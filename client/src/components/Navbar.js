@@ -34,7 +34,7 @@ export default function Navbar() {
     const handleSignOut = async (event) => {
         event.preventDefault();
         try {
-            const response = await axios.get('http://localhost:8000/api/logout');
+            const response = await axios.get('https://fieldex-production.up.railway.app/api/logout');
             console.log(response.data);
             alert('Sign out successful!');
             setIsAuthenticated(false);

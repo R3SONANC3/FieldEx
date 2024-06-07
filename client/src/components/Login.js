@@ -23,13 +23,13 @@ function Login({ setOpenModal, setIsAuthenticated }) {
     try {
       let response;
       if (isSignUp) {
-        response = await axios.post("http://localhost:8000/api/register", {
+        response = await axios.post("https://fieldex-production.up.railway.app/api/register", {
           email,
           password,
         });
         alert("สร้างบัญชีสำเร็จ  สามารถเข้าสู่ระบบได้แล้ว.");
       } else {
-        response = await axios.post("http://localhost:8000/api/login", {
+        response = await axios.post("https://fieldex-production.up.railway.app/api/login", {
           email,
           password,
         });
@@ -37,7 +37,7 @@ function Login({ setOpenModal, setIsAuthenticated }) {
         const token = response.data.token;
         const decodedToken = jwtDecode(token);
         const role = decodedToken.role; // Assuming the token has a 'role' field
-        
+
         alert("เข้าสู่ระบบสำเร็จ!");
         setIsAuthenticated(true);
 
