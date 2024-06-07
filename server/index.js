@@ -4,19 +4,27 @@ const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const bcrypt = require("bcrypt");
 const mysql = require('mysql2/promise')
+require('dotenv').config();
 
 
 const secret = "mysecret"; // Generate key and store it in environment variables
 const port = process.env.PORT || 8000;
 const app = express();
 app.use(express.json());
+app.use(cookieParser());
+
+// CORS configuration
 app.use(
   cors({
     credentials: true,
-    origin: ["http://localhost:3000", "https://field-ex.vercel.app/"],// Ensure this matches the frontend's URL and port
-  }),
+    origin: ["http://localhost:3000", "https://field-ex.vercel.app"],
+    methods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
 );
-app.use(cookieParser());
+
+// Handle preflight requests
+app.options("*", cors());
 
 let connector = null;
 const initMySQL = async () => {
