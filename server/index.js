@@ -14,17 +14,23 @@ app.use(express.json());
 app.use(cookieParser());
 
 // CORS configuration
-app.use(
-  cors({
-    credentials: true,
-    origin: ["http://localhost:3000", "https://field-ex.vercel.app"],
-    methods: ["GET", "POST", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
+const allowedOrigins = ["http://localhost:3000", "https://field-ex.vercel.app:8000"];
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 
 // Handle preflight requests
-app.options("*", cors());
+app.options("*", cors(corsOptions));
 
 let connector = null;
 const initMySQL = async () => {
