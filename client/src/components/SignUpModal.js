@@ -9,24 +9,22 @@ function SignUpModal({ setOpenModal }) {
   const handleReg = async (event) => {
     event.preventDefault(); // Prevent default form submission behavior
     try {
-      const response = await axios.post('https://fieldex-production.up.railway.app/api/register', {
+      const response = await axios.post('api/register', {
         email,
         password
-      });
+      }, { withCredentials: true });
 
       console.log(response.data);
       alert('Sign up successful!');
       setOpenModal(false);
       setIsAuthenticated(true); // Set authentication state to true
 
-      // Store authentication status in local storage
-      localStorage.setItem('isAuthenticated', true);
-
     } catch (error) {
       console.error('Error:', error);
       alert('Sign up failed!');
     }
   };
+
 
   return (
     <div className="modalBackground">
