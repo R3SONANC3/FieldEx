@@ -7,7 +7,7 @@ const mysql = require('mysql2/promise')
 require('dotenv').config();
 
 
-const secret = "mysecret"; // Generate key and store it in environment variables
+const secret = process.env.JWT_SECRET || "mysecret";
 const port = process.env.PORT || 8000;
 const app = express();
 app.use(express.json());
@@ -35,14 +35,14 @@ app.options("*", cors(corsOptions));
 let connector = null;
 const initMySQL = async () => {
   connector = await mysql.createConnection({
-    host: 'fieldex.c3ssu4aw8v1d.ap-southeast-2.rds.amazonaws.com',
-    user: 'admin',
-    database: 'FieldEx',
-    password: '12345678',
-    port: 3306,
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    database: process.env.DB_NAME,
+    password: process.env.DB_PASSWORD,
+    port: process.env.DB_PORT,
     waitForConnections: true,
     connectionLimit: 10,
-    queueLimit: 0
+    queueLimit: 0,
   });
 };
 
@@ -172,35 +172,27 @@ app.post('/api/login', async (req, res) => {
 });
 
 
-app.get('/api/users', async (req, res) => {
-  try {
-    const authToken = req.cookies.token
-    const user = jwt.verify(authToken, secret)
-
-    // recheck from database
-    const [checkResults] = await connector.query('SELECT * FROM FieldEx.users WHERE email = ?', user.email)
-    if(!checkResults[0]) {
-      throw { message:"User not found"}
-    }
-   
-    // user confirm 
-    const [results] = await connector.query('SELECT * FROM FieldEx.users')
-    
-    res.json({ email: decoded.email, role: decoded.role })
-  } catch (error) {
-    console.log('error', error)
-    res.status(403).json({
-      message: "Autentication failed",
-      error
-    })
+app.get('/api/users', verifyUser, async (req, res) => {
+  if (req.role !== 'admin') {
+    return res.status(403).json({ message: "Access denied" });
   }
-})
+  try {
+    const [results] = await connector.query('SELECT * FROM FieldEx.users');
+    res.json(results);
+  } catch (error) {
+    console.log('error', error);
+    res.status(500).json({ message: "Failed to retrieve users", error });
+  }
+});
 
 app.get('/api/logout', (req, res) => {
-  res.clearCookie('token');
-  return res.json({Status:"Logout Success"})
-})
-
+  res.clearCookie('token', {
+    secure: true,
+    httpOnly: true,
+    sameSite: "none",
+  });
+  return res.json({ Status: "Logout Success" });
+});
 
 app.listen(port, async () => {
   await initMySQL();
