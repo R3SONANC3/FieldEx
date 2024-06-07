@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/static/css/main.53cc6bad.css",
+    "main.js": "/static/js/main.e4326fcd.js",
+    "static/media/logoNu.png": "/static/media/logoNu.9765e5467100da3be466.png",
+    "static/media/logo.png": "/static/media/logo.bb0d7d6595e2e32a2c4c.png",
+    "index.html": "/index.html",
+    "main.53cc6bad.css.map": "/static/css/main.53cc6bad.css.map",
+    "main.e4326fcd.js.map": "/static/js/main.e4326fcd.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.53cc6bad.css",
+    "static/js/main.e4326fcd.js"
+  ]
+}

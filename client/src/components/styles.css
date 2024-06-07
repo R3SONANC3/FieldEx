@@ -1,0 +1,316 @@
+/* styles.css */
+body {
+  font-family: Arial, sans-serif;
+  background-color: white;
+  margin: 0;
+}
+
+.container {
+  position: flex;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+}
+
+.navbar {
+  background-color: #333;
+}
+
+.navbar-container {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  margin-left: 50px;
+}
+
+.website-name {
+  margin-left: 10px;
+  font-size: 1.2em;
+  font-weight: bold;
+  color: white;
+}
+
+.navbar-logo,
+.navbar-logonu {
+  height: 50px; /* Adjust as needed */
+}
+
+.navbar-links {
+  align-items: center;
+  list-style: none;
+  display: flex;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar-links li {
+  margin: 0 10px;
+}
+
+.navbar-links a {
+  text-decoration: none;
+  color: #fff;
+  font-size: 1em;
+  transition: color 0.3s, background-color 0.3s, padding 0.3s;
+  border-radius: 5px; /* Rounded corners */
+}
+
+.navbar-links a:hover {
+  color: #333;
+  background-color: orangered;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+  background-color: #fff;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 500px;
+  position: relative;
+  border-radius: 10px; /* Rounded corners for modal content */
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  position: absolute;
+  right: 20px;
+  top: 10px;
+}
+
+.close:hover,
+.close:focus {
+  color: orangered;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+  border-radius: 5px; /* Rounded corners for inputs */
+}
+
+button {
+  padding: 10px 20px;
+  background-color: orangered;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px; /* Rounded corners */
+}
+
+button:hover {
+  background-color: #555;
+  border-radius: 5px; /* Rounded corners */
+}
+
+@media (max-width: 600px) {
+  .modal-content {
+      width: 90%;
+  }
+}
+
+.text-center {
+  text-align: center;
+}
+
+
+/* Modal Styles*/
+/* Modal.css */
+.modalBackground {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modalContainer {
+  background-color: white;
+  border-radius: 8px;
+  padding: 50px;
+  width: 500px; /* เพิ่มความกว้าง */
+  height: 300px; /* เพิ่มความสูง */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+
+.titleCloseBtn {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.titleCloseBtn button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: black;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.body {
+  margin-top: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+input[type="text"],
+input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+button {
+  padding: 10px 20px;
+  background-color: gray;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+button:hover {
+  background-color: orangered;
+}
+
+.footer {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+}
+
+
+.schoolBotanicalGardenButton, .localResourceBaseButton {
+  margin: 0 10px;
+}
+
+.ge-form {
+  text-align: center;
+  margin-top: 20px;
+}
+
+/* Form Styles*/
+
+.form-container {
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #fff;
+  padding-left: 100px;
+  padding-right: 100px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+h3 {
+  color: #555;
+  margin-bottom: 10px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+label {
+  font-weight: bold;
+  color: #444;
+  margin-bottom: 5px;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="tel"],
+input[type="email"],
+select,
+textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: 16px;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="tel"]:focus,
+input[type="email"]:focus,
+select:focus,
+textarea:focus {
+  border-color: #66afe9;
+  outline: none;
+  box-shadow: 0 0 8px rgba(102, 175, 233, 0.6);
+}
+
+textarea {
+  resize: vertical;
+}
