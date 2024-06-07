@@ -9,7 +9,7 @@ function SignInModal({ setOpenModal, setIsAuthenticated }) {
   const handleLogin = async (event) => {
     event.preventDefault(); // Prevent default form submission behavior
     try {
-      const response = await axios.post('http://localhost:8000/api/login', {
+      const response = await axios.post('https://fieldex-production.up.railway.app/api/login', {
         email,
         password
       }, { withCredentials: true });
