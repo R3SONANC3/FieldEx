@@ -13,7 +13,7 @@ app.use(express.json());
 app.use(
   cors({
     credentials: true,
-    origin: ["https://main--fieldex.netlify.app/"], // Ensure this matches the frontend's URL and port
+    origin: ["http://localhost:3000", "https://field-ex.vercel.app/"],// Ensure this matches the frontend's URL and port
   }),
 );
 app.use(cookieParser());
