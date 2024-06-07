@@ -4,26 +4,29 @@ import axios from "axios";
 function SignInModal({ setOpenModal, setIsAuthenticated }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isSignUp, setIsSignUp] = useState(false);
+  const [userRole, setUserRole] = useState(null);
 
   const handleLogin = async (event) => {
     event.preventDefault(); // Prevent default form submission behavior
+  
     try {
       const response = await axios.post('https://fieldex-production.up.railway.app/api/login', {
         email,
         password
-      }, { withCredentials: true });
+      });
 
-      console.log(response.data);
+      localStorage.setItem('token', response.data.token)
+      console.log(response.data.token);
       alert('Sign in successful!');
       setOpenModal(false);
       setIsAuthenticated(true); // Set authentication state to true
-
+  
     } catch (error) {
       console.error('Error:', error);
       alert('Sign in failed!');
     }
   };
+  
 
   return (
     <div className="modalBackground">

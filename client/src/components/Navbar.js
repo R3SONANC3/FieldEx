@@ -21,11 +21,11 @@ export default function Navbar() {
             if (timeElapsed < authDuration) {
                 setIsAuthenticated(true);
                 setTimeout(() => {
-                    localStorage.removeItem('authTimestamp');
+                    localStorage.removeItem('authTimestamp','token','useRole');
                     window.location.reload();
                 }, authDuration - timeElapsed);
             } else {
-                localStorage.removeItem('authTimestamp');
+                localStorage.removeItem('authTimestamp','token','useRole');
                 window.location.reload();
             }
         }
@@ -34,11 +34,11 @@ export default function Navbar() {
     const handleSignOut = async (event) => {
         event.preventDefault();
         try {
-            const response = await axios.get('https://fieldex-production.up.railway.app/api/logout', { withCredentials: true });
+            const response = await axios.get('https://fieldex-production.up.railway.app/api/logout');
             console.log(response.data);
             alert('Sign out successful!');
             setIsAuthenticated(false);
-            localStorage.removeItem('authTimestamp');
+            localStorage.removeItem('authTimestamp','token','useRole');
             window.location.reload();
         } catch (error) {
             console.error('Error:', error);
@@ -50,9 +50,9 @@ export default function Navbar() {
         setIsAuthenticated(true);
         localStorage.setItem('authTimestamp', new Date().getTime());
         setTimeout(() => {
-            localStorage.removeItem('authTimestamp');
+            localStorage.removeItem('authTimestamp','token','useRole');
             window.location.reload();
-        }, 10 * 1000);
+        }, 10 * 1000 * 60);
     };
 
 

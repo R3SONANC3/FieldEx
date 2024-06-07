@@ -1,7 +1,6 @@
 const cors = require("cors");
 const express = require("express");
 const jwt = require("jsonwebtoken");
-const cookieParser = require("cookie-parser");
 const bcrypt = require("bcrypt");
 const mysql = require('mysql2/promise')
 require('dotenv').config();
@@ -11,7 +10,6 @@ const secret = "mysecret"; // Generate key and store it in environment variables
 const port = process.env.PORT || 8000;
 const app = express();
 app.use(express.json());
-app.use(cookieParser());
 
 // CORS configuration
 const allowedOrigins = ["http://localhost:3000", "https://field-ex.vercel.app"];
@@ -46,67 +44,27 @@ const initMySQL = async () => {
   });
 };
 
-const verifyUser = async (req, res, next) => {
-  const token = await req.cookies.token;
-  if(!token) {
-    return res.json({message: "We need token please provide it."})
-  }else {
-    jwt.verify(token, secret, (err, decode) =>{
+const verifyUser = (req, res, next) => {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    return res.json({ message: "We need token please provide it." });
+  } else {
+    jwt.verify(token, secret, (err, decode) => {
       if (err) {
-        return res.json({message:"Autentication failed"})
-      }else {
+        return res.json({ message: "Authentication failed" });
+      } else {
         req.name = decode.name;
         next();
       }
-    })
+    });
   }
-}
+};
+
 
 app.get("/",verifyUser ,(req, res) => {
   return res.json({Status:"Success", name: req.name})
 });
 
-// app.post('/api/register', async (req, res) => {
-//   const {email,password} = req.body;
-//   try {
-//     const result = await new Promise((resolve, reject) => 
-//     connector.insert('FieldEx.users', {email,password}, (error, result)=>{
-//       if(error){
-//         reject(error);
-//       }else{
-//         resolve(result);
-//       }
-//     }));
-//     res.status(200).json({message:'sucess', result});
-//   } catch (error) {
-//     console.log('error', error);
-//     res.status(400).json({message: 'insert failed',error});
-//   }
-// });
-
-// app.post('/api/login', async (req, res) => {
-//   const {email,password} = req.body;
-//   try {
-//     const result = await new Promise((resolve, reject) => 
-//     connector.search('FieldEx.users', `email = '${email}'`, (error, result)=>{
-//       if(error){
-//         reject(error);
-//       }else{
-//         resolve(result);
-//       }
-//     }));
-
-
-//     res.status(200).json({message:'sucess', result});
-
-
-
-
-//   } catch (error) {
-//     console.log('error', error);
-//     res.status(400).json({message: 'insert failed',error});
-//   }
-// });
 
 app.post('/api/register', async (req, res) => {
   try {
@@ -146,21 +104,14 @@ app.post('/api/login', async (req, res) => {
 
     if (!match) {
       res.status(400).json({
-        message: "Login Fail (Email or Password worng)"
+        message: "Login Failed (Incorrect Email or Password)"
       })
       return false
     }
 
     const token = jwt.sign({ email, role: userData.role }, secret, { expiresIn: '1h'})
-    res.cookie('token', token, {
-      maxAge: 300000,
-      secure:true,
-      httpOnly:true,
-      sameSite:"none"
-    })
-
     res.json({
-      message: "Login successful!!"
+      message: "Login successful!!",token
     })
   } catch (error) {
     console.log('error', error)
@@ -186,11 +137,7 @@ app.get('/api/users', verifyUser, async (req, res) => {
 });
 
 app.get('/api/logout', (req, res) => {
-  res.clearCookie('token', {
-    secure: true,
-    httpOnly: true,
-    sameSite: "none",
-  });
+  localStorage.removeItem('authTimestamp','token','useRole');
   return res.json({ Status: "Logout Success" });
 });
 
