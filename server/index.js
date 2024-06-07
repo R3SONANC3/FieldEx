@@ -7,7 +7,7 @@ const mysql = require('mysql2/promise')
 require('dotenv').config();
 
 
-const secret = process.env.JWT_SECRET || "mysecret";
+const secret = "mysecret"; // Generate key and store it in environment variables
 const port = process.env.PORT || 8000;
 const app = express();
 app.use(express.json());
@@ -35,14 +35,14 @@ app.options("*", cors(corsOptions));
 let connector = null;
 const initMySQL = async () => {
   connector = await mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    database: process.env.DB_NAME,
-    password: process.env.DB_PASSWORD,
-    port: process.env.DB_PORT,
+    host: 'fieldex.c3ssu4aw8v1d.ap-southeast-2.rds.amazonaws.com',
+    user: 'admin',
+    database: 'FieldEx',
+    password: '12345678',
+    port: 3306,
     waitForConnections: true,
     connectionLimit: 10,
-    queueLimit: 0,
+    queueLimit: 0
   });
 };
 
