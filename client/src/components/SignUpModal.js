@@ -12,19 +12,21 @@ function SignUpModal({ setOpenModal }) {
       const response = await axios.post('https://fieldex-production.up.railway.app/api/register', {
         email,
         password
-      }, { withCredentials: true });
+      });
 
       console.log(response.data);
       alert('Sign up successful!');
       setOpenModal(false);
       setIsAuthenticated(true); // Set authentication state to true
 
+      // Store authentication status in local storage
+      localStorage.setItem('isAuthenticated', true);
+
     } catch (error) {
       console.error('Error:', error);
       alert('Sign up failed!');
     }
   };
-
 
   return (
     <div className="modalBackground">
