@@ -6,8 +6,8 @@ const mysql = require('mysql2/promise')
 require('dotenv').config();
 
 
-const secret = "mysecret";
-const port = 8000;
+const secret ="mysecret";
+const port = process.env.PORT || 8000;
 const app = express();
 app.use(express.json());
 
