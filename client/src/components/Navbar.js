@@ -3,33 +3,35 @@ import { Link } from 'react-router-dom';
 import logo from '../assets/logo.png';
 import logonu from '../assets/logoNu.png';
 import axios from 'axios';
-import SignInModal from './Login';
+import LoginModal from './Login';
 import SelectForm from './SelectForm';
 
-export default function Navbar() {
-    const [SignInModalOpen, setSignInModalOpen] = useState(false);
+const Navbar = () => {
+    const [LoginModalOpen, setLoginModalOpen] = useState(false);
     const [selectFormOpen, setSelectFormOpen] = useState(false);
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState(false)
 
     useEffect(() => {
-        const authTimestamp = localStorage.getItem('authTimestamp');
-        if (authTimestamp) {
-            const now = new Date().getTime();
-            const timeElapsed = now - authTimestamp;
-            const authDuration = 10 * 1000 * 60; //time before session out
+        const authTime = localStorage.getItem('authTime');
 
-            if (timeElapsed < authDuration) {
+        if (authTime) {
+            const timeNow = new Date().getTime();
+            const timeElapsed = timeNow - authTime;
+            const authDuration = 10 * 1000;
+
+            if (timeElapsed < authDuration ){
                 setIsAuthenticated(true);
                 setTimeout(() => {
-                    localStorage.removeItem('authTimestamp');
+                    localStorage.removeItem('authTime');
                     window.location.reload();
-                }, authDuration - timeElapsed);
+                }, authDuration - timeElapsed );
             } else {
-                localStorage.removeItem('authTimestamp');
+                localStorage.removeItem('authTime');
                 window.location.reload();
             }
         }
-    }, []);
+    }, [] );
+
 
     const handleSignOut = async (event) => {
         event.preventDefault();
@@ -38,7 +40,7 @@ export default function Navbar() {
             console.log(response.data);
             alert('Sign out successful!');
             setIsAuthenticated(false);
-            localStorage.removeItem('authTimestamp');
+            localStorage.removeItem('authTime')
             localStorage.removeItem('token')
             localStorage.removeItem('userRole')
             window.location.reload();
@@ -49,14 +51,14 @@ export default function Navbar() {
     };
 
     const handleSignInSuccess = () => {
+        const timeOut = 10 * 1000;
         setIsAuthenticated(true);
-        localStorage.setItem('authTimestamp', new Date().getTime());
+        localStorage.setItem('authTime', new Date().getTime());
         setTimeout(() => {
-            localStorage.removeItem('authTimestamp');
+            localStorage.removeItem('authTime');
             window.location.reload();
-        }, 10 * 1000 * 60);
-    };
-
+        }, timeOut )
+    }
 
     return (
         <nav className="navbar">
@@ -68,16 +70,23 @@ export default function Navbar() {
                 </div>
                 <ul className="navbar-links">
                     <li><Link to="/">About</Link></li>
-                    <li><Link to="/" onClick={() => setSelectFormOpen(true)}>กรอกแบบฟอร์ม</Link></li>
+                    <li><Link to="/admin">Admin Page</Link></li>
+
+                    <li><Link to="/" onClick={() => { if (isAuthenticated) { setSelectFormOpen(true);} else
+                        { setLoginModalOpen(true);alert('กรุณาเข้าสู่ระบบก่อนกรอกแบบฟอร์ม');}}}> กรอกแบบฟอร์ม</Link></li>
+
                     {isAuthenticated ? (
                         <li><Link onClick={handleSignOut} className="signout-button">ออกจากระบบ</Link></li>
                     ) : (
-                        <li><Link to="/" onClick={() => setSignInModalOpen(true)}>เข้าสู่ระบบ</Link></li>
+                        <li><Link to="/" onClick={() => setLoginModalOpen(true)}>เข้าสู่ระบบ</Link></li>
                     )}
+
                 </ul>
             </div>
-            {SignInModalOpen && <SignInModal setOpenModal={setSignInModalOpen} setIsAuthenticated={handleSignInSuccess} />}
+            {LoginModalOpen && <LoginModal setOpenModal={setLoginModalOpen} setIsAuthenticated={handleSignInSuccess} />}
             {selectFormOpen && <SelectForm setOpenModal={setSelectFormOpen} />}
         </nav>
     );
 }
+
+export default Navbar;
