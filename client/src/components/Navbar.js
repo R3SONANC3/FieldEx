@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import logo from '../assets/logo.png';
 import logonu from '../assets/logoNu.png';
-import SignInModal from './SignInModal';
-import SelectForm from './SelectForm';
 import axios from 'axios';
+import SignInModal from './Login';
+import SelectForm from './SelectForm';
 
 export default function Navbar() {
     const [SignInModalOpen, setSignInModalOpen] = useState(false);
@@ -21,11 +21,11 @@ export default function Navbar() {
             if (timeElapsed < authDuration) {
                 setIsAuthenticated(true);
                 setTimeout(() => {
-                    localStorage.removeItem('authTimestamp','token','useRole');
+                    localStorage.removeItem('authTimestamp');
                     window.location.reload();
                 }, authDuration - timeElapsed);
             } else {
-                localStorage.removeItem('authTimestamp','token','useRole');
+                localStorage.removeItem('authTimestamp');
                 window.location.reload();
             }
         }
@@ -34,11 +34,13 @@ export default function Navbar() {
     const handleSignOut = async (event) => {
         event.preventDefault();
         try {
-            const response = await axios.get('https://fieldex-production.up.railway.app/api/logout');
+            const response = await axios.get('http://localhost:8000/api/logout');
             console.log(response.data);
             alert('Sign out successful!');
             setIsAuthenticated(false);
-            localStorage.removeItem('authTimestamp','token','useRole');
+            localStorage.removeItem('authTimestamp');
+            localStorage.removeItem('token')
+            localStorage.removeItem('userRole')
             window.location.reload();
         } catch (error) {
             console.error('Error:', error);
@@ -50,7 +52,7 @@ export default function Navbar() {
         setIsAuthenticated(true);
         localStorage.setItem('authTimestamp', new Date().getTime());
         setTimeout(() => {
-            localStorage.removeItem('authTimestamp','token','useRole');
+            localStorage.removeItem('authTimestamp');
             window.location.reload();
         }, 10 * 1000 * 60);
     };

@@ -110,6 +110,7 @@ app.post('/api/login', async (req, res) => {
     }
 
     const token = jwt.sign({ email, role: userData.role }, secret, { expiresIn: '1h'})
+
     res.json({
       message: "Login successful!!",token
     })
@@ -137,7 +138,6 @@ app.get('/api/users', verifyUser, async (req, res) => {
 });
 
 app.get('/api/logout', (req, res) => {
-  localStorage.removeItem('authTimestamp','token','useRole');
   return res.json({ Status: "Logout Success" });
 });
 

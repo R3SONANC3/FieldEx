@@ -169,10 +169,14 @@ button:hover {
   border-radius: 8px;
   padding: 50px;
   width: 500px; /* เพิ่มความกว้าง */
-  height: 300px; /* เพิ่มความสูง */
+  height: 400px; /* เพิ่มความสูง */
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
+.modal-navigate{
+  text-align: center;
+  margin-top: 50px;
+}
 
 .titleCloseBtn {
   display: flex;
