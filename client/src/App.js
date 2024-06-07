@@ -7,13 +7,14 @@ import FormManagement from "./components/form/FormManagement";
 import FormManagement2 from "./components/form/FormManagement2";
 import GeneralForm from "./components/form/GeneralForm";
 import "./components/styles.css";
+import { Helmet } from "react-helmet";
 
 function App() {
-  const [openModal, setOpenModal] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
   return (
     <BrowserRouter>
+      <Helmet>
+        <title>ระบบประเมินตัวเอง</title>
+      </Helmet>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/selectform" element={<SelectForm />} />
