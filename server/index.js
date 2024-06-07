@@ -14,7 +14,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 // CORS configuration
-const allowedOrigins = ["http://localhost:3000", "https://field-ex.vercel.app:8000"];
+const allowedOrigins = ["http://localhost:3000", "https://field-ex.vercel.app"];
 
 const corsOptions = {
   origin: function (origin, callback) {
