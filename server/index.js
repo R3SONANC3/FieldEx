@@ -148,7 +148,43 @@ app.get('/api/logout', (req, res) => {
   return res.json({ Status: "Logout Success" });
 });
 
+app.post('/api/submitGeForm', (req, res) => {
+  const formData = req.body;
 
+  // Determine which education level to use
+  const finalEducationLevel = formData.educationLevel === 'อื่นๆ' ? formData.otherEducationLevel : formData.educationLevel;
+
+  // Insert form data into the database
+  const query = `
+    INSERT INTO generalForm (
+      educationLevel, studentCount, teacherCount, institutionName, phoneNumber, faxNumber, email, district, province, affiliation, headName, projectDetail
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+
+  const values = [
+    finalEducationLevel,
+    formData.studentCount,
+    formData.teacherCount,
+    formData.institutionName,
+    formData.phoneNumber,
+    formData.faxNumber,
+    formData.email,
+    formData.district,
+    formData.province,
+    formData.affiliation,
+    formData.headName,
+    formData.projectDetail
+  ];
+
+  connector.query(query, values, (err, results) => {
+    if (err) {
+      console.error('Error inserting data into the database:', err);
+      res.status(500).json({ message: 'Error inserting data into the database' });
+      return;
+    }
+    res.status(200).json({ message: 'Data received and saved successfully' });
+  });
+});
 
 app.listen(PORT, async () => {
   await initMySQL();

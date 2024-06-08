@@ -19,10 +19,6 @@ const GeneralForm = () => {
 
   const navigate = useNavigate();
 
-  const goToNextPage = () => {
-    navigate("/generalform");
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -43,7 +39,7 @@ const GeneralForm = () => {
     };
 
     try {
-      const response = await fetch("/api/submitGeForm", {
+      const response = await fetch("http://localhost:8000/api/submitGeForm", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -53,6 +49,7 @@ const GeneralForm = () => {
 
       if (response.ok) {
         console.log("Data sent successfully");
+        navigate("/generalform");
       } else {
         console.error("Failed to send data");
       }

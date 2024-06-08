@@ -6,20 +6,22 @@ import Evaluation from "./components/form/EvaluationPage";
 import FormManagement from "./components/form/FormManagement";
 import FormManagement2 from "./components/form/FormManagement2";
 import GeneralForm from "./components/form/GeneralForm";
-import "./components/styles.css";
 import AdminDashboard from "./components/AdminDashboard";
+import "./components/styles.css";
+import About from "./components/About";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/home" element={<Home />} />\
+        <Route path="/" element={<Home />} />
         <Route path="/admindashboard" element={<AdminDashboard/>}/>
         <Route path="/selectform" element={<SelectForm />} />
         <Route path="/evaluation" element={<Evaluation />} />
         <Route path="/generalform" element={<GeneralForm />} />
         <Route path="/formmanagement" element={<FormManagement />} />
         <Route path="/formmanagement2" element={<FormManagement2 />} />
+        <Route path="/about" element={<About /> } />
       </Routes>
     </BrowserRouter>
   );

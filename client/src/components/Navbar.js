@@ -51,7 +51,7 @@ const Navbar = () => {
             setIsAuthenticated(false);
             setUserRole(null);
             clearAuthData();
-            navigate('/home'); // Redirect to home page after logout
+            navigate('/'); // Redirect to home page after logout
         } catch (error) {
             console.error('Error:', error);
             alert('Sign out failed!');
@@ -70,35 +70,36 @@ const Navbar = () => {
         setTimeout(() => {
             clearAuthData();
         }, timeOut);
+        window.location.reload();
     };
 
     return (
         <nav className="navbar">
             <div className="navbar-container">
                 <div className="logo-container">
-                    <img src={logo} className="navbar-logo" alt="Logo" />
-                    <img src={logonu} className="navbar-logonu" alt="logonu" />
-                    <span className="website-name">ระบบประเมินตัวเอง</span>
+                    <Link > <img src={logo} className="navbar-logo" alt="Logo" />  </Link>
+                    <Link > <img src={logonu} className="navbar-logonu" alt="logonu" />  </Link>
+                    <Link > <span className="website-name">ระบบประเมินตัวเอง</span>  </Link>
                 </div>
                 <ul className="navbar-links">
-                    <li><Link to="/home">About</Link></li>
+                    <li><Link to="/about">About</Link></li>
                     {isAuthenticated && userRole === 'admin' && (
                         <li><Link to="/admindashboard">Admin Page</Link></li>
                     )}
                     <li>
-                        <Link to="/home" onClick={() => {
+                        <Link to="/" onClick={() => {
                             if (isAuthenticated) {
                                 setSelectFormOpen(true);
                             } else {
                                 setLoginModalOpen(true);
                                 alert('กรุณาเข้าสู่ระบบก่อนกรอกแบบฟอร์ม');
                             }
-                        }}> กรอกแบบฟอร์ม</Link>
+                        }}>กรอกแบบฟอร์ม</Link>
                     </li>
                     {isAuthenticated ? (
                         <li><Link onClick={handleSignOut} className="signout-button">ออกจากระบบ</Link></li>
                     ) : (
-                        <li><Link to="/home" onClick={() => setLoginModalOpen(true)}>เข้าสู่ระบบ</Link></li>
+                        <li><Link to="/" onClick={() => setLoginModalOpen(true)}>เข้าสู่ระบบ</Link></li>
                     )}
                 </ul>
             </div>
