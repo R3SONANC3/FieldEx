@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../Navbar";
 
 const FormManagement = () => {
   const navigate = useNavigate();
@@ -13,7 +12,6 @@ const FormManagement = () => {
 
   return (
     <div className="container">
-      <Navbar />
     </div>
   );
 };

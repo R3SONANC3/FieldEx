@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
 import PropTypes from "prop-types";
-import { jwtDecode } from "jwt-decode";
+import { jwtDecode } from "jwt-decode";  // Corrected import statement
 
-function Login({ setOpenModal, setIsAuthenticated }) {
+function Login({ setOpenModal, setIsAuthenticated, setUserRole }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -40,10 +40,12 @@ function Login({ setOpenModal, setIsAuthenticated }) {
 
         alert("เข้าสู่ระบบสำเร็จ!");
         setIsAuthenticated(true);
+        setUserRole(role);
 
-        // Save the token and role to localStorage or state if needed
+        // Save the token and role to localStorage
         localStorage.setItem("token", token);
         localStorage.setItem("userRole", role);
+        localStorage.setItem('authTime', new Date().getTime());
       }
 
       setOpenModal(false);
@@ -125,6 +127,7 @@ function Login({ setOpenModal, setIsAuthenticated }) {
 Login.propTypes = {
   setOpenModal: PropTypes.func.isRequired,
   setIsAuthenticated: PropTypes.func.isRequired,
+  setUserRole: PropTypes.func.isRequired,
 };
 
 export default Login;

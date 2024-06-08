@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import logo from '../assets/logo.png';
 import logonu from '../assets/logoNu.png';
 import axios from 'axios';
@@ -10,28 +10,37 @@ const Navbar = () => {
     const [LoginModalOpen, setLoginModalOpen] = useState(false);
     const [selectFormOpen, setSelectFormOpen] = useState(false);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [userRole, setUserRole] = useState(null);
+    const navigate = useNavigate(); // Add useNavigate hook
 
     useEffect(() => {
         const authTime = localStorage.getItem('authTime');
+        const storedUserRole = localStorage.getItem('userRole');
 
-        if (authTime) {
+        if (authTime && storedUserRole) {
             const timeNow = new Date().getTime();
             const timeElapsed = timeNow - authTime;
-            const authDuration = 10 * 1000;
+            const authDuration = 60 * 60 * 1000; // time before session out is 1 hour
 
-            if (timeElapsed < authDuration ){
+            if (timeElapsed < authDuration) {
                 setIsAuthenticated(true);
+                setUserRole(storedUserRole);
                 setTimeout(() => {
-                    localStorage.removeItem('authTime');
-                    window.location.reload();
-                }, authDuration - timeElapsed );
+                    clearAuthData();
+                }, authDuration - timeElapsed);
             } else {
-                localStorage.removeItem('authTime');
-                window.location.reload();
+                clearAuthData();
             }
         }
-    }, [] );
+    }, []);
 
+    const clearAuthData = () => {
+        localStorage.removeItem('authTime');
+        localStorage.removeItem('token');
+        localStorage.removeItem('userRole');
+        localStorage.removeItem('isLoggedIn');
+        window.location.reload();
+    };
 
     const handleSignOut = async (event) => {
         event.preventDefault();
@@ -40,10 +49,9 @@ const Navbar = () => {
             console.log(response.data);
             alert('Sign out successful!');
             setIsAuthenticated(false);
-            localStorage.removeItem('authTime')
-            localStorage.removeItem('token')
-            localStorage.removeItem('userRole')
-            window.location.reload();
+            setUserRole(null);
+            clearAuthData();
+            navigate('/home'); // Redirect to home page after logout
         } catch (error) {
             console.error('Error:', error);
             alert('Sign out failed!');
@@ -51,14 +59,18 @@ const Navbar = () => {
     };
 
     const handleSignInSuccess = () => {
-        const timeOut = 10 * 1000;
+        const timeOut = 60 * 60 * 1000;
         setIsAuthenticated(true);
-        localStorage.setItem('authTime', new Date().getTime());
+        const storedUserRole = localStorage.getItem('userRole');
+        setUserRole(storedUserRole);
+    
+        // เพิ่มข้อมูลการเข้าสู่ระบบลงใน localStorage
+        localStorage.setItem('isLoggedIn', 'true');
+    
         setTimeout(() => {
-            localStorage.removeItem('authTime');
-            window.location.reload();
-        }, timeOut )
-    }
+            clearAuthData();
+        }, timeOut);
+    };
 
     return (
         <nav className="navbar">
@@ -69,22 +81,30 @@ const Navbar = () => {
                     <span className="website-name">ระบบประเมินตัวเอง</span>
                 </div>
                 <ul className="navbar-links">
-                    <li><Link to="/">About</Link></li>
-
-                    <li><Link to="/admin">Admin Page</Link></li>
-
-                    <li><Link to="/" onClick={() => { if (isAuthenticated) { setSelectFormOpen(true);} else
-                        { setLoginModalOpen(true);alert('กรุณาเข้าสู่ระบบก่อนกรอกแบบฟอร์ม');}}}> กรอกแบบฟอร์ม</Link></li>
-
+                    <li><Link to="/home">About</Link></li>
+                    {isAuthenticated && userRole === 'admin' && (
+                        <li><Link to="/admindashboard">Admin Page</Link></li>
+                    )}
+                    <li>
+                        <Link to="/home" onClick={() => {
+                            if (isAuthenticated) {
+                                setSelectFormOpen(true);
+                            } else {
+                                setLoginModalOpen(true);
+                                alert('กรุณาเข้าสู่ระบบก่อนกรอกแบบฟอร์ม');
+                            }
+                        }}> กรอกแบบฟอร์ม</Link>
+                    </li>
                     {isAuthenticated ? (
                         <li><Link onClick={handleSignOut} className="signout-button">ออกจากระบบ</Link></li>
                     ) : (
-                        <li><Link to="/" onClick={() => setLoginModalOpen(true)}>เข้าสู่ระบบ</Link></li>
+                        <li><Link to="/home" onClick={() => setLoginModalOpen(true)}>เข้าสู่ระบบ</Link></li>
                     )}
-
                 </ul>
             </div>
-            {LoginModalOpen && <LoginModal setOpenModal={setLoginModalOpen} setIsAuthenticated={handleSignInSuccess} />}
+            {LoginModalOpen && (
+                <LoginModal setOpenModal={setLoginModalOpen} setIsAuthenticated={handleSignInSuccess} setUserRole={setUserRole} />
+            )}
             {selectFormOpen && <SelectForm setOpenModal={setSelectFormOpen} />}
         </nav>
     );

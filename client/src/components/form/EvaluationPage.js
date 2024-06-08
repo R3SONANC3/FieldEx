@@ -1,8 +1,9 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../Navbar";
+import Navbar from '../Navbar'
 
 const EvaluationPage = () => {
+
   const navigate = useNavigate();
 
   const goToNextPage = () => {
@@ -12,7 +13,7 @@ const EvaluationPage = () => {
   return (
     <div className="container">
       <Navbar />
-      <div className="head">
+      <div className="header">
         <h2 className="text-center">
           การประเมินสถานศึกษา
         </h2>

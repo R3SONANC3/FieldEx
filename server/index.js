@@ -2,7 +2,7 @@ const cors = require("cors");
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const mysql = require('mysql2/promise')
+const MySQLConnector = require('./MySQLConnector')
 require('dotenv').config();
 
 
@@ -31,33 +31,40 @@ app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));
 
 let connector = null;
+
 const initMySQL = async () => {
-  connector = await mysql.createConnection({
-    host: 'fieldex.c3ssu4aw8v1d.ap-southeast-2.rds.amazonaws.com',
-    user: 'admin',
-    database: 'FieldEx',
-    password: '12345678',
-    port: '3306',
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0,
-  });
+  try {
+    connector = await new MySQLConnector({
+      host: 'fieldex.c3ssu4aw8v1d.ap-southeast-2.rds.amazonaws.com',
+      user: 'admin',
+      database: 'FieldEx',
+      password: '12345678',
+      port: '3306',
+      waitForConnections: true,
+      connectionLimit: 10,
+      queueLimit: 0,
+    });
+    console.log('Connected to MySQL database');
+  } catch (error) {
+    console.error('Error initializing MySQL connection:', error);
+    // Optionally, you can rethrow the error to let the caller handle it
+    throw error;
+  }
 };
 
 const verifyUser = (req, res, next) => {
-  const token = localStorage.getItem('token');
+  const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
   if (!token) {
-    return res.json({ message: "We need token please provide it." });
-  } else {
-    jwt.verify(token, secret, (err, decode) => {
-      if (err) {
-        return res.json({ message: "Authentication failed" });
-      } else {
-        req.name = decode.name;
-        next();
-      }
-    });
+      return res.status(401).json({ message: "Unauthorized" });
   }
+
+  jwt.verify(token, secret, (err, decoded) => {
+      if (err) {
+          return res.status(403).json({ message: "Invalid token" });
+      }
+      req.role = decoded.role; // Assuming role is stored in the token
+      next();
+  });
 };
 
 
@@ -99,7 +106,7 @@ app.post('/api/login', async (req, res) => {
   try {
     const { email, password } = req.body
     const [results] = await connector.query('SELECT * FROM FieldEx.users WHERE email = ?', email)
-    const userData = results[0]
+    const userData = results[0];
     const match = await bcrypt.compare(password, userData.password)
 
     if (!match) {
@@ -140,6 +147,19 @@ app.get('/api/users', verifyUser, async (req, res) => {
 app.get('/api/logout', (req, res) => {
   return res.json({ Status: "Logout Success" });
 });
+
+app.post('/api/sendform', async (req,res) => {
+  const { educationLevel, studentCount, teacherCount, otherEducationLevel, institutionName, phoneNumber, 
+    faxNumber, email, district, province, affiliation, headName, projectDetail } = req.body;
+  
+  try {
+    
+  } catch (error) {
+    
+  }
+
+});
+
 
 app.listen(PORT, async () => {
   await initMySQL();

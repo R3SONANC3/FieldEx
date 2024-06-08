@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import Navbar from "../Navbar";
+import Navbar from "../Home";
+import { useNavigate } from "react-router-dom";
 
 const GeneralForm = () => {
   const [educationLevel, setEducationLevel] = useState("");
@@ -15,6 +16,12 @@ const GeneralForm = () => {
   const [affiliation, setAffiliation] = useState("");
   const [headName, setHeadName] = useState("");
   const [projectDetail, setProjectDetail] = useState("");
+
+  const navigate = useNavigate();
+
+  const goToNextPage = () => {
+    navigate("/generalform");
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
