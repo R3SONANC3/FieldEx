@@ -2,7 +2,7 @@ const cors = require("cors");
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const MySQLConnector = require('./MySQLConnector')
+const mysql = require('mysql2/promise')
 require('dotenv').config();
 
 
@@ -34,7 +34,7 @@ let connector = null;
 
 const initMySQL = async () => {
   try {
-    connector = await new MySQLConnector({
+    connector = await  mysql.createConnection({
       host: 'fieldex.c3ssu4aw8v1d.ap-southeast-2.rds.amazonaws.com',
       user: 'admin',
       database: 'FieldEx',
@@ -148,17 +148,6 @@ app.get('/api/logout', (req, res) => {
   return res.json({ Status: "Logout Success" });
 });
 
-app.post('/api/sendform', async (req,res) => {
-  const { educationLevel, studentCount, teacherCount, otherEducationLevel, institutionName, phoneNumber, 
-    faxNumber, email, district, province, affiliation, headName, projectDetail } = req.body;
-  
-  try {
-    
-  } catch (error) {
-    
-  }
-
-});
 
 
 app.listen(PORT, async () => {
