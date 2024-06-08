@@ -1,7 +1,7 @@
-const mysql = require('mysql');
+const mysql = require('mysql')
 
 class MySQLConnector {
-    constructor(config) {
+    constructor (config) {
         this.connection = mysql.createConnection(config);
     }
 

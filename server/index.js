@@ -7,7 +7,7 @@ require('dotenv').config();
 
 
 const secret ="mysecret";
-const port = process.env.PORT || 8000;
+const PORT = process.env.PORT || 8000;
 const app = express();
 app.use(express.json());
 
@@ -141,7 +141,7 @@ app.get('/api/logout', (req, res) => {
   return res.json({ Status: "Logout Success" });
 });
 
-app.listen(port, async () => {
+app.listen(PORT, async () => {
   await initMySQL();
   console.log("https://fieldex-production.up.railway.app/");
 });

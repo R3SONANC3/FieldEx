@@ -9,7 +9,7 @@ import SelectForm from './SelectForm';
 const Navbar = () => {
     const [LoginModalOpen, setLoginModalOpen] = useState(false);
     const [selectFormOpen, setSelectFormOpen] = useState(false);
-    const [isAuthenticated, setIsAuthenticated] = useState(false)
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
 
     useEffect(() => {
         const authTime = localStorage.getItem('authTime');
@@ -70,6 +70,7 @@ const Navbar = () => {
                 </div>
                 <ul className="navbar-links">
                     <li><Link to="/">About</Link></li>
+
                     <li><Link to="/admin">Admin Page</Link></li>
 
                     <li><Link to="/" onClick={() => { if (isAuthenticated) { setSelectFormOpen(true);} else
