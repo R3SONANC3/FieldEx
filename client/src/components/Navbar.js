@@ -5,6 +5,7 @@ import logonu from '../assets/logoNu.png';
 import axios from 'axios';
 import LoginModal from './Login';
 import SelectForm from './SelectForm';
+import  Swal from 'sweetalert2'
 
 const Navbar = () => {
     const [LoginModalOpen, setLoginModalOpen] = useState(false);
@@ -45,32 +46,45 @@ const Navbar = () => {
     const handleSignOut = async (event) => {
         event.preventDefault();
         try {
-            const response = await axios.get('https://fieldex-production.up.railway.app/api/logout');
+            const response = await axios.get('http://localhost:8000/api/logout');
             console.log(response.data);
-            alert('Sign out successful!');
-            setIsAuthenticated(false);
-            setUserRole(null);
-            clearAuthData();
-            navigate('/'); // Redirect to home page after logout
+            Swal.fire({
+                title: 'Sign out successful!',
+                icon: 'success',
+            }).then(() => {
+                setIsAuthenticated(false);
+                setUserRole(null);
+                clearAuthData();
+                navigate('/'); // Redirect to home page after logout
+            });
         } catch (error) {
             console.error('Error:', error);
-            alert('Sign out failed!');
+            Swal.fire({
+                title: 'Sign out failed!',
+                icon: 'error',
+            });
         }
     };
+    
 
     const handleSignInSuccess = () => {
         const timeOut = 60 * 60 * 1000;
         setIsAuthenticated(true);
         const storedUserRole = localStorage.getItem('userRole');
         setUserRole(storedUserRole);
-    
-        // เพิ่มข้อมูลการเข้าสู่ระบบลงใน localStorage
+
         localStorage.setItem('isLoggedIn', 'true');
-    
+
         setTimeout(() => {
             clearAuthData();
         }, timeOut);
-        window.location.reload();
+        
+        Swal.fire({
+            title: 'เข้าสู่ระบบสำเร็จ',
+            icon: 'success',
+          }).then(() => {
+            window.location.reload();
+        });
     };
 
     return (
@@ -91,8 +105,12 @@ const Navbar = () => {
                             if (isAuthenticated) {
                                 setSelectFormOpen(true);
                             } else {
-                                setLoginModalOpen(true);
-                                alert('กรุณาเข้าสู่ระบบก่อนกรอกแบบฟอร์ม');
+                                Swal.fire({
+                                    title: 'กรุณาเข้าสู่ระบบก่อนกรอกแบบฟอร์ม',
+                                    icon: 'warning',
+                                }).then(()=>{
+                                    setLoginModalOpen(true);
+                                })
                             }
                         }}>กรอกแบบฟอร์ม</Link>
                     </li>

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import PropTypes from "prop-types";
 import { jwtDecode } from "jwt-decode";  // Corrected import statement
+import Swal from "sweetalert2";  // Import SweetAlert2
 
 function Login({ setOpenModal, setIsAuthenticated, setUserRole }) {
   const [email, setEmail] = useState("");
@@ -14,7 +15,10 @@ function Login({ setOpenModal, setIsAuthenticated, setUserRole }) {
 
     // Basic validation
     if (!email || !password) {
-      alert("กรุณากรอกข้อมูลให้ครบทั้งสองช่อง..");
+      Swal.fire({
+        title: 'กรุณากรอกข้อมูลให้ครบทั้งสองช่อง.',
+        icon: 'warning',
+      });
       return;
     }
 
@@ -23,13 +27,17 @@ function Login({ setOpenModal, setIsAuthenticated, setUserRole }) {
     try {
       let response;
       if (isSignUp) {
-        response = await axios.post("https://fieldex-production.up.railway.app/api/register", {
+        response = await axios.post("http://localhost:8000/api/register", {
           email,
           password,
         });
-        alert("สร้างบัญชีสำเร็จ  สามารถเข้าสู่ระบบได้แล้ว.");
+        Swal.fire({
+          title: 'สร้างบัญชีสำเร็จ',
+          text: 'สามารถเข้าสู่ระบบได้แล้ว.',
+          icon: 'success',
+        });
       } else {
-        response = await axios.post("https://fieldex-production.up.railway.app/api/login", {
+        response = await axios.post("http://localhost:8000/api/login", {
           email,
           password,
         });
@@ -37,8 +45,6 @@ function Login({ setOpenModal, setIsAuthenticated, setUserRole }) {
         const token = response.data.token;
         const decodedToken = jwtDecode(token);
         const role = decodedToken.role; // Assuming the token has a 'role' field
-
-        alert("เข้าสู่ระบบสำเร็จ!");
         setIsAuthenticated(true);
         setUserRole(role);
 
@@ -51,7 +57,10 @@ function Login({ setOpenModal, setIsAuthenticated, setUserRole }) {
       setOpenModal(false);
     } catch (error) {
       console.error("Error:", error);
-      alert(isSignUp ? "เกิดข้อผิดพลาดในการสร้างบัญชี" : "เกิดข้อผิดพลาดในการเข้าสู่ระบบ");
+      Swal.fire({
+        title: isSignUp ? "เกิดข้อผิดพลาดในการสร้างบัญชี" : "เกิดข้อผิดพลาดในการเข้าสู่ระบบ",
+        icon: 'error',
+      });
     } finally {
       setLoading(false);
     }

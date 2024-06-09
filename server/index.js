@@ -144,7 +144,7 @@ app.get('/api/users', verifyUser, async (req, res) => {
   }
 });
 
-app.get('/api/logout', verifyUser, (req, res) => {
+app.get('/api/logout', (req, res) => {
   return res.json({ Status: "Logout Success" });
 });
 

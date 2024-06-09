@@ -5,8 +5,6 @@ function SelectForm({ setOpenModal }) {
     const navigate = useNavigate();
 
     const selectOption = (option) => {
-        console.log("Selected option:", option);
-        
         if(option = 'schoolBotanicalGardenButton'){
             navigate('/evaluation')
         }

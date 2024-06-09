@@ -319,3 +319,71 @@ textarea:focus {
 textarea {
   resize: vertical;
 }
+
+/* FormManagement Styles*/
+.heading {
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.maintable {
+  border-collapse: collapse;
+  table-layout: fixed; /* Ensures the table adjusts based on content */
+  margin-left: 50px;
+  margin-right: 50px;
+}
+
+.maintable th, .maintable td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+  vertical-align: top;
+  word-wrap: break-word; /* Allow content to wrap to the next line */
+}
+.maintable th {
+  background-color: #f2f2f2;
+}
+
+.maintable input[type="number"], .maintable input[type="text"], .maintable input[type="file"] {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.table1, .table2, .table3, .table4 {
+  max-width: 800px; /* Adjust the max-width as needed */
+  margin-top: 10px;
+  border-collapse: collapse;
+  font-size: 0.9em; /* Smaller font size */
+}
+
+.table1 th, .table2 th, .table3 th, .table4 th, 
+.table1 td, .table2 td, .table3 td, .table4 td {
+  border: 1px solid #ddd;
+  padding: 4px; /* Reduced padding */
+  text-align: left;
+}
+
+.table1 th, .table2 th, .table3 th, .table4 th {
+  background-color: #f2f2f2;
+}
+
+.table1 input[type="text"], .table2 input[type="text"], 
+.table3 input[type="text"], .table4 input[type="text"] {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.col1 {
+  width: 40%; /* Adjust as needed */
+}
+
+.col2, .col3, .col4, .col5 {
+  width: 15%; /* Adjust as needed */
+}
+
+.number-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 5px;
+}
