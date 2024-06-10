@@ -15,7 +15,7 @@ body {
 }
 
 .navbar {
-  background-color: #333;
+  background-color: #c9c9c9;
 }
 
 .navbar-container {
@@ -34,7 +34,7 @@ body {
   margin-left: 10px;
   font-size: 1.2em;
   font-weight: bold;
-  color: white;
+  color: black;
 }
 
 .navbar-logo,
@@ -56,7 +56,7 @@ body {
 
 .navbar-links a {
   text-decoration: none;
-  color: #fff;
+  color: black;
   font-size: 1em;
   transition: color 0.3s, background-color 0.3s, padding 0.3s;
   border-radius: 5px; /* Rounded corners */

@@ -144,6 +144,35 @@ app.get('/api/users', verifyUser, async (req, res) => {
   }
 });
 
+app.get('/api/usersData', verifyUser, async (req,res) =>{
+  if(req.role !== 'admin'){
+    return res.status(403).json({message: "Access denied"});
+  }
+  try {
+    const [results] = await connector.query('SELECT email, institutionName FROM FieldEx.generalForm')
+    res.json(results);
+  } catch (error) {
+    console.log('error', error);
+    res.status(500).json({ message: "Failed to retrieve users", error })
+  }
+});
+
+app.post('/api/managementForm', (req, res) => {
+  const formData = req.body;
+  const sql = 'INSERT INTO FieldEx.management SET ?';
+
+  connector.query(sql, formData, (err, result) => {
+      if (err) {
+          console.error('Error inserting form data: ', err);
+          res.status(500).json({ error: 'Error inserting form data' });
+          return;
+      }
+      console.log('Form data inserted: ', result);
+      res.status(201).json({ message: 'Form data inserted successfully' });
+  });
+});
+
+
 app.get('/api/logout', (req, res) => {
   return res.json({ Status: "Logout Success" });
 });

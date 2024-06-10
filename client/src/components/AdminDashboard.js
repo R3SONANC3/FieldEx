@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom"; // Import useNavigate hook
+import Navbar from './Navbar';
 
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [usersData, setUsersData] = useState([]);
+  const navigate = useNavigate(); // Initialize navigate
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
     const fetchUsers = async () => {
       try {
-        // Retrieve token from localStorage
-        const token = localStorage.getItem("token");
-
         const response = await axios.get("http://localhost:8000/api/users", {
           headers: {
             Authorization: `Bearer ${token}`, // Include token in the request headers
@@ -25,6 +27,22 @@ const AdminDashboard = () => {
       }
     };
 
+    const fetchUsersData = async () => {
+      try {
+        const response = await axios.get("http://localhost:8000/api/usersData", {
+          headers: {
+            Authorization: `Bearer ${token}`
+          },
+        });
+        setUsersData(response.data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUsersData();
     fetchUsers();
   }, []);
 
@@ -36,26 +54,56 @@ const AdminDashboard = () => {
     return <p>Error: {error}</p>;
   }
 
+  const tableStyle = {
+    border: "1px solid black",
+    borderCollapse: "collapse",
+    width: "100%",
+    marginBottom: "20px"
+  };
+
+  const thTdStyle = {
+    border: "1px solid black",
+    padding: "8px",
+    textAlign: "left"
+  };
+
   return (
     <div className="container">
-        <div className="header">
-        </div>
+      <div className="header">
+        <Navbar />
+      </div>
       <div className="admin-dashboard">
         <h1>User Data</h1>
-        <table>
+        <table style={tableStyle}>
           <thead>
             <tr>
-              <th>ID</th>
-              <th>Email</th>
-              <th>Role</th>
+              <th style={thTdStyle}>ID</th>
+              <th style={thTdStyle}>Email</th>
+              <th style={thTdStyle}>Role</th>
             </tr>
           </thead>
           <tbody>
             {users.map((user) => (
               <tr key={user.id}>
-                <td>{user.id}</td>
-                <td>{user.email}</td>
-                <td>{user.role}</td>
+                <td style={thTdStyle}>{user.id}</td>
+                <td style={thTdStyle}>{user.email}</td>
+                <td style={thTdStyle}>{user.role}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <table style={tableStyle}>
+          <thead>
+            <tr>
+              <th style={thTdStyle}>Email</th>
+              <th style={thTdStyle}>School Name</th>
+            </tr>
+          </thead>
+          <tbody>
+            {usersData.map((school, index) => (
+              <tr key={index}>
+                <td style={thTdStyle}>{school.email}</td>
+                <td style={thTdStyle}>{school.institutionName}</td>
               </tr>
             ))}
           </tbody>
