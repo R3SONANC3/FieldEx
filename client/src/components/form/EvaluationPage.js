@@ -1,26 +1,39 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from '../Navbar'
+import Swal from "sweetalert2"; // Import SweetAlert2
+import './form.css'
+
 
 const EvaluationPage = () => {
-
+  const [isChecked, setIsChecked] = useState(false);
   const navigate = useNavigate();
 
   const goToNextPage = () => {
-    navigate("/generalform");
+    if (isChecked) {
+      navigate("/generalform");
+    } else {
+      // ใช้ SweetAlert2 เพื่อแสดงข้อความแจ้งเตือน
+      Swal.fire({
+        icon: "warning",
+        title: "กรุณายอมรับเงื่อนไข",
+        showConfirmButton: true,
+        confirmButtonText: "ตกลง",
+      });
+    }
   };
 
   return (
-    <div className="container">
+    <div className="ev-container">
       <Navbar />
-      <div className="header">
-        <h2 className="text-center">
+      <div className="ev-header">
+        <h2 className="ev-text-center">
           การประเมินสถานศึกษา
         </h2>
-        <h2 className="text-center">
+        <h2 className="ev-text-center">
           เพื่อรับป้ายสนองพระราชดำริในงานสวนพฤกษศาสตร์โรงเรียน
         </h2>
-        <div className="text-center">
+        <div className="ev-text-center">
           <h3 >
             1.เกณฑ์การประเมิน แบ่งเป็น 4 ด้าน (ด้านที่ 1 - 3 คะแนน 1,000 คะแนน
             ด้านที่ 4 คะแนน 100 คะแนน)
@@ -63,6 +76,16 @@ const EvaluationPage = () => {
             <dd>1)นำเสนอตามรายการประเมิน พิจารณาหลักฐานเอกสารที่ปรากฏย้อนหลัง 2 ปี</dd>
             <dd>2)สอบถามบุคลากรของสถานศึกษา ผู้บริหารสถานศึกษา ครู-อาจารย์ ผู้เรียนและผู้ที่เกี่ยวข้องกับการดำเนินงานสวนพฤกษศาสตร์โรงเรียน</dd>
           </dl>
+          <div className="ev-footer">
+          <input
+            type="checkbox"
+            id="acceptTerms"
+            checked={isChecked}
+            onChange={() => setIsChecked(!isChecked)}
+          />
+          <label htmlFor="acceptTerms">ยอมรับเงื่อนไข</label>
+          <br />
+          </div>
           <button onClick={goToNextPage}>ไปหน้าถัดไป</button>
         </div>
       </div>

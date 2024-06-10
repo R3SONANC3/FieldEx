@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import './styles.css';
 import Navbar from './Navbar';
 import { useNavigate } from 'react-router-dom';
+import './styles.css'
 
 const Home = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);

@@ -157,79 +157,31 @@ app.get('/api/usersData', verifyUser, async (req,res) =>{
   }
 });
 
-app.post('/api/managementForm', (req, res) => {
-  const formData = req.body;
-  const sql = 'INSERT INTO FieldEx.management SET ?';
-
-  connector.query(sql, formData, (err, result) => {
-      if (err) {
-          console.error('Error inserting form data: ', err);
-          res.status(500).json({ error: 'Error inserting form data' });
-          return;
-      }
-      console.log('Form data inserted: ', result);
-      res.status(201).json({ message: 'Form data inserted successfully' });
-  });
-});
-
 
 app.get('/api/logout', (req, res) => {
   return res.json({ Status: "Logout Success" });
 });
 
-app.post('/api/submitGeForm', async (req, res) => {
+app.post('/api/add_general_form', async (req, res) => {
   try {
-    const {
-      educationLevel,
-      otherEducationLevel,
-      studentCount,
-      teacherCount,
-      institutionName,
-      phoneNumber,
-      faxNumber,
-      email,
-      district,
-      province,
-      affiliation,
-      headName,
-      projectDetail
-    } = req.body;
+    const formData = req.body; // Form data sent from the frontend
 
-    // Create the userData object excluding educationLevel if it is 'อื่นๆ'
-    const userData = {
-      studentCount,
-      teacherCount,
-      institutionName,
-      phoneNumber,
-      faxNumber,
-      email,
-      district,
-      province,
-      affiliation,
-      headName,
-      projectDetail
-    };
+    // Convert arrays and objects to strings before inserting
+    formData.educationLevels = JSON.stringify(formData.educationLevels);
+    formData.studentCounts = JSON.stringify(formData.studentCounts);
+    formData.teacherCounts = JSON.stringify(formData.teacherCounts);
 
-    // Add either educationLevel or otherEducationLevel to userData as appropriate
-    if (educationLevel === 'อื่นๆ') {
-      userData.otherEducationLevel = otherEducationLevel;
-    } else {
-      userData.educationLevel = educationLevel;
-    }
-
-    // Insert the userData into the database
-    const [results] = await connector.query("INSERT INTO FieldEx.generalForm SET ?", userData);
-    res.json({
-      message: "Submit Success",
-    });
+    // Insert the form data into the database table
+    const [results] = await connector.query("INSERT INTO FieldEx.geForm SET ?", formData);
+    
+    res.json({ message: "Form submitted successfully" });
   } catch (error) {
-    console.log('error', error);
-    res.status(500).json({
-      message: "Submit failed",
-      error
-    });
+    console.error('Error:', error);
+    res.status(500).json({ message: "Failed to submit form", error });
   }
 });
+ 
+
 
 app.listen(PORT, async () => {
   await initMySQL();

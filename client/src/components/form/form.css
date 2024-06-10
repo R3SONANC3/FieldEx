@@ -1,0 +1,88 @@
+/* form.css */  
+  .ev-text-center {
+    text-align: center;
+  }
+  
+  .ev-footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+  }
+  
+  .ev-footer input[type="checkbox"] {
+    margin-right: 10px;
+    width: 20px;
+    height: 20px;
+  }
+  
+  .ev-footer button {
+    background-color: #4caf50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .ev-footer button:hover {
+    background-color: #45a049;
+  }
+  
+  .ev-footer button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
+  
+  .ev-footer button:disabled:hover {
+    background-color: #cccccc;
+  }
+  
+
+/* GeneralForm.css */
+.ge-container {
+  display: relative;
+}
+.ge-text {
+  text-align: center;
+}
+
+.ge-body {
+  display: flex;
+}
+
+.ge-column-left {
+  padding-right: 10rem; /* Adjusted padding */
+  padding-left: 20rem; /* Adjusted padding */
+  text-align: center;
+}
+
+.ge-column-middle {
+  padding: 0 2rem; /* Adjusted padding */
+}
+
+.ge-column-right {
+  padding-left: 10rem; /* Adjusted padding */
+}
+
+.counts {
+  margin-top: 5px;
+}
+
+input[type='number'],
+input[type='text'],
+input[type='tel'],
+input[type='ge-email'] {
+  width: 200px;
+  margin: 5px;
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+input[type='checkbox'] {
+  height: 20px; /* Increase the height of the checkbox */
+  margin-right: 5px;
+}
+

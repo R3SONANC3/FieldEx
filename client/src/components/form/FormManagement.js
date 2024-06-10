@@ -26,7 +26,7 @@ const FormManagement = () => {
     if (userRole) {
       setRole(userRole);
     } else {
-      navigate('/h'); // Redirect to login if no role is found
+      navigate('/'); // Redirect to login if no role is found
     }
   }, [navigate]);
 
@@ -45,21 +45,21 @@ const FormManagement = () => {
   };
 
   return (
-    <div className="container">
-      <div className="header">
+    <div className="fm-container">
+      <div className="fm-header">
         <Navbar />
       </div>
-      <div className="body">
-        <h1 className="heading">ส่วนที่ 1 การบริหารและการจัดการ</h1>
+      <div className="fm-body">
+        <h1 className="fm-heading">ส่วนที่ 1 การบริหารและการจัดการ</h1>
         <form onSubmit={handleSubmit}>
-          <table className="maintable">
+          <table className="fm-maintable">
             <thead>
               <tr>
-                <th className="col1">รายการประเมิน (คะแนนเต็ม 250 คะแนน)</th>
-                <th className="col2">สถานศึกษา</th>
-                <th className="col3">แนบเอกสาร</th>
-                <th className="col4">กรรมการ</th>
-                <th className="col5">ข้อเสนอแนะ</th>
+                <th className="fm-col1">รายการประเมิน (คะแนนเต็ม 250 คะแนน)</th>
+                <th className="fm-col2">สถานศึกษา</th>
+                <th className="fm-col3">แนบเอกสาร</th>
+                <th className="fm-col4">กรรมการ</th>
+                <th className="fm-col5">ข้อเสนอแนะ</th>
               </tr>
             </thead>
             <tbody>

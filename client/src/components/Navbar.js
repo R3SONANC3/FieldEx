@@ -6,6 +6,8 @@ import axios from 'axios';
 import LoginModal from './Login';
 import SelectForm from './SelectForm';
 import  Swal from 'sweetalert2'
+import './styles.css'
+
 
 const Navbar = () => {
     const [LoginModalOpen, setLoginModalOpen] = useState(false);

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom"; // Import useNavigate hook
 import Navbar from './Navbar';
 
 const AdminDashboard = () => {
@@ -8,7 +7,6 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [usersData, setUsersData] = useState([]);
-  const navigate = useNavigate(); // Initialize navigate
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -42,8 +40,8 @@ const AdminDashboard = () => {
       }
     };
 
-    fetchUsersData();
     fetchUsers();
+    fetchUsersData();
   }, []);
 
   if (loading) {
@@ -110,6 +108,7 @@ const AdminDashboard = () => {
         </table>
       </div>
     </div>
+    
   );
 };
 
