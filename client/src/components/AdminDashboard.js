@@ -100,7 +100,7 @@ const AdminDashboard = () => {
           <tbody>
             {usersData.map((school, index) => (
               <tr key={index}>
-                <td style={thTdStyle}>{school.email}</td>
+                <td style={thTdStyle}>{school.institutionID}</td>
                 <td style={thTdStyle}>{school.institutionName}</td>
               </tr>
             ))}

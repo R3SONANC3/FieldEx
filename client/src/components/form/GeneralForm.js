@@ -2,16 +2,17 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Swal from 'sweetalert2';
 import { useNavigate } from "react-router-dom";
-import { jwtDecode } from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode'; // Ensure correct import statement for jwt-decode
 import Navbar from "../Navbar";
-import './form.css'
-
+import './form.css';
 
 const GeneralForm = () => {
   const [educationLevels, setEducationLevels] = useState([]);
   const [studentCounts, setStudentCounts] = useState({});
   const [teacherCounts, setTeacherCounts] = useState({});
   const [otherEducationLevel, setOtherEducationLevel] = useState("");
+
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     educationLevels: [],
@@ -32,8 +33,6 @@ const GeneralForm = () => {
     userEmail: ""
   });
 
-  const navigate = useNavigate();
-
   useEffect(() => {
     // Decode JWT token and set userEmail
     const token = localStorage.getItem('token');
@@ -43,10 +42,48 @@ const GeneralForm = () => {
         ...prevData,
         userEmail: decodedToken.email // Assuming the email is stored under 'email' key
       }));
+    }else{
+      navigate('/')
     }
-  }, []);
+  }, [navigate]);
+
+  const isFormValid = () => {
+    // Check if required fields are filled
+    const requiredFields = [
+      'institutionName', 'institutionID', 'telephone', 
+      'email', 'subdistrict', 'district', 
+      'province', 'affiliation', 'headmasterName'
+    ];
+    for (let field of requiredFields) {
+      if (!formData[field]) {
+        return false;
+      }
+    }
+
+    // Check if at least one education level is selected
+    if (formData.educationLevels.length === 0) {
+      return false;
+    }
+
+    // Optionally, check if counts are entered for selected education levels
+    for (let level of formData.educationLevels) {
+      if (!formData.studentCounts[level] || !formData.teacherCounts[level]) {
+        return false;
+      }
+    }
+
+    return true;
+  };
 
   const handleSubmit = async () => {
+    if (!isFormValid()) {
+      await Swal.fire({
+        icon: 'error',
+        title: 'เกิดข้อผิดพลาดในการส่งข้อมูล!',
+        text: 'กรุณากรอกข้อมูลให้ครบถ้วน',
+      });
+      return;
+    }
     try {
       const response = await axios.post('http://localhost:8000/api/submitge', formData);
       console.log("Form submitted successfully:", response.data.message);
@@ -71,15 +108,12 @@ const GeneralForm = () => {
     const isChecked = e.target.checked;
     setEducationLevels(prevLevels => {
       if (isChecked) {
-        // เพิ่ม educationLevel เข้าไปใน prevLevels
         return [...prevLevels, educationLevel];
       } else {
-        // กรอง educationLevel ที่ไม่ตรงกับ educationLevel ที่ถูกคลิก
         return prevLevels.filter(level => level !== educationLevel);
       }
     });
-    
-    // อัปเดตค่า formData ด้วยค่าใหม่ของ educationLevels
+
     setFormData(prevData => ({
       ...prevData,
       educationLevels: isChecked ? [...prevData.educationLevels, educationLevel] : prevData.educationLevels.filter(level => level !== educationLevel)
@@ -92,36 +126,28 @@ const GeneralForm = () => {
         ...prevCounts,
         [educationLevel]: count
       };
-      // อัปเดต formData ด้วยค่าใหม่ของ studentCounts
-      setFormData(prevData => {
-        const newFormData = {
-          ...prevData,
-          studentCounts: updatedCounts
-        };
-        return newFormData;
-      });
+      setFormData(prevData => ({
+        ...prevData,
+        studentCounts: updatedCounts
+      }));
       return updatedCounts;
     });
   };
-  
+
   const handleTeacherCountChange = (educationLevel, count) => {
     setTeacherCounts(prevCounts => {
       const updatedCounts = {
         ...prevCounts,
         [educationLevel]: count
       };
-      // อัปเดต formData ด้วยค่าใหม่ของ teacherCounts
-      setFormData(prevData => {
-        const newFormData = {
-          ...prevData,
-          teacherCounts: updatedCounts
-        };
-        return newFormData;
-      });
+      setFormData(prevData => ({
+        ...prevData,
+        teacherCounts: updatedCounts
+      }));
       return updatedCounts;
     });
   };
-  
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prevData => ({
@@ -129,8 +155,6 @@ const GeneralForm = () => {
       [name]: value
     }));
   };
-
-
 
   return (
     <div className="ge-container">
@@ -376,9 +400,15 @@ const GeneralForm = () => {
               id="projectDetail"
               name="projectDetail"
               value={formData.projectDetail}
-              onChange={handleInputChange} rows="6"></textarea>
+              onChange={handleInputChange}
+              rows="6"
+            ></textarea>
           </div>
-          <button className="submit-button" onClick={handleSubmit}>
+          <button
+            className="submit-button"
+            onClick={handleSubmit}
+            disabled={!isFormValid()}
+          >
             Submit
           </button>
         </div>

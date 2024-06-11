@@ -132,7 +132,7 @@ app.post('/api/login', async (req, res) => {
 
 
 app.get('/api/users', verifyUser, async (req, res) => {
-  if (req.role !== 'admin') {
+  if (req.user.role !== 'admin') {
     return res.status(403).json({ message: "Access denied" });
   }
   try {
@@ -145,11 +145,11 @@ app.get('/api/users', verifyUser, async (req, res) => {
 });
 
 app.get('/api/usersData', verifyUser, async (req,res) =>{
-  if(req.role !== 'admin'){
+  if(req.user.role !== 'admin'){
     return res.status(403).json({message: "Access denied"});
   }
   try {
-    const [results] = await connector.query('SELECT email, institutionName FROM FieldEx.institution')
+    const [results] = await connector.query('SELECT institutionID, institutionName FROM FieldEx.institution')
     res.json(results);
   } catch (error) {
     console.log('error', error);
