@@ -118,12 +118,16 @@
 input[type='number'],
 input[type='text'],
 input[type='tel'],
-input[type='ge-email'] {
+input[type='ge-email']{
   width: 200px;
   margin: 5px;
   padding: 8px;
   border-radius: 5px;
   border: 1px solid #ccc;
+  font-size: 14px;
+}
+textarea[type='projectDetail'] {
+  font-size: 14px;
 }
 
 input[type='checkbox'] {

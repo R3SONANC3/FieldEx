@@ -6,6 +6,7 @@ import { jwtDecode } from 'jwt-decode'; // Ensure correct import statement for j
 import Navbar from "../Navbar";
 import './form.css';
 
+
 const GeneralForm = () => {
   const [educationLevels, setEducationLevels] = useState([]);
   const [studentCounts, setStudentCounts] = useState({});
@@ -34,24 +35,72 @@ const GeneralForm = () => {
   });
 
   useEffect(() => {
-    // Decode JWT token and set userEmail
     const token = localStorage.getItem('token');
     if (token) {
       const decodedToken = jwtDecode(token);
       setFormData(prevData => ({
         ...prevData,
-        userEmail: decodedToken.email // Assuming the email is stored under 'email' key
+        userEmail: decodedToken.email
       }));
-    }else{
-      navigate('/')
+  
+      axios.get('http://localhost:8000/api/fetchGeForm', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+        .then(response => {
+          const data = response.data;
+          const institutionData = data.institution;
+          const educationLevelsData = data.educationLevels;
+          const otherEducationLevelsData = data.otherEducationLevels;
+          const studentCountsData = educationLevelsData.reduce((acc, level) => {
+            acc[level.educationLevel] = level.studentCount;
+            return acc;
+          }, {});
+          const teacherCountsData = educationLevelsData.reduce((acc, level) => {
+            acc[level.educationLevel] = level.teacherCount;
+            return acc;
+          }, {});
+  
+          // Set formData for otherEducationLevel
+          const otherEducationLevelData = otherEducationLevelsData.length > 0 ? otherEducationLevelsData[0] : {};
+          setFormData(prevData => ({
+            ...prevData,
+            ...institutionData,
+            otherEducationLevel: otherEducationLevelData.otherEducationLevel || "",
+            otherEducationLevelStudentCount: otherEducationLevelData.studentCount || "",
+            otherEducationLevelTeacherCount: otherEducationLevelData.teacherCount || "",
+            educationLevels: educationLevelsData.map(level => level.educationLevel),
+            studentCounts: studentCountsData,
+            teacherCounts: teacherCountsData
+          }));
+
+          setEducationLevels(educationLevelsData.map(level => level.educationLevel));
+          setOtherEducationLevel(otherEducationLevelsData.length > 0 ? otherEducationLevelsData[0].otherEducationLevel : "");
+          setStudentCounts(studentCountsData);
+          setTeacherCounts(teacherCountsData);
+        })
+        .catch(error => {
+          console.error("Failed to fetch institution data:", error);
+          Swal.fire({
+            icon: 'error',
+            title: 'เกิดข้อผิดพลาดในการโหลดข้อมูล!',
+            text: 'กรุณาลองใหม่อีกครั้ง',
+          });
+          navigate('/');
+        });
+    } else {
+      navigate('/');
     }
   }, [navigate]);
+  
+  
+
 
   const isFormValid = () => {
-    // Check if required fields are filled
     const requiredFields = [
-      'institutionName', 'institutionID', 'telephone', 
-      'email', 'subdistrict', 'district', 
+      'institutionName', 'institutionID', 'telephone',
+      'email', 'subdistrict', 'district',
       'province', 'affiliation', 'headmasterName'
     ];
     for (let field of requiredFields) {
@@ -60,12 +109,10 @@ const GeneralForm = () => {
       }
     }
 
-    // Check if at least one education level is selected
     if (formData.educationLevels.length === 0) {
       return false;
     }
 
-    // Optionally, check if counts are entered for selected education levels
     for (let level of formData.educationLevels) {
       if (!formData.studentCounts[level] || !formData.teacherCounts[level]) {
         return false;
@@ -87,7 +134,7 @@ const GeneralForm = () => {
     try {
       const response = await axios.post('http://localhost:8000/api/submitge', formData);
       console.log("Form submitted successfully:", response.data.message);
-      console.log(formData);
+      console.log(formData.userEmail);
       await Swal.fire({
         icon: 'success',
         title: 'ส่งข้อมูลสำเร็จ',
@@ -397,6 +444,7 @@ const GeneralForm = () => {
           <div className="form-group">
             <label htmlFor="projectDetail">รายละเอียด</label>
             <textarea
+              type='projectDetail'
               id="projectDetail"
               name="projectDetail"
               value={formData.projectDetail}

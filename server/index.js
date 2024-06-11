@@ -162,7 +162,7 @@ app.get('/api/logout', (req, res) => {
   return res.json({ Status: "Logout Success" });
 });
 
-app.get('/api/forms', verifyUser, async (req, res) => {
+app.get('/api/fetchforms', verifyUser, async (req, res) => {
   try {
     // Query เพื่อค้นหารหัสสถานศึกษาจาก email
     const [userResults] = await connector.query('SELECT institutionID FROM FieldEx.users WHERE email = ?', [req.user.email]);
@@ -183,9 +183,37 @@ app.get('/api/forms', verifyUser, async (req, res) => {
   }
 });
 
+app.get('/api/fetchGeForm', verifyUser, async (req, res) => {
+  try {
+    // Query เพื่อค้นหารหัสสถานศึกษาที่เกี่ยวข้องกับอีเมลของผู้ใช้
+    const [userResults] = await connector.query('SELECT institutionID FROM FieldEx.users WHERE email = ?', [req.user.email]);
+    
+    if (userResults.length === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const institutionID = userResults[0].institutionID;
+
+    // Query เพื่อดึงข้อมูลแบบฟอร์มจากตาราง 'otherEducationLevels' โดยอิงจาก institutionID
+    const [otherEducationResults] = await connector.query('SELECT * FROM otherEducationLevels WHERE institutionID = ?', [institutionID]);
+
+    // Query เพื่อดึงข้อมูลแบบฟอร์มจากตาราง 'educationLevels' โดยอิงจาก institutionID
+    const [educationResults] = await connector.query('SELECT * FROM educationLevels WHERE institutionID = ?', [institutionID]);
+    
+    // Query เพื่อดึงข้อมูลของสถานศึกษาจากตาราง 'FieldEx.institution' โดยอิงจาก institutionID
+    const [institution] = await connector.query('SELECT * FROM FieldEx.institution WHERE institutionID = ?', [institutionID]);
+    
+    // ส่งข้อมูลสถานศึกษาและข้อมูลแบบฟอร์มกลับไป
+    res.json({ institution: institution[0], otherEducationLevels: otherEducationResults, educationLevels: educationResults });
+  } catch (error) {
+    console.error('Error retrieving forms:', error);
+    res.status(500).json({ message: "Failed to retrieve forms", error });
+  }
+});
 
 
-app.post('/api/submitge', async (req, res) => {
+
+app.post('/api/submitge', verifyUser,async (req, res) => {
   const {
     institutionID, institutionName, telephone, fax, email, subdistrict, district, province,
     affiliation, headmasterName, projectDetail, educationLevels, studentCounts, teacherCounts,
@@ -247,6 +275,7 @@ app.post('/api/submitge', async (req, res) => {
     });
   }
 });
+
 
 app.listen(PORT, async () => {
   await initMySQL();

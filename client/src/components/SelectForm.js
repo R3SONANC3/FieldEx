@@ -11,7 +11,7 @@ function SelectForm({ setOpenModal }) {
         const fetchForms = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const response = await axios.get('http://localhost:8000/api/forms', {
+                const response = await axios.get('http://localhost:8000/api/fetchforms', {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -29,9 +29,14 @@ function SelectForm({ setOpenModal }) {
         if (option === 'schoolBotanicalGarden') {
             navigate('/evaluation');
         } else if (option === 'localResourceBase') {
-            // Add navigation logic for localResourceBase
+            navigate('/localresourcebase'); // เพิ่มการนำทางไปยังหน้าที่เหมาะสมสำหรับ localResourceBase
         }
 
+        setOpenModal(false);
+    };
+
+    const viewPreviousForm = () => {
+        navigate(`/generalform`);
         setOpenModal(false);
     };
 
@@ -56,7 +61,7 @@ function SelectForm({ setOpenModal }) {
                     <h3>ฟอร์มที่เคยกรอก:</h3>
                     {previousForms.length > 0 ? (
                         previousForms.map((form, index) => (
-                            <button key={index} className="previousFormButton">
+                            <button key={index} className="previousFormButton" onClick={() => viewPreviousForm()}>
                                 {form.institutionName}
                             </button>
                         ))
