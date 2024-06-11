@@ -4,6 +4,7 @@ import Swal from 'sweetalert2';
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from 'jwt-decode';
 import Navbar from "../Navbar";
+import './form.css'
 
 
 const GeneralForm = () => {
