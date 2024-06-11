@@ -5,7 +5,7 @@ import logonu from '../assets/logoNu.png';
 import axios from 'axios';
 import LoginModal from './Login';
 import SelectForm from './SelectForm';
-import  Swal from 'sweetalert2'
+import Swal from 'sweetalert2'
 import './styles.css'
 
 
@@ -67,7 +67,7 @@ const Navbar = () => {
             });
         }
     };
-    
+
 
     const handleSignInSuccess = () => {
         const timeOut = 60 * 60 * 1000;
@@ -80,11 +80,11 @@ const Navbar = () => {
         setTimeout(() => {
             clearAuthData();
         }, timeOut);
-        
+
         Swal.fire({
             title: 'เข้าสู่ระบบสำเร็จ',
             icon: 'success',
-          }).then(() => {
+        }).then(() => {
             window.location.reload();
         });
     };
@@ -110,7 +110,7 @@ const Navbar = () => {
                                 Swal.fire({
                                     title: 'กรุณาเข้าสู่ระบบก่อนกรอกแบบฟอร์ม',
                                     icon: 'warning',
-                                }).then(()=>{
+                                }).then(() => {
                                     setLoginModalOpen(true);
                                 })
                             }

@@ -42,7 +42,7 @@ const GeneralForm = () => {
         ...prevData,
         userEmail: decodedToken.email
       }));
-  
+
       axios.get('http://localhost:8000/api/fetchGeForm', {
         headers: {
           Authorization: `Bearer ${token}`
@@ -61,7 +61,7 @@ const GeneralForm = () => {
             acc[level.educationLevel] = level.teacherCount;
             return acc;
           }, {});
-  
+
           // Set formData for otherEducationLevel
           const otherEducationLevelData = otherEducationLevelsData.length > 0 ? otherEducationLevelsData[0] : {};
           setFormData(prevData => ({
@@ -93,8 +93,8 @@ const GeneralForm = () => {
       navigate('/');
     }
   }, [navigate]);
-  
-  
+
+
 
 
   const isFormValid = () => {

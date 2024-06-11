@@ -6,7 +6,7 @@ const mysql = require('mysql2/promise')
 require('dotenv').config();
 
 
-const secret ="mysecret";
+const secret = "mysecret";
 const PORT = process.env.PORT || 8000;
 const app = express();
 app.use(express.json());
@@ -34,7 +34,7 @@ let connector = null;
 
 const initMySQL = async () => {
   try {
-    connector = await  mysql.createConnection({
+    connector = await mysql.createConnection({
       host: 'fieldex.c3ssu4aw8v1d.ap-southeast-2.rds.amazonaws.com',
       user: 'admin',
       database: 'FieldEx',
@@ -68,8 +68,8 @@ const verifyUser = (req, res, next) => {
 };
 
 
-app.get("/",verifyUser ,(req, res) => {
-  return res.json({Status:"Success", name: req.name})
+app.get("/", verifyUser, (req, res) => {
+  return res.json({ Status: "Success", name: req.name })
 });
 
 
@@ -116,10 +116,10 @@ app.post('/api/login', async (req, res) => {
       return false
     }
 
-    const token = jwt.sign({ email, role: userData.role }, secret, { expiresIn: '1h'})
+    const token = jwt.sign({ email, role: userData.role }, secret, { expiresIn: '1h' })
 
     res.json({
-      message: "Login successful!!",token
+      message: "Login successful!!", token
     })
   } catch (error) {
     console.log('error', error)
@@ -144,9 +144,9 @@ app.get('/api/users', verifyUser, async (req, res) => {
   }
 });
 
-app.get('/api/usersData', verifyUser, async (req,res) =>{
-  if(req.user.role !== 'admin'){
-    return res.status(403).json({message: "Access denied"});
+app.get('/api/usersData', verifyUser, async (req, res) => {
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({ message: "Access denied" });
   }
   try {
     const [results] = await connector.query('SELECT institutionID, institutionName FROM FieldEx.institution')
@@ -166,7 +166,7 @@ app.get('/api/fetchforms', verifyUser, async (req, res) => {
   try {
     // Query เพื่อค้นหารหัสสถานศึกษาจาก email
     const [userResults] = await connector.query('SELECT institutionID FROM FieldEx.users WHERE email = ?', [req.user.email]);
-    
+
     if (userResults.length === 0) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -175,7 +175,7 @@ app.get('/api/fetchforms', verifyUser, async (req, res) => {
 
     // Query เพื่อค้นหาข้อมูลฟอร์มจากรหัสสถานศึกษา
     const [formResults] = await connector.query('SELECT * FROM FieldEx.institution WHERE institutionID = ?', [institutionID]);
-    
+
     res.json(formResults);
   } catch (error) {
     console.error('Error retrieving forms:', error);
@@ -187,7 +187,7 @@ app.get('/api/fetchGeForm', verifyUser, async (req, res) => {
   try {
     // Query เพื่อค้นหารหัสสถานศึกษาที่เกี่ยวข้องกับอีเมลของผู้ใช้
     const [userResults] = await connector.query('SELECT institutionID FROM FieldEx.users WHERE email = ?', [req.user.email]);
-    
+
     if (userResults.length === 0) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -199,10 +199,10 @@ app.get('/api/fetchGeForm', verifyUser, async (req, res) => {
 
     // Query เพื่อดึงข้อมูลแบบฟอร์มจากตาราง 'educationLevels' โดยอิงจาก institutionID
     const [educationResults] = await connector.query('SELECT * FROM educationLevels WHERE institutionID = ?', [institutionID]);
-    
+
     // Query เพื่อดึงข้อมูลของสถานศึกษาจากตาราง 'FieldEx.institution' โดยอิงจาก institutionID
     const [institution] = await connector.query('SELECT * FROM FieldEx.institution WHERE institutionID = ?', [institutionID]);
-    
+
     // ส่งข้อมูลสถานศึกษาและข้อมูลแบบฟอร์มกลับไป
     res.json({ institution: institution[0], otherEducationLevels: otherEducationResults, educationLevels: educationResults });
   } catch (error) {
@@ -213,7 +213,7 @@ app.get('/api/fetchGeForm', verifyUser, async (req, res) => {
 
 
 
-app.post('/api/submitge', verifyUser,async (req, res) => {
+app.post('/api/submitge', verifyUser, async (req, res) => {
   const {
     institutionID, institutionName, telephone, fax, email, subdistrict, district, province,
     affiliation, headmasterName, projectDetail, educationLevels, studentCounts, teacherCounts,
