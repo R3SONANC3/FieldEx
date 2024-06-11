@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../Navbar";
+import './form.css'; // Import your CSS file
 
 const FormManagement = () => {
   const [formData, setFormData] = useState({
@@ -133,29 +134,29 @@ const FormManagement = () => {
                 <td>{role === "admin" ? <input type="text" name="committeeFeedback" value={formData.committeeFeedback} onChange={handleChange} /> : formData.committeeFeedback}</td>
                 <td>{role === "admin" ? <input type="text" name="suggestions" value={formData.suggestions} onChange={handleChange} /> : formData.suggestions}</td>
               </tr>
-            <tr>
-              <td>2) คำสั่งแต่งตั้งคณะกรรมการดำเนินงาน 5 องค์ประกอบ (10 คะแนน)</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-            </tr>
-            <tr>
-              <td>3) คำสั่งแต่งตั้งคณะกรรมการดำเนินงาน พืชศึกษา การสำรวจและจัดทำฐานทรัพยากรท้องถิ่น สาระการเรียนรู้ ธรรมชาติแห่งชีวิต สรรพสิ่งล้วนพันเกี่ยว ประโยชน์แท้แก่มหาชน (10 คะแนน)</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-            </tr>
-            <tr>
-              <td><strong>1.3 วางแผนการบริหารและแผนการจัดการเรียนรู้ (50 คะแนน) </strong></td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-            </tr>
-          </tbody>
-        </table>
+              <tr>
+                <td>2) คำสั่งแต่งตั้งคณะกรรมการดำเนินงาน 5 องค์ประกอบ (10 คะแนน)</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+              </tr>
+              <tr>
+                <td>3) คำสั่งแต่งตั้งคณะกรรมการดำเนินงาน พืชศึกษา การสำรวจและจัดทำฐานทรัพยากรท้องถิ่น สาระการเรียนรู้ ธรรมชาติแห่งชีวิต สรรพสิ่งล้วนพันเกี่ยว ประโยชน์แท้แก่มหาชน (10 คะแนน)</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+              </tr>
+              <tr>
+                <td><strong>1.3 วางแผนการบริหารและแผนการจัดการเรียนรู้ (50 คะแนน) </strong></td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+              </tr>
+            </tbody>
+          </table>
         </form>
       </div>
     </div>

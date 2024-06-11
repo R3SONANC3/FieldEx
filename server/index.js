@@ -55,15 +55,15 @@ const initMySQL = async () => {
 const verifyUser = (req, res, next) => {
   const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
   if (!token) {
-      return res.status(401).json({ message: "Unauthorized" });
+    return res.status(401).json({ message: "Unauthorized" });
   }
 
   jwt.verify(token, secret, (err, decoded) => {
-      if (err) {
-          return res.status(403).json({ message: "Invalid token" });
-      }
-      req.role = decoded.role; // Assuming role is stored in the token
-      next();
+    if (err) {
+      return res.status(403).json({ message: "Invalid token" });
+    }
+    req.user = decoded; // Store decoded user information in req.user
+    next();
   });
 };
 
@@ -149,7 +149,7 @@ app.get('/api/usersData', verifyUser, async (req,res) =>{
     return res.status(403).json({message: "Access denied"});
   }
   try {
-    const [results] = await connector.query('SELECT email, institutionName FROM FieldEx.generalForm')
+    const [results] = await connector.query('SELECT email, institutionName FROM FieldEx.institution')
     res.json(results);
   } catch (error) {
     console.log('error', error);
@@ -162,26 +162,91 @@ app.get('/api/logout', (req, res) => {
   return res.json({ Status: "Logout Success" });
 });
 
-app.post('/api/add_general_form', async (req, res) => {
+app.get('/api/forms', verifyUser, async (req, res) => {
   try {
-    const formData = req.body; // Form data sent from the frontend
-
-    // Convert arrays and objects to strings before inserting
-    formData.educationLevels = JSON.stringify(formData.educationLevels);
-    formData.studentCounts = JSON.stringify(formData.studentCounts);
-    formData.teacherCounts = JSON.stringify(formData.teacherCounts);
-
-    // Insert the form data into the database table
-    const [results] = await connector.query("INSERT INTO FieldEx.geForm SET ?", formData);
+    // Query เพื่อค้นหารหัสสถานศึกษาจาก email
+    const [userResults] = await connector.query('SELECT institutionID FROM FieldEx.users WHERE email = ?', [req.user.email]);
     
-    res.json({ message: "Form submitted successfully" });
+    if (userResults.length === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const institutionID = userResults[0].institutionID;
+
+    // Query เพื่อค้นหาข้อมูลฟอร์มจากรหัสสถานศึกษา
+    const [formResults] = await connector.query('SELECT * FROM FieldEx.institution WHERE institutionID = ?', [institutionID]);
+    
+    res.json(formResults);
   } catch (error) {
-    console.error('Error:', error);
-    res.status(500).json({ message: "Failed to submit form", error });
+    console.error('Error retrieving forms:', error);
+    res.status(500).json({ message: "Failed to retrieve forms", error });
   }
 });
- 
 
+
+
+app.post('/api/submitge', async (req, res) => {
+  const {
+    institutionID, institutionName, telephone, fax, email, subdistrict, district, province,
+    affiliation, headmasterName, projectDetail, educationLevels, studentCounts, teacherCounts,
+    otherEducationLevel, userEmail
+  } = req.body;
+
+  try {
+    const formData = {
+      institutionID, institutionName, telephone, fax, email, subdistrict, district, province,
+      affiliation, headmasterName, projectDetail
+    };
+
+    connector.query(`UPDATE \`users\` SET \`institutionID\` = ${institutionID} WHERE \`email\` = '${userEmail}'`);
+    // Insert into institution table
+    await connector.query('INSERT INTO FieldEx.institution SET ?', formData, (error) => {
+      if (error) {
+        console.error('Error inserting institution data:', error);
+        res.status(500).send('Error saving institution data');
+        return;
+      }
+    });
+
+    // Prepare data for educationLevels table
+    const educationLevelsValues = educationLevels.map(level => [
+      institutionID, level, studentCounts[level], teacherCounts[level]
+    ]);
+
+    // Insert transformed education levels data into educationLevels table
+    for (const eduLevel of educationLevelsValues) {
+      await connector.query('INSERT INTO FieldEx.educationLevels (institutionID, educationLevel, studentCount, teacherCount) VALUES (?, ?, ?, ?)', eduLevel, (error) => {
+        if (error) {
+          console.error('Error inserting education levels data:', error);
+          res.status(500).send('Error saving education levels data');
+          return;
+        }
+      });
+    }
+
+    // Insert other education levels if not empty or null
+    if (otherEducationLevel) {
+      const otherLevels = { institutionID, otherEducationLevel };
+      await connector.query('INSERT INTO FieldEx.otherEducationLevels SET ?', otherLevels, (error) => {
+        if (error) {
+          console.error('Error inserting other education level data:', error);
+          res.status(500).send('Error saving other education level data');
+          return;
+        }
+      });
+    }
+
+    res.status(200).json({
+      message: "Submit Success"
+    });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({
+      message: "Submit failed",
+      error: error.message
+    });
+  }
+});
 
 app.listen(PORT, async () => {
   await initMySQL();

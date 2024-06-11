@@ -166,3 +166,8 @@ button:hover {
 .schoolBotanicalGardenButton, .localResourceBaseButton {
   margin: 0 10px;
 }
+
+.previousFormsContainer{
+  text-align: center;
+  margin-top: 5rem;
+}

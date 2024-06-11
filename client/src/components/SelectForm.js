@@ -1,14 +1,35 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import './styles.css'
-
+import axios from 'axios';
 
 function SelectForm({ setOpenModal }) {
+    const [previousForms, setPreviousForms] = useState([]);
     const navigate = useNavigate();
 
+    useEffect(() => {
+        const fetchForms = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await axios.get('http://localhost:8000/api/forms', {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                setPreviousForms(response.data);
+            } catch (error) {
+                console.error("Error fetching previous forms:", error);
+            }
+        };
+
+        fetchForms();
+    }, []);
+
     const selectOption = (option) => {
-        if(option = 'schoolBotanicalGardenButton'){
-            navigate('/evaluation')
+        if (option === 'schoolBotanicalGarden') {
+            navigate('/evaluation');
+        } else if (option === 'localResourceBase') {
+            // Add navigation logic for localResourceBase
         }
 
         setOpenModal(false);
@@ -31,7 +52,18 @@ function SelectForm({ setOpenModal }) {
                         ฐานทรัพยากรท้องถิ่น
                     </button>
                 </div>
-
+                <div className="previousFormsContainer">
+                    <h3>ฟอร์มที่เคยกรอก:</h3>
+                    {previousForms.length > 0 ? (
+                        previousForms.map((form, index) => (
+                            <button key={index} className="previousFormButton">
+                                {form.institutionName}
+                            </button>
+                        ))
+                    ) : (
+                        <p>ท่านยังไม่เคยกรอกข้อมูลในระบบนี้</p>
+                    )}
+                </div>
             </div>
         </div>
     );
