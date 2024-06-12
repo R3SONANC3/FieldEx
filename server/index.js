@@ -3,7 +3,7 @@ const express = require("express");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 require('dotenv').config();
-const MySQLConnector = require("./MySQLConnector");
+const mysql = require("mysql2/promise")
 
 const {
   JWT_SECRET,
@@ -35,12 +35,14 @@ app.options("*", cors(corsOptions));
 
 let connector = null;
 
+
 const initMySQL = async () => {
   try {
-    connector = new MySQLConnector(`mysql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}`);
-    await connector.connect();
+    connector = await mysql.createConnection(`mysql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}`);
+    console.log('MySQL connection established');
   } catch (error) {
-    process.exit(1); // Exit process if connection fails
+    console.error('Error connecting to MySQL:', error);
+    throw error;
   }
 };
 
@@ -69,7 +71,7 @@ app.post('/api/register', async (req, res) => {
     const passwordHash = await bcrypt.hash(password, 10);
     const userData = { email, password: passwordHash, role: 'user' };
 
-    await connector.insert('FieldEx.users', userData);
+    await connector.query('INSERT INTO FieldEx.users SET ?', [userData]);
     res.json({ message: "Register Success" });
   } catch (error) {
     console.error('Error registering user:', error);
@@ -81,7 +83,7 @@ app.post('/api/register', async (req, res) => {
 app.post('/api/login', async (req, res) => {
   try {
     const { email, password } = req.body;
-    const results = await connector.query('SELECT * FROM FieldEx.users WHERE email = ?', [email]);
+    const [results] = await connector.query('SELECT * FROM FieldEx.users WHERE email = ?', email);
 
     if (results.length === 0) {
       return res.status(400).json({ message: "Login Failed (Incorrect Email or Password)" });
@@ -161,7 +163,7 @@ app.get('/api/fetchforms', verifyUser, async (req, res) => {
     const institutionID = userResults[0].institutionID;
 
     // Query to find form data from institution ID
-    const formResults = await connector.query('SELECT * FROM FieldEx.institution WHERE institutionID = ?', [institutionID]);
+    const [formResults] = await connector.query('SELECT * FROM FieldEx.institution WHERE institutionID = ?', institutionID);
 
     if (formResults.length === 0) {
       return res.status(404).json({
@@ -180,49 +182,11 @@ app.get('/api/fetchforms', verifyUser, async (req, res) => {
 });
 
 
-
-app.get('/api/fetchGeForm', verifyUser, async (req, res) => {
-  try {
-    // Query เพื่อค้นหารหัสสถานศึกษาที่เกี่ยวข้องกับอีเมลของผู้ใช้
-    const [userResults] = await connector.query('SELECT institutionID FROM FieldEx.users WHERE email = ?', [req.user.email]);
-
-    if (userResults.length === 0) {
-      return res.status(404).json({
-        message: "User not found"
-      });
-    }
-
-    const institutionID = userResults[0].institutionID;
-
-    // Query เพื่อดึงข้อมูลแบบฟอร์มจากตาราง 'otherEducationLevels' โดยอิงจาก institutionID
-    const [otherEducationResults] = await connector.query('SELECT * FROM otherEducationLevels WHERE institutionID = ?', [institutionID]);
-
-    // Query เพื่อดึงข้อมูลแบบฟอร์มจากตาราง 'educationLevels' โดยอิงจาก institutionID
-    const [educationResults] = await connector.query('SELECT * FROM educationLevels WHERE institutionID = ?', [institutionID]);
-
-    // Query เพื่อดึงข้อมูลของสถานศึกษาจากตาราง 'FieldEx.institution' โดยอิงจาก institutionID
-    const [institution] = await connector.query('SELECT * FROM FieldEx.institution WHERE institutionID = ?', [institutionID]);
-
-    // ส่งข้อมูลสถานศึกษาและข้อมูลแบบฟอร์มกลับไป
-    res.json({
-      institution: institution[0],
-      otherEducationLevels: otherEducationResults,
-      educationLevels: educationResults
-    });
-  } catch (error) {
-    console.error('Error retrieving forms:', error);
-    res.status(500).json({
-      message: "Failed to retrieve forms",
-      error
-    });
-  }
-});
-
-app.post('/api/submitge', verifyUser, async (req, res) => {
+app.post('/api/submitge', async (req, res) => {
   const {
     institutionID, institutionName, telephone, fax, email, subdistrict, district, province,
     affiliation, headmasterName, projectDetail, educationLevels, studentCounts, teacherCounts,
-    otherEducationLevel, userEmail, otherStudentCount, otherTeacherCount
+    otherEducationLevel, otherStudentCount, otherTeacherCount
   } = req.body;
 
   try {
@@ -231,77 +195,35 @@ app.post('/api/submitge', verifyUser, async (req, res) => {
       affiliation, headmasterName, projectDetail
     };
 
-    // Update user's institutionID based on userEmail
-    await new Promise((resolve, reject) => {
-      connector.query('UPDATE `users` SET `institutionID` = ? WHERE `email` = ?', [institutionID, userEmail], (err, result) => {
-        if (err) {
-          console.error("Error updating user's institutionID:", err);
-          reject(err);
-        } else {
-          console.log("User's institutionID updated. Affected rows:", result.affectedRows);
-          resolve();
-        }
-      });
-    });
+    // Insert into institution table
+    await connector.query('INSERT INTO FieldEx.institution SET ?', formData);
 
-    // Insert institution data
-    await new Promise((resolve, reject) => {
-      connector.query('INSERT INTO FieldEx.institution SET ?', formData, (err, result) => {
-        if (err) {
-          console.error('Error inserting institution data:', err);
-          reject('Error saving institution data');
-        } else {
-          console.log("Institution data inserted. Affected rows:", result.affectedRows);
-          resolve();
-        }
-      });
-    });
+    // Prepare data for educationLevels table
+    // Prepare data for educationLevels table
+    const educationLevelsValues = educationLevels
+      .filter(level => level !== 'อื่น ๆ') // Filter out "อื่น ๆ" from educationLevels
+      .map(level => [
+        institutionID, level, studentCounts[level], teacherCounts[level]
+      ]);
 
-    // Prepare and insert data for educationLevels table
-    const educationLevelsValues = educationLevels.map(level => [
-      institutionID, level, studentCounts[level], teacherCounts[level]
-    ]);
-
-    await new Promise((resolve, reject) => {
-      const query = 'INSERT INTO FieldEx.educationLevels (institutionID, educationLevel, studentCount, teacherCount) VALUES ?';
-      connector.query(query, [educationLevelsValues], (err, result) => {
-        if (err) {
-          console.error('Error inserting education levels data:', err);
-          reject('Error saving education levels data');
-        } else {
-          console.log("Education levels data inserted. Affected rows:", result.affectedRows);
-          resolve();
-        }
-      });
-    });
-
-    // Insert other education level data if provided
-    if (otherEducationLevel && otherStudentCount && otherTeacherCount) {
-      const otherLevels = {
-        institutionID,
-        otherEducationLevel: otherEducationLevel,
-        otherStudentCount: otherStudentCount,
-        otherTeacherCount: otherTeacherCount
-      };
-      await new Promise((resolve, reject) => {
-        connector.query('INSERT INTO FieldEx.otherEducationLevels SET ?', otherLevels, (err, result) => {
-          if (err) {
-            console.error('Error inserting other education level data:', err);
-            reject('Error saving other education level data');
-          } else {
-            console.log("Other education level data inserted. Affected rows:", result.affectedRows);
-            resolve();
-          }
-        });
-      });
+    // Insert transformed education levels data into educationLevels table
+    for (const eduLevel of educationLevelsValues) {
+      await connector.query('INSERT INTO FieldEx.educationLevels (institutionID, educationLevel, studentCount, teacherCount) VALUES (?, ?, ?, ?)', eduLevel);
     }
 
-    res.status(200).json({ message: "Submit Success" });
+
+    // Insert other education levels
+    const otherLevels = { institutionID, otherEducationLevel, otherStudentCount, otherTeacherCount };
+    await connector.query('INSERT INTO FieldEx.otherEducationLevels SET ?', otherLevels);
+
+    res.status(200).json({
+      message: "Submit Success"
+    });
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({
       message: "Submit failed",
-      error: error
+      error: error.message
     });
   }
 });
