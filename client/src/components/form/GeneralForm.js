@@ -48,7 +48,8 @@ const GeneralForm = () => {
           Authorization: `Bearer ${token}`
         }
       })
-        .then(response => {
+      .then(response => {
+          console.log(formData);
           const data = response.data;
           const institutionData = data.institution;
           const educationLevelsData = data.educationLevels;

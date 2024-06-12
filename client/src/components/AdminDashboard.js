@@ -1,15 +1,21 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Navbar from './Navbar';
+import { useNavigate } from "react-router-dom";
 
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [usersData, setUsersData] = useState([]);
+  const navigate = useNavigate();
+  
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+    if(!token){
+      navigate('/')
+    }
     const fetchUsers = async () => {
       try {
         const response = await axios.get("http://localhost:8000/api/users", {
@@ -42,7 +48,7 @@ const AdminDashboard = () => {
 
     fetchUsers();
     fetchUsersData();
-  }, []);
+  }, [navigate]);
 
   if (loading) {
     return <p>Loading...</p>;
@@ -108,6 +114,7 @@ const AdminDashboard = () => {
         </table>
       </div>
     </div>
+    
     
   );
 };
