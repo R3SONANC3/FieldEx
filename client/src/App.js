@@ -9,6 +9,8 @@ import EvaluationPage from "./components/form/School/EvaluationPage";
 import GeneralForm from './components/form/School/GeneralForm'
 import LocalGovernmentForm from "./components/form/Local/LocalGovernmentForm ";
 import Conscript from "./components/form/Local/Conscript";
+import Summary from "./components/form/Local/Summary";
+import LocalManage from "./components/form/Local/LocalManage"
 
 function App() {
   return (
@@ -23,6 +25,8 @@ function App() {
         <Route path="/about" element={<About /> } />
         <Route path="/localform" element={<LocalGovernmentForm  />} />
         <Route path="/localconscript" element={<Conscript />} />
+        <Route path="/localsummary" element={<Summary />} />
+        <Route path="/localmanage" element={<LocalManage />} />
       </Routes>
     </BrowserRouter>
   );
