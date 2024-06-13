@@ -3,12 +3,30 @@ body {
   font-family: Arial, sans-serif;
   margin: 0;
   height: 100vh;
-  /* background-image: url('../assets/background.jpg');
+  background-color: black;
+  position: relative;
+  overflow: hidden;
+}
+
+body::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('./assets/backgroung.jpg');
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center center;
-  background-attachment: fixed; */
-  background-color: white;
+  background-attachment: fixed;
+  filter: blur(32px); /* Adjust the blur amount as needed */
+  z-index: -1; /* Ensure the blur layer is behind the content */
+}
+
+body > * {
+  position: relative;
+  z-index: 1; /* Ensure the content is above the blur layer */
 }
 
 .container{
@@ -21,7 +39,7 @@ body {
 }
 
 .navbar {
-  background-color: #c9c9c9;
+  background: transparent;
 }
 
 .navbar-container {
@@ -40,12 +58,12 @@ body {
   margin-left: 10px;
   font-size: 1.2em;
   font-weight: bold;
-  color: black;
+  color: white;
 }
 
 .navbar-logo,
 .navbar-logonu {
-  height: 50px; /* Adjust as needed */
+  height: 50px; 
 }
 
 .navbar-links {
@@ -61,18 +79,28 @@ body {
 }
 
 .navbar-links a {
+  position: relative;
+  font-size: 18px;
+  color: white;
+  font-weight: 500;
   text-decoration: none;
-  color: black;
-  font-size: 1em;
-  transition: color 0.3s, background-color 0.3s, padding 0.3s;
-  border-radius: 5px; /* Rounded corners */
+  margin-left: 20px;
+  margin-right: 20px;
 }
 
-.navbar-links a:hover {
-  color: #333;
-  background-color: orangered;
-  padding: 5px 10px;
-  border-radius: 5px;
+.navbar-links a::before {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 0;
+  height: 3px;
+  background: #cd5ff8;
+  transition: .8s;
+}
+
+.navbar-links a:hover::before {
+  width: 100%;
 }
 
 /* Modal Styles*/
@@ -176,4 +204,59 @@ button:hover {
 .previousFormsContainer{
   text-align: center;
   margin-top: 2rem;
+}
+
+/* Home Css */
+.wave {
+  animation-name: wave-animation;
+  /* Refers to the name of your @keyframes element below */
+  animation-duration: 2.5s;
+  /* Change to speed up or slow down */
+  animation-iteration-count: infinite;
+  /* Never stop waving :) */
+  transform-origin: 70% 70%;
+  /* Pivot around the bottom-left palm */
+  display: inline-block;
+}
+
+@keyframes wave-animation {
+  0% {transform: rotate(0.0deg)}
+  10% {transform: rotate(14.0deg)}
+  20% {transform: rotate(-8.0deg)}
+  30% {transform: rotate(14.0deg)}
+  40% {transform: rotate(-4.0deg)}
+  50% {transform: rotate(10.0deg)}
+  60% {transform: rotate(0.0deg)}
+  100% {transform: rotate(0.0deg)}
+}
+
+.typewriter{
+  color: #cd5ff8;
+  position: relative;
+}
+
+.typewriter::after{
+  content: "|";
+  position: absolute;
+  right: 200px;
+  color: #cd5ff8;
+  background-color: black;
+  width: 100%;
+  animation: typing 3s steps(12) alternate infinite, line 1s infinite;
+}
+
+@keyframes typing{
+  to{
+      width: 0%;
+  }
+}
+
+@keyframes line {
+  50%{
+      color: transparent;
+  }
+}
+
+section {
+  padding: 0 15%;
 }

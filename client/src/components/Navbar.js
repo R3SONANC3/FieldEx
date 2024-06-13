@@ -7,6 +7,10 @@ import LoginModal from './Login';
 import SelectForm from './SelectForm';
 import Swal from 'sweetalert2'
 import '../styles.css'
+import { FaUser } from "react-icons/fa";
+import { FaFileWaveform } from "react-icons/fa6";
+import { MdAdminPanelSettings, MdPermContactCalendar } from "react-icons/md";
+import { IoHome } from "react-icons/io5";
 
 
 const Navbar = () => {
@@ -98,9 +102,10 @@ const Navbar = () => {
                     <Link > <span className="website-name">ระบบประเมินตัวเอง</span>  </Link>
                 </div>
                 <ul className="navbar-links">
-                    <li><Link to="/about">About</Link></li>
+                    <li> <Link to="/" > <IoHome /> Home</Link> </li>
+                    <li><Link to="/about"> <MdPermContactCalendar /> About</Link></li>
                     {isAuthenticated && userRole === 'admin' && (
-                        <li><Link to="/admindashboard">Admin Page</Link></li>
+                        <li><Link to="/admindashboard"> <MdAdminPanelSettings /> Admin Page</Link></li>
                     )}
                     <li>
                         <Link to="/" onClick={() => {
@@ -114,12 +119,12 @@ const Navbar = () => {
                                     setLoginModalOpen(true);
                                 })
                             }
-                        }}>กรอกแบบฟอร์ม</Link>
+                        }}> <FaFileWaveform /> Select Forms</Link>
                     </li>
                     {isAuthenticated ? (
-                        <li><Link onClick={handleSignOut} className="signout-button">ออกจากระบบ</Link></li>
+                        <li><Link onClick={handleSignOut} className="signout-button"> <FaUser /> Logout</Link></li>
                     ) : (
-                        <li><Link to="/" onClick={() => setLoginModalOpen(true)}>เข้าสู่ระบบ</Link></li>
+                        <li><Link to="/" onClick={() => setLoginModalOpen(true)}> <FaUser /> Login</Link></li>
                     )}
                 </ul>
             </div>
