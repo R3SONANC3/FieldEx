@@ -51,7 +51,7 @@ const Navbar = () => {
             const response = await axios.get('http://localhost:8000/api/logout');
             console.log(response.data);
             Swal.fire({
-                title: 'Sign out successful!',
+                title: 'ออกจากระบบสำเร็จ',
                 icon: 'success',
             }).then(() => {
                 setIsAuthenticated(false);
@@ -62,7 +62,7 @@ const Navbar = () => {
         } catch (error) {
             console.error('Error:', error);
             Swal.fire({
-                title: 'Sign out failed!',
+                title: 'เกิดข้อผิดพลาดในการออกจากระบบ',
                 icon: 'error',
             });
         }

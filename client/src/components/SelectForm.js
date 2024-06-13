@@ -28,6 +28,7 @@ function SelectForm({ setOpenModal }) {
     const selectOption = (option) => {
         if (option === 'schoolBotanicalGarden') {
             navigate('/evaluation');
+            localStorage.setItem('fetchData',false)
         } else if (option === 'localResourceBase') {
             navigate('/localresourcebase'); // เพิ่มการนำทางไปยังหน้าที่เหมาะสมสำหรับ localResourceBase
         }
@@ -38,6 +39,7 @@ function SelectForm({ setOpenModal }) {
     const viewPreviousForm = () => {
         navigate(`/generalform`);
         setOpenModal(false);
+        localStorage.setItem('fetchData',true)
     };
 
     return (

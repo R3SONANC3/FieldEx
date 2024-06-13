@@ -10,6 +10,8 @@ const GeneralForm = () => {
   const [studentCounts, setStudentCounts] = useState({});
   const [teacherCounts, setTeacherCounts] = useState({});
   const [otherEducationLevel, setOtherEducationLevel] = useState("");
+  const [otherStudentCount, setOtherStudentCount] = useState("");
+  const [otherTeacherCount, setOtherTeacherCount] = useState("");
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -29,49 +31,71 @@ const GeneralForm = () => {
     province: "",
     affiliation: "",
     headmasterName: "",
-    projectDetail: "",
-    userEmail: "",
+    projectDetail: ""
   });
 
+  const token = localStorage.getItem('token');
+  const fetchData = localStorage.getItem('fetchData');
+
   useEffect(() => {
-    console.log(formData);
-  })
+    if (!token) {
+      navigate('/');
+    }
+    if (fetchData === 'true') {
+      fetchOldData();
+    }
+  }, []);
+  
 
-  const isFormValid = () => {
-    const requiredFields = [
-      'institutionName', 'institutionID', 'telephone',
-      'email', 'subdistrict', 'district',
-      'province', 'affiliation', 'headmasterName'
-    ];
-    for (let field of requiredFields) {
-      if (!formData[field]) {
-        return false;
-      }
-    }
-    if (formData.educationLevels.length === 0) {
-      return false;
-    }
-    for (let level of formData.educationLevels) {
-      if (!formData.studentCounts[level] || !formData.teacherCounts[level]) {
-        return false;
-      }
-    }
-    return true;
-  };
-
-  const handleSubmit = async () => {
-    if (!isFormValid()) {
-      await Swal.fire({
-        icon: 'error',
-        title: 'เกิดข้อผิดพลาดในการส่งข้อมูล!',
-        text: 'กรุณากรอกข้อมูลให้ครบถ้วน',
-      });
-      return;
-    }
+  const fetchOldData = async () => {
     try {
-      const response = await axios.post('http://localhost:8000/api/submitge', formData);
-      console.log("Form submitted successfully:", response.data.message);
-      console.log(formData.userEmail);
+      const response = await axios.get('http://localhost:8000/api/fetchData', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      const oldData = response.data;
+      setFormData(prevData => ({
+        ...prevData,
+        ...oldData.institutionData,
+        educationLevels: oldData.educationLevelsData.map(levelData => levelData.educationLevel),
+        studentCounts: Object.fromEntries(oldData.educationLevelsData.map(levelData => [levelData.educationLevel, levelData.studentCount])),
+        teacherCounts: Object.fromEntries(oldData.educationLevelsData.map(levelData => [levelData.educationLevel, levelData.teacherCount])),
+        otherEducationLevel: oldData.otherEducationLevelsData.otherEducationLevel,
+        otherStudentCount: oldData.otherEducationLevelsData.otherStudentCount,
+        otherTeacherCount: oldData.otherEducationLevelsData.otherTeacherCount,
+      }));
+  
+      // อัพเดต studentCounts และ teacherCounts
+      const studentCountsFromData = Object.fromEntries(oldData.educationLevelsData.map(levelData => [levelData.educationLevel, levelData.studentCount]));
+      setStudentCounts(studentCountsFromData);
+  
+      const teacherCountsFromData = Object.fromEntries(oldData.educationLevelsData.map(levelData => [levelData.educationLevel, levelData.teacherCount]));
+      setTeacherCounts(teacherCountsFromData);
+  
+      setOtherEducationLevel(oldData.otherEducationLevelsData.otherEducationLevel);
+      setEducationLevels(oldData.educationLevelsData.map(levelData => levelData.educationLevel));
+      setOtherStudentCount(oldData.otherEducationLevelsData.otherStudentCount);
+      setOtherTeacherCount(oldData.otherEducationLevelsData.otherTeacherCount);
+    } catch (error) {
+      console.error("Failed to fetch institution data:", error);
+      Swal.fire({
+        icon: 'error',
+        title: 'เกิดข้อผิดพลาดในการโหลดข้อมูล!',
+        text: 'กรุณาลองใหม่อีกครั้ง',
+      });
+      navigate('/');
+    }
+  };
+  
+  
+  const handleSubmit = async () => {
+    try {
+      await axios.post('http://localhost:8000/api/submitge', formData, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       await Swal.fire({
         icon: 'success',
         title: 'ส่งข้อมูลสำเร็จ',
@@ -79,7 +103,6 @@ const GeneralForm = () => {
       });
       navigate("/formmanagement");
     } catch (error) {
-      console.error("Failed to submit form:", error);
       await Swal.fire({
         icon: 'error',
         title: 'เกิดข้อผิดพลาดในการส่งข้อมูล!',
@@ -97,64 +120,88 @@ const GeneralForm = () => {
         return prevLevels.filter(level => level !== educationLevel);
       }
     });
-    setFormData(prevData => ({
-      ...prevData,
-      educationLevels: isChecked ? [...prevData.educationLevels, educationLevel] : prevData.educationLevels.filter(level => level !== educationLevel)
-    }));
+
+    setFormData(prevData => {
+      const newEducationLevels = isChecked ? [...prevData.educationLevels, educationLevel] : prevData.educationLevels.filter(level => level !== educationLevel);
+      return {
+        ...prevData,
+        educationLevels: newEducationLevels
+      };
+    });
   };
 
   const handleStudentCountChange = (educationLevel, count) => {
-    setStudentCounts(prevCounts => {
-      const updatedCounts = {
-        ...prevCounts,
-        [educationLevel]: count
-      };
+    setStudentCounts(prevCounts => ({
+      ...prevCounts,
+      [educationLevel]: count
+    }));
+    setFormData(prevData => {
+      const newStudentCounts = { ...prevData.studentCounts, [educationLevel]: count };
       if (educationLevel === "อื่น ๆ") {
-        setFormData(prevData => ({
+        return {
           ...prevData,
           otherStudentCount: count
-        }));
+        };
       } else {
-        setFormData(prevData => ({
+        return {
           ...prevData,
-          studentCounts: updatedCounts
-        }));
+          studentCounts: newStudentCounts
+        };
       }
-      return updatedCounts;
     });
   };
 
   const handleTeacherCountChange = (educationLevel, count) => {
-    setTeacherCounts(prevCounts => {
-      const updatedCounts = {
-        ...prevCounts,
-        [educationLevel]: count
-      };
+    setTeacherCounts(prevCounts => ({
+      ...prevCounts,
+      [educationLevel]: count
+    }));
+    setFormData(prevData => {
+      const newTeacherCounts = { ...prevData.teacherCounts, [educationLevel]: count };
       if (educationLevel === "อื่น ๆ") {
-        setFormData(prevData => ({
+        return {
           ...prevData,
           otherTeacherCount: count
-        }));
+        };
       } else {
-        setFormData(prevData => ({
+        return {
           ...prevData,
-          teacherCounts: updatedCounts
-        }));
+          teacherCounts: newTeacherCounts
+        };
       }
-      return updatedCounts;
     });
   };
 
-
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prevData => ({
-      ...prevData,
-      [name]: value
-    }));
+    setFormData(prevData => {
+      const updatedData = {
+        ...prevData,
+        [name]: value
+      };
+      // ตรวจสอบค่าที่เปลี่ยนแปลง
+      if (name === "otherEducationLevel" && value !== "") {
+        setOtherEducationLevel(value);
+      } else if (name === "otherStudentCount" && value !== "") {
+        setOtherStudentCount(value);
+        setStudentCounts(prevCounts => ({
+          ...prevCounts,
+          [otherEducationLevel]: value
+        }));
+      } else if (name === "otherTeacherCount" && value !== "") {
+        setOtherTeacherCount(value);
+        setTeacherCounts(prevCounts => ({
+          ...prevCounts,
+          [otherEducationLevel]: value
+        }));
+      }
+  
+      return updatedData;
+    });
   };
-
+  
+  
+  
 
   return (
     <div className="ge-container">
@@ -195,28 +242,24 @@ const GeneralForm = () => {
                 <div className="counts">
                   <input
                     type="text"
+                    name="otherEducationLevel"
                     placeholder="โปรดระบุ"
                     value={otherEducationLevel}
-                    onChange={(e) => {
-                      setOtherEducationLevel(e.target.value);
-                      setFormData(prevData => ({
-                        ...prevData,
-                        otherEducationLevel: e.target.value
-                      }));
-                    }}
+                    onChange={handleInputChange}
                   />
-
                   <input
                     type="number"
+                    name="otherStudentCount"
                     placeholder="จำนวนนักเรียน"
-                    value={studentCounts[level] || ""}
-                    onChange={(e) => handleStudentCountChange(level, e.target.value)}
+                    value={otherStudentCount}
+                    onChange={handleInputChange}
                   />
                   <input
                     type="number"
+                    name="otherTeacherCount"
                     placeholder="จำนวนครู / อาจารย์"
-                    value={teacherCounts[level] || ""}
-                    onChange={(e) => handleTeacherCountChange(level, e.target.value)}
+                    value={otherTeacherCount}
+                    onChange={handleInputChange}
                   />
                 </div>
               )}
@@ -228,14 +271,14 @@ const GeneralForm = () => {
           <div className="form-group">
             {[
               { label: "ชื่อสถานศึกษา", name: "institutionName" },
-              { label: "รหัสสถานศึกษา", name: "institutionID" },
+              { label: "รหัสประจำสถานศึกษา", name: "institutionID" },
               { label: "โทรศัพท์", name: "telephone" },
               { label: "โทรสาร", name: "fax" },
               { label: "อีเมล", name: "email" },
               { label: "ตำบล", name: "subdistrict" },
               { label: "อำเภอ", name: "district" },
               { label: "จังหวัด", name: "province" },
-              { label: "สังกัด", name: "affiliation" },
+              { label: "สังกัด", name: "affiliation" }
             ].map(field => (
               <React.Fragment key={field.name}>
                 <label htmlFor={field.name}>{field.label}</label>
@@ -243,7 +286,7 @@ const GeneralForm = () => {
                   type="text"
                   id={field.name}
                   name={field.name}
-                  value={formData[field.name]}
+                  value={formData[field.name] || ""}
                   onChange={handleInputChange}
                 />
               </React.Fragment>
@@ -258,25 +301,24 @@ const GeneralForm = () => {
               type="text"
               id="headmasterName"
               name="headmasterName"
-              value={formData.headmasterName}
+              value={formData.headmasterName || ""}
               onChange={handleInputChange}
             />
-          </div>      <h4>4. งาน / โครงการหรือกิจกรรมดีเด่น</h4>
+          </div>
+          <h4>4. งาน / โครงการหรือกิจกรรมดีเด่น</h4>
           <div className="form-group">
             <label htmlFor="projectDetail">รายละเอียด</label>
             <textarea
               id="projectDetail"
               name="projectDetail"
-              value={formData.projectDetail}
+              value={formData.projectDetail || ""}
               onChange={handleInputChange}
               rows="6"
             ></textarea>
           </div>
           <button
             className="submit-button"
-            onClick={handleSubmit}
-            disabled={!isFormValid()}
-          >
+            onClick={handleSubmit}>
             Submit
           </button>
         </div>
@@ -284,6 +326,5 @@ const GeneralForm = () => {
     </div>
   );
 };
-
 
 export default GeneralForm;

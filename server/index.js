@@ -2,8 +2,8 @@ const cors = require("cors");
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-require('dotenv').config();
 const mysql = require("mysql2/promise")
+require('dotenv').config();
 
 const {
   JWT_SECRET,
@@ -70,7 +70,6 @@ app.post('/api/register', async (req, res) => {
     const { email, password } = req.body;
     const passwordHash = await bcrypt.hash(password, 10);
     const userData = { email, password: passwordHash, role: 'user' };
-
     await connector.query('INSERT INTO FieldEx.users SET ?', [userData]);
     res.json({ message: "Register Success" });
   } catch (error) {
@@ -97,7 +96,9 @@ app.post('/api/login', async (req, res) => {
     }
 
     const token = jwt.sign({ email, role: userData.role }, JWT_SECRET, { expiresIn: '1h' });
-    res.json({ message: "Login successful!", token });
+
+
+    res.json({ message: "Login successful!", token});
   } catch (error) {
     console.error('Error logging in:', error);
     res.status(500).json({ message: "Login failed", error });
@@ -152,18 +153,17 @@ app.get('/api/fetchforms', verifyUser, async (req, res) => {
     }
 
     // Query to find institution ID from email
-    const userResults = await connector.query('SELECT institutionID FROM FieldEx.users WHERE email = ?', [req.user.email]);
+    const [userResults] = await connector.query('SELECT institutionID FROM FieldEx.users WHERE email = ?', [req.user.email]);
 
     if (userResults.length === 0) {
       return res.status(404).json({
         message: "User not found"
       });
     }
-
     const institutionID = userResults[0].institutionID;
 
     // Query to find form data from institution ID
-    const [formResults] = await connector.query('SELECT * FROM FieldEx.institution WHERE institutionID = ?', institutionID);
+    const [formResults] = await connector.query('SELECT * FROM FieldEx.institution WHERE institutionID = ?', [institutionID]);
 
     if (formResults.length === 0) {
       return res.status(404).json({
@@ -182,18 +182,30 @@ app.get('/api/fetchforms', verifyUser, async (req, res) => {
 });
 
 
-app.post('/api/submitge', async (req, res) => {
+app.post('/api/submitge', verifyUser,async (req, res) => {
   const {
     institutionID, institutionName, telephone, fax, email, subdistrict, district, province,
     affiliation, headmasterName, projectDetail, educationLevels, studentCounts, teacherCounts,
     otherEducationLevel, otherStudentCount, otherTeacherCount
   } = req.body;
 
+  const userEmail = req.user.email;
+
   try {
     const formData = {
       institutionID, institutionName, telephone, fax, email, subdistrict, district, province,
       affiliation, headmasterName, projectDetail
     };
+    const [userResult] = await connector.query('SELECT * FROM users WHERE email = ?', [userEmail]);
+    
+    if (userResult.length === 0) {
+      return res.status(404).json({
+        message: "User not found"
+      });
+    } 
+
+    // Update institutionID in users table
+    await connector.query('UPDATE users SET institutionID = ? WHERE email = ?', [institutionID, userEmail]);
 
     // Insert into institution table
     await connector.query('INSERT INTO FieldEx.institution SET ?', formData);
@@ -227,6 +239,34 @@ app.post('/api/submitge', async (req, res) => {
     });
   }
 });
+
+app.get('/api/fetchData', verifyUser, async (req, res) => {
+  const userEmail = req.user.email; // Assuming verifyUser middleware sets req.user
+  try {
+    // Fetch institution data
+    const [userID] = await connector.query('SELECT institutionID FROM FieldEx.users WHERE email = ?', [userEmail]);
+
+    const [institutionData] = await connector.query('SELECT * FROM FieldEx.institution WHERE institutionID = ? ', [[userID[0].institutionID]])
+    // Fetch education levels data
+    const [educationLevelsData] = await connector.query('SELECT * FROM FieldEx.educationLevels WHERE institutionID = ?', [userID[0].institutionID]);
+
+    // Fetch other education levels data
+    const [otherEducationLevelsData] = await connector.query('SELECT * FROM FieldEx.otherEducationLevels WHERE institutionID = ?', [userID[0].institutionID]);
+
+    res.status(200).json({
+      institutionData: institutionData[0],
+      educationLevelsData,
+      otherEducationLevelsData: otherEducationLevelsData[0]
+    });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({
+      message: "Failed to fetch data",
+      error: error.message
+    });
+  }
+});
+
 
 app.listen(API_PORT, () => {
   initMySQL();

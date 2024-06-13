@@ -32,6 +32,7 @@ function Login({ setOpenModal, setIsAuthenticated, setUserRole }) {
           email,
           password,
         });
+        console.log(response.data);
         Swal.fire({
           title: 'สร้างบัญชีสำเร็จ',
           text: 'สามารถเข้าสู่ระบบได้แล้ว.',
