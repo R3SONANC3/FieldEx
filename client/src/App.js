@@ -7,6 +7,7 @@ import About from "./components/About";
 import FormManagement from "./components/form/School/FormManagement";
 import EvaluationPage from "./components/form/School/EvaluationPage";
 import GeneralForm from './components/form/School/GeneralForm'
+import LocalGovernmentForm from "./components/form/Local/LocalGovernmentForm ";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/generalform" element={<GeneralForm />} />
         <Route path="/formmanagement" element={<FormManagement />} />
         <Route path="/about" element={<About /> } />
+        <Route path="/localform" element={<LocalGovernmentForm  />} />
       </Routes>
     </BrowserRouter>
   );
