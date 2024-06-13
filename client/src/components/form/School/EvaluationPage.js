@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from '../Navbar'
+import Navbar from '../../Navbar'
 import Swal from "sweetalert2"; // Import SweetAlert2
 import './form.css'
 
