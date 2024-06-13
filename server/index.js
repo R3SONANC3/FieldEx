@@ -131,15 +131,18 @@ app.get('/api/usersData', verifyUser, async (req, res) => {
       message: "Access denied"
     });
   }
+
   try {
-    const [results] = await connector.query('SELECT institutionID, institutionName FROM FieldEx.institution')
-    res.json(results);
+    const [results] = await connector.query('SELECT institutionID, institutionName FROM FieldEx.institution');
+    res.status(200).json({
+      results
+    });
   } catch (error) {
     console.log('error', error);
     res.status(500).json({
       message: "Failed to retrieve users",
       error
-    })
+    });
   }
 });
 
@@ -267,6 +270,11 @@ app.get('/api/fetchData', verifyUser, async (req, res) => {
   }
 });
 
+app.put('/api/updateGe', verifyUser, async (req,res)=>{
+  const { educationLevels, studentCounts, teacherCounts, otherEducationLevel, otherStudentCount, otherTeacherCount, institutionName, telephone,
+    fax, email, subdistrict, district, province, affiliation, headmasterName, projectDetail} = req.body;
+  const institutionID = user.req.institutionID;
+})
 
 app.listen(API_PORT, () => {
   initMySQL();

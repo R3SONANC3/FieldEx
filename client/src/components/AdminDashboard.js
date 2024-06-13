@@ -16,20 +16,6 @@ const AdminDashboard = () => {
     if(!token){
       navigate('/')
     }
-    const fetchUsers = async () => {
-      try {
-        const response = await axios.get("http://localhost:8000/api/users", {
-          headers: {
-            Authorization: `Bearer ${token}`, // Include token in the request headers
-          },
-        });
-        setUsers(response.data);
-      } catch (error) {
-        setError(error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
 
     const fetchUsersData = async () => {
       try {
@@ -45,10 +31,8 @@ const AdminDashboard = () => {
         setLoading(false);
       }
     };
-
-    fetchUsers();
     fetchUsersData();
-  }, [navigate]);
+  }, [navigate]); 
 
   if (loading) {
     return <p>Loading...</p>;
@@ -77,30 +61,13 @@ const AdminDashboard = () => {
         <Navbar />
       </div>
       <div className="admin-dashboard">
-        <h1>User Data</h1>
+        <h1>Data Form</h1>
         <table style={tableStyle}>
           <thead>
             <tr>
-              <th style={thTdStyle}>ID</th>
-              <th style={thTdStyle}>Email</th>
-              <th style={thTdStyle}>Role</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((user) => (
-              <tr key={user.id}>
-                <td style={thTdStyle}>{user.id}</td>
-                <td style={thTdStyle}>{user.email}</td>
-                <td style={thTdStyle}>{user.role}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <table style={tableStyle}>
-          <thead>
-            <tr>
-              <th style={thTdStyle}>Email</th>
-              <th style={thTdStyle}>School Name</th>
+              <th style={thTdStyle}>รหัสประจำสถานศึกษา</th>
+              <th style={thTdStyle}>ชื่อสถานศึกษา</th>
+              <th style={thTdStyle}>ข้อมูลติดต่อผู้กรอกข้อมูล</th>
             </tr>
           </thead>
           <tbody>
@@ -108,6 +75,7 @@ const AdminDashboard = () => {
               <tr key={index}>
                 <td style={thTdStyle}>{school.institutionID}</td>
                 <td style={thTdStyle}>{school.institutionName}</td>
+                <td style={thTdStyle}>{}</td>
               </tr>
             ))}
           </tbody>
