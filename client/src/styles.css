@@ -11,8 +11,7 @@ body {
   background-color: white;
 }
 
-
-.container {
+.container{
   position: flex;
   top: 0;
   left: 0;

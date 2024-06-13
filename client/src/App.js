@@ -4,10 +4,8 @@ import Home from "./components/Home";
 import SelectForm from "./components/SelectForm";
 import Evaluation from "./components/form/EvaluationPage";
 import FormManagement from "./components/form/FormManagement";
-import FormManagement2 from "./components/form/FormManagement2";
 import GeneralForm from "./components/form/GeneralForm";
 import AdminDashboard from "./components/AdminDashboard";
-import "./components/styles.css";
 import About from "./components/About";
 
 function App() {
@@ -20,7 +18,6 @@ function App() {
         <Route path="/evaluation" element={<Evaluation />} />
         <Route path="/generalform" element={<GeneralForm />} />
         <Route path="/formmanagement" element={<FormManagement />} />
-        <Route path="/formmanagement2" element={<FormManagement2 />} />
         <Route path="/about" element={<About /> } />
       </Routes>
     </BrowserRouter>

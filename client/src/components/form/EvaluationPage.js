@@ -4,7 +4,6 @@ import Navbar from '../Navbar'
 import Swal from "sweetalert2"; // Import SweetAlert2
 import './form.css'
 
-
 const EvaluationPage = () => {
   const [isChecked, setIsChecked] = useState(false);
   const navigate = useNavigate();

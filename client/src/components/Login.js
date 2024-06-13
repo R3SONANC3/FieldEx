@@ -3,7 +3,7 @@ import axios from "axios";
 import PropTypes from "prop-types";
 import { jwtDecode } from "jwt-decode";  // Corrected import statement
 import Swal from "sweetalert2";  // Import SweetAlert2
-import './styles.css'
+import '../styles.css'
 
 function Login({ setOpenModal, setIsAuthenticated, setUserRole }) {
   const [email, setEmail] = useState("");

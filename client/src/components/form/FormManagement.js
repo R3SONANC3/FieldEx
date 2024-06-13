@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../Navbar";
-import './form.css'; // Import your CSS file
+import './form.css'
 
 const FormManagement = () => {
   const [formData, setFormData] = useState({

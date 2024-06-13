@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import './styles.css'
 import axios from 'axios';
+import '../styles.css'
 
 function SelectForm({ setOpenModal }) {
     const [previousForms, setPreviousForms] = useState([]);
