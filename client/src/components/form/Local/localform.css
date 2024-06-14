@@ -91,6 +91,7 @@
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   margin: 0 auto; /* Center the container horizontally */
+  position: flex;
 }
 
 /* Style the body */
@@ -99,30 +100,28 @@
   padding: 20px; /* Add some padding */
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: flex;
 }
 
 /* Style the table */
-#lmf-table {
+.lmf-table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px; /* Add some space between the table and the previous element */
+  table-layout: fixed; 
 }
 
 /* Style the table header */
-#lmf-table th {
+.lmf-table th {
   background-color: #f0f0f0; /* Light gray background for header */
   border: 1px solid #ddd; /* Add borders */
   padding: 10px;
+  word-wrap: break-word;
 }
-
-/* Style the table cells */
-#lmf-table td {
-  border: 1px solid #ddd; /* Add borders */
-  padding: 10px;
-}
-
 /* Style the input fields */
-.score-input, .referee-score-input, .comment, .file-input {
+input[type='score-input'],
+input[type='referee-score-input'],
+input[type= 'comment']{
   width: 100%; /* Make inputs fill the entire cell */
   padding: 8px;
   border-radius: 4px;

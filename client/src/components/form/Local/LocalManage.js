@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../../Navbar';
 import './localform.css';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function LocalManage() {
     const [isAdmin, setIsAdmin] = useState(false);
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         localMeetingAgenda: 0,
         localMemberSignatures: 0,
@@ -29,32 +31,84 @@ function LocalManage() {
         ]
     });
 
+    const token = localStorage.getItem('token');
 
     useEffect(() => {
         setIsAdmin(localStorage.getItem('userRole') === 'admin');
-        fetchData();
-    }, []);
+        if (!token) {
+            navigate('/');
+        } else {
+            fetchOldData();
+        }
+    }, [navigate, token]);
 
     const handleInputChange = (e) => {
         const { name, value, dataset } = e.target;
-        const { min, max, index, field } = dataset;
+        const { index, field } = dataset;
 
-        const numericValue = value === '' ? 0 : parseFloat(value); // Handle empty inputs
+        const numericValue = value === '' ? 0 : parseFloat(value);
 
         if (index !== undefined) {
             const updatedBudgetDetails = formData.budgetDetails.map((detail, i) =>
                 i === parseInt(index) ? { ...detail, [field]: numericValue } : detail
             );
-            setFormData({ ...formData, budgetDetails: updatedBudgetDetails });
+            setFormData(prevFormData => ({
+                ...prevFormData,
+                budgetDetails: updatedBudgetDetails
+            }));
         } else {
-            setFormData({ ...formData, [name]: numericValue });
+            setFormData(prevFormData => ({
+                ...prevFormData,
+                [name]: numericValue
+            }));
         }
     };
 
-    const fetchData = async () => {
+    const fetchOldData = async () => {
         try {
-            const response = await axios.get('http://localhost:8000/getFormData'); // Adjust the URL to your API endpoint
-            setFormData(response.data);
+            const response = await axios.get('http://localhost:8000/api/fetchData', {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            const data = response.data.localManageData[0] || {}; // Assuming there's only one object in the array
+
+            const updatedFormData = {
+                localMeetingAgenda: data.localMeetingAgenda || 0,
+                localMemberSignatures: data.localMemberSignatures || 0,
+                meetingMinutes: data.meetingMinutes || 0,
+                photos: data.photos || 0,
+                appointmentOrder: data.appointmentOrder || 0,
+                subcommittee: data.subcommittee || 0,
+                managementPlan: data.managementPlan || 0,
+                protectionPlan: data.protectionPlan || 0,
+                surveyPlan: data.surveyPlan || 0,
+                coordination: data.coordination || 0,
+                expenseSummary: data.expenseSummary || 0,
+                meetingInvite: data.meetingInvite || 0,
+                thankYouNote: data.thankYouNote || 0,
+                operationResults: data.operationResults || 0,
+                analysisResults: data.analysisResults || 0,
+                improvementPlan: data.improvementPlan || 0,
+                annualReport: data.annualReport || 0,
+                budgetDetails: [
+                    {
+                        year: data.budget1_year || 0,
+                        budget: parseFloat(data.budget1_budget) || 0,
+                        expense: parseFloat(data.budget1_expense) || 0,
+                        remaining: parseFloat(data.budget1_remaining) || 0,
+                    },
+                    {
+                        year: data.budget2_year || 0,
+                        budget: parseFloat(data.budget2_budget) || 0,
+                        expense: parseFloat(data.budget2_expense) || 0,
+                        remaining: parseFloat(data.budget2_remaining) || 0,
+                    },
+                ],
+            };
+
+            setFormData(updatedFormData);
         } catch (error) {
             console.error('There was an error fetching the form data!', error);
         }
@@ -62,10 +116,16 @@ function LocalManage() {
 
     const handleSubmit = async () => {
         try {
-            const response = await axios.post('http://localhost:8000/submit', formData);
+            const response = await axios.post('http://localhost:8000/submit', formData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
             console.log(response.data);
+            // Optionally, perform navigation or display success message
         } catch (error) {
             console.error('There was an error submitting the form!', error);
+            // Optionally, display an error message to the user
         }
     };
 
@@ -94,13 +154,8 @@ function LocalManage() {
         { colSpan: 6, title: "1.3 วางแผนการบริหารและแผนการดำเนินงานการจัดทำฐานทรัพยากรท้องถิ่น (40 คะแนน)" },
         { title: "1) แผนการดำเนินงานด้านการบริหาร โดยเขียนแผนการจัดทำฐานทรัพยากรท้องถิ่น รวมกับแผนพัฒนา แผนงานประจำปีขององค์กรปกครองส่วนท้องถิ่นแสดงผังงาน Flow Chart แสดงขั้นตอนอย่างชัดเจน (20 คะแนน)", name: "managementPlan", max: 20 },
         { title: "2) แผนการปกปัก (10 คะแนน)", name: "protectionPlan", max: 10 },
-        { title: "3) แผนการสำรวจเก็บรวบรวม (10 คะแนน)", name: "surveyPlan", max: 10 },
-        { colSpan: 6, title: "1.4 ดำเนินงานตามแผน (20 คะแนน)" },
-        {
-            title: "การประสานงานของคณะกรรมการดำเนินงาน คณะอนุกรรมการ ศูนย์อนุรักษ์พัฒนาทรัพยากรท้องถิ่นตำบลกับหน่วยงานต่างๆ",
-            name: "coordination", max: 20,
-            nestedTable: true
-        },
+        { title: "3) แผนการสำรวจ (10 คะแนน)", name: "surveyPlan", max: 10 },
+        { colSpan: 6, title: "1.4 บันทึกรายงานการประชุม การประสานงานในพื้นที่องค์กรปกครองส่วนท้องถิ่นตำบลกับหน่วยงานต่างๆ" },
         { title: "1) เอกสารสรุปค่าใช้จ่ายในการดำเนินการจัดทำฐานทรัพยากรท้องถิ่น ลงนามชื่อผู้บริหาร หัวหน้างาน (10 คะแนน)", name: "expenseSummary", max: 10 },
         { title: "2) หนังสือเชิญประชุม (5 คะแนน)", name: "meetingInvite", max: 5 },
         { title: "3) หนังสือขอบคุณผู้เข้าร่วมประชุม (5 คะแนน)", name: "thankYouNote", max: 5 },
@@ -116,6 +171,7 @@ function LocalManage() {
         },
         { colSpan: 6, title: "รวมคะแนนที่ได้ ด้านที่ 1 การบริหารและการจัดการ", center: true, fontSize: "18px" }
     ];
+
     return (
         <div className="lmf-container">
             <div className="lmf-header"><Navbar /></div>
@@ -173,6 +229,7 @@ function LocalManage() {
                                                 type="number"
                                                 className="score-input"
                                                 name={name}
+                                                value={formData[name] || ''}
                                                 min="0"
                                                 max={max}
                                                 onChange={handleInputChange}
@@ -214,6 +271,5 @@ function LocalManage() {
         </div>
     );
 }
-
 
 export default LocalManage;

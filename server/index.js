@@ -302,9 +302,11 @@ app.get('/api/fetchData', verifyUser, async (req, res) => {
     if (localID) {
       // Fetch data from FieldEx.localGovernmentData if localID is present
       const [localGovernmentData] = await connection.query('SELECT * FROM FieldEx.localGovernmentData WHERE localID = ?', [localID]);
+      const [localManageData] = await connection.query(`SELECT * FROM FieldEx.localManageData WHERE localID = ?`, [localID])
+
       await connection.commit();
       return res.status(200).json({
-        localGovernmentData
+        localGovernmentData, localManageData
       });
     } else {
       // Fetch data based on institutionID

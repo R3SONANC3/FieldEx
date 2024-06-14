@@ -119,8 +119,6 @@ function LocalGovernmentForm() {
         text: "ไปที่หน้าต่อไป"
       });
       navigate("/localconscript");
-      localStorage.removeItem('fetchData')
-      localStorage.removeItem('updateData')
     } catch (error) {
       await Swal.fire({
         icon: "error",
