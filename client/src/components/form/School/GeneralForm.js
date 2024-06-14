@@ -219,23 +219,21 @@ const GeneralForm = () => {
         ...prevData,
         [name]: value,
       };
-      // ตรวจสอบค่าที่เปลี่ยนแปลง
-      // if (name === "otherEducationLevel" && value !== "") {
-      //   setOtherEducationLevel(value);
-      // } else if (name === "otherStudentCount" && value !== "") {
-      //   setOtherStudentCount(value);
-      //   setStudentCounts((prevCounts) => ({
-      //     ...prevCounts,
-      //     [otherEducationLevel]: value,
-      //   }));
-      // } else if (name === "otherTeacherCount" && value !== "") {
-      //   setOtherTeacherCount(value);
-      //   setTeacherCounts((prevCounts) => ({
-      //     ...prevCounts,
-      //     [otherEducationLevel]: value,
-      //   }));
-      // }
-
+      if (name === "otherEducationLevel" && value !== "") {
+        setOtherEducationLevel(value);
+      } else if (name === "otherStudentCount" && value !== "") {
+        setOtherStudentCount(value);
+        setStudentCounts((prevCounts) => ({
+          ...prevCounts,
+          [otherEducationLevel]: value,
+        }));
+      } else if (name === "otherTeacherCount" && value !== "") {
+        setOtherTeacherCount(value);
+        setTeacherCounts((prevCounts) => ({
+          ...prevCounts,
+          [otherEducationLevel]: value,
+        }));
+      }
       return updatedData;
       });
   };

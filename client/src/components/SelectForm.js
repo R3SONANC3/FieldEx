@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import '../styles.css'
+import '../styles.css';
 
 function SelectForm({ setOpenModal }) {
     const [previousForms, setPreviousForms] = useState([]);
@@ -28,18 +28,23 @@ function SelectForm({ setOpenModal }) {
     const selectOption = (option) => {
         if (option === 'schoolBotanicalGarden') {
             navigate('/evaluation');
-            localStorage.setItem('fetchData',false)
+            localStorage.setItem('fetchData', false);
         } else if (option === 'localResourceBase') {
-            navigate('/localresourcebase'); // เพิ่มการนำทางไปยังหน้าที่เหมาะสมสำหรับ localResourceBase
+            navigate('/localform');
+            localStorage.setItem('fetchData', false);
         }
 
         setOpenModal(false);
     };
 
-    const viewPreviousForm = () => {
-        navigate(`/generalform`);
+    const viewPreviousForm = (id, type) => {
+        if (type === 'institution') {
+            navigate(`/generalform`);
+        } else if (type === 'local') {
+            navigate(`/localform`);
+        }
         setOpenModal(false);
-        localStorage.setItem('fetchData',true)
+        localStorage.setItem('fetchData', true);
     };
 
     return (
@@ -63,8 +68,15 @@ function SelectForm({ setOpenModal }) {
                     <h3>ฟอร์มที่เคยกรอก:</h3>
                     {previousForms.length > 0 ? (
                         previousForms.map((form, index) => (
-                            <button key={index} className="previousFormButton" onClick={() => viewPreviousForm()}>
-                                {form.institutionName}
+                            <button
+                                key={index}
+                                className="previousFormButton"
+                                onClick={() => viewPreviousForm(form.id, form.institutionID ? 'institution' : 'local')}
+                            >
+                                {form.institutionID ? 
+                                    `${form.institutionName} (${form.institutionID})` : 
+                                    `${form.organizationName} (${form.localID})`
+                                }
                             </button>
                         ))
                     ) : (

@@ -2,13 +2,10 @@
   width: 100%;
   max-width: 100%;
   border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .lc-body {
-  margin-left: 500px;
   margin-top: 20px;
-  margin-right: 500px;
 }
 
 .lc-heading {
@@ -34,8 +31,6 @@
   margin-bottom: 15px;
   box-sizing: border-box;
 }
-
-
 
 .phone-fax,
 .address {

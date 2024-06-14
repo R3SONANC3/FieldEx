@@ -5,13 +5,12 @@ import logonu from '../assets/logoNu.png';
 import axios from 'axios';
 import LoginModal from './Login';
 import SelectForm from './SelectForm';
-import Swal from 'sweetalert2'
-import '../styles.css'
+import Swal from 'sweetalert2';
+import '../styles.css';
 import { FaUser } from "react-icons/fa";
 import { FaFileWaveform } from "react-icons/fa6";
 import { MdAdminPanelSettings, MdPermContactCalendar } from "react-icons/md";
-import { IoHome } from "react-icons/io5";
-
+import { IoHome, IoLogOut } from "react-icons/io5";
 
 const Navbar = () => {
     const [LoginModalOpen, setLoginModalOpen] = useState(false);
@@ -72,7 +71,6 @@ const Navbar = () => {
         }
     };
 
-
     const handleSignInSuccess = () => {
         const timeOut = 60 * 60 * 1000;
         setIsAuthenticated(true);
@@ -97,15 +95,15 @@ const Navbar = () => {
         <nav className="navbar">
             <div className="navbar-container">
                 <div className="logo-container">
-                    <Link > <img src={logo} className="navbar-logo" alt="Logo" />  </Link>
-                    <Link > <img src={logonu} className="navbar-logonu" alt="logonu" />  </Link>
-                    <Link > <span className="website-name">ระบบประเมินตัวเอง</span>  </Link>
+                    <Link to="/" > <img src={logo} className="navbar-logo" alt="Logo" />  </Link>
+                    <Link to="/" > <img src={logonu} className="navbar-logonu" alt="logonu" />  </Link>
+                    <Link to="/" > <span className="website-name">ระบบประเมินตัวเอง</span>  </Link>
                 </div>
                 <ul className="navbar-links">
-                    <li> <Link to="/" > <IoHome /> Home</Link> </li>
-                    <li><Link to="/about"> <MdPermContactCalendar /> About</Link></li>
+                    <li> <Link to="/" > <IoHome className='icon custom-icon'/> Home</Link> </li>
+                    <li><Link to="/about"> <MdPermContactCalendar className='icon custom-icon' /> About</Link></li>
                     {isAuthenticated && userRole === 'admin' && (
-                        <li><Link to="/admindashboard"> <MdAdminPanelSettings /> Admin Page</Link></li>
+                        <li><Link to="/admindashboard"> <MdAdminPanelSettings className='icon custom-icon' /> Admin Page</Link></li>
                     )}
                     <li>
                         <Link to="/" onClick={() => {
@@ -119,12 +117,12 @@ const Navbar = () => {
                                     setLoginModalOpen(true);
                                 })
                             }
-                        }}> <FaFileWaveform /> Select Forms</Link>
+                        }}> <FaFileWaveform className='icon custom-icon' /> Select Forms</Link>
                     </li>
                     {isAuthenticated ? (
-                        <li><Link onClick={handleSignOut} className="signout-button"> <FaUser /> Logout</Link></li>
+                        <li><Link onClick={handleSignOut} className="signout-button"> <IoLogOut className='icon custom-icon' /> Logout</Link></li>
                     ) : (
-                        <li><Link to="/" onClick={() => setLoginModalOpen(true)}> <FaUser /> Login</Link></li>
+                        <li><Link to="/" onClick={() => setLoginModalOpen(true)}> <FaUser className='icon custom-icon' /> Login</Link></li>
                     )}
                 </ul>
             </div>

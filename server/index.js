@@ -38,7 +38,7 @@ let connector = null;
 
 const initMySQL = async () => {
   try {
-    connector = await mysql.createConnection(`mysql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}`);
+    connector = await mysql.createPool(`mysql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}`);
     console.log('MySQL connection established');
   } catch (error) {
     console.error('Error connecting to MySQL:', error);
@@ -66,44 +66,65 @@ app.get("/", verifyUser, (req, res) => {
 });
 
 app.post('/api/register', async (req, res) => {
+  const connection = await pool.getConnection();
   try {
     const { email, password } = req.body;
     const passwordHash = await bcrypt.hash(password, 10);
     const userData = { email, password: passwordHash, role: 'user' };
-    await connector.query('INSERT INTO FieldEx.users SET ?', [userData]);
+    await connection.beginTransaction();     // Start a transaction
+
+    // Insert user data
+    await connection.query('INSERT INTO FieldEx.users SET ?', [userData]);
+
+    // Commit the transaction if everything is successful
+    await connection.commit();
+
     res.json({ message: "Register Success" });
   } catch (error) {
     console.error('Error registering user:', error);
+
+    // Rollback the transaction in case of an error
+    await connection.rollback();
+
     res.status(500).json({ message: "Register failed", error });
+  } finally {
+    // Release the connection back to the pool
+    connection.release();
   }
 });
+
 
 
 app.post('/api/login', async (req, res) => {
   try {
     const { email, password } = req.body;
-    const [results] = await connector.query('SELECT * FROM FieldEx.users WHERE email = ?', email);
+
+    // Query to find user by email
+    const [results] = await connector.query('SELECT * FROM FieldEx.users WHERE email = ?', [email]);
 
     if (results.length === 0) {
       return res.status(400).json({ message: "Login Failed (Incorrect Email or Password)" });
     }
 
     const userData = results[0];
+
+    // Compare provided password with hashed password in database
     const match = await bcrypt.compare(password, userData.password);
 
     if (!match) {
       return res.status(400).json({ message: "Login Failed (Incorrect Email or Password)" });
     }
 
+    // Generate JWT token
     const token = jwt.sign({ email, role: userData.role }, JWT_SECRET, { expiresIn: '1h' });
 
-
-    res.json({ message: "Login successful!", token});
+    res.json({ message: "Login successful!", token });
   } catch (error) {
     console.error('Error logging in:', error);
-    res.status(500).json({ message: "Login failed", error });
+    res.status(500).json({ message: "Login failed", error: error.message });
   }
 });
+
 
 app.get('/api/logout', (req, res) => {
   return res.json({
@@ -148,42 +169,61 @@ app.get('/api/usersData', verifyUser, async (req, res) => {
 
 
 app.get('/api/fetchforms', verifyUser, async (req, res) => {
+  const connection = await connector.getConnection();
   try {
     if (!req.user || !req.user.email) {
       return res.status(401).json({
         message: "Unauthorized: User information is missing"
       });
     }
-
-    // Query to find institution ID from email
-    const [userResults] = await connector.query('SELECT institutionID FROM FieldEx.users WHERE email = ?', [req.user.email]);
+    // Start a transaction
+    await connection.beginTransaction();
+    // Query to find institution ID and local ID from email
+    const [userResults] = await connection.query('SELECT institutionID, localID FROM FieldEx.users WHERE email = ?', [req.user.email]);
 
     if (userResults.length === 0) {
       return res.status(404).json({
         message: "User not found"
       });
     }
-    const institutionID = userResults[0].institutionID;
 
-    // Query to find form data from institution ID
-    const [formResults] = await connector.query('SELECT * FROM FieldEx.institution WHERE institutionID = ?', [institutionID]);
+    const { institutionID, localID } = userResults[0];
+    let formResults;
+    if (localID) {
+      // Query to find form data from local ID
+      [formResults] = await connection.query('SELECT * FROM FieldEx.localGovernmentData WHERE localID = ?', [localID]);
+    } else {
+      // Query to find form data from institution ID
+      [formResults] = await connection.query('SELECT * FROM FieldEx.institution WHERE institutionID = ?', [institutionID]);
+    }
 
     if (formResults.length === 0) {
+      // If no forms are found, rollback the transaction and send a 404 response
+      await connection.rollback();
       return res.status(404).json({
-        message: "No forms found for the given institution"
+        message: "No forms found for the given ID"
       });
     }
+
+    // Commit the transaction if everything is successful
+    await connection.commit();
 
     res.json(formResults);
   } catch (error) {
     console.error('Error retrieving forms:', error);
+
+    // Rollback the transaction in case of an error
+    await connection.rollback();
+
     res.status(500).json({
       message: "Failed to retrieve forms",
       error: error.message
     });
+  } finally {
+    // Release the connection back to the pool
+    connection.release();
   }
 });
-
 
 app.post('/api/submitge', verifyUser,async (req, res) => {
   const {
@@ -270,11 +310,35 @@ app.get('/api/fetchData', verifyUser, async (req, res) => {
   }
 });
 
-app.put('/api/updateGe', verifyUser, async (req,res)=>{
-  const { educationLevels, studentCounts, teacherCounts, otherEducationLevel, otherStudentCount, otherTeacherCount, institutionName, telephone,
-    fax, email, subdistrict, district, province, affiliation, headmasterName, projectDetail} = req.body;
-  const institutionID = user.req.institutionID;
-})
+app.post('/api/submitlc', verifyUser,async (req,res) =>{
+  const { organizationName, localID, phoneNumber, faxNumber, email, subDistrict, district, province, affiliation, headmasterName, highlightedActivities,
+  }  = req.body; 
+
+try {
+  const formData = {organizationName, localID, phoneNumber, faxNumber, email, subDistrict, district, province, affiliation, headmasterName, highlightedActivities,
+  }
+  const userEmail = req.user.email;
+  const [userResult] = await connector.query('SELECT * FROM users WHERE email = ?', [userEmail]);
+  if (userResult.length === 0) {
+    return res.status(404).json({
+      message: "User not found"
+    });
+  }
+  await connector.query('UPDATE users SET localID = ? WHERE email = ?', [localID, userEmail]);
+
+  await connector.query(`INSERT INTO FieldEx.localGovernmentData SET ?`, formData)
+  console.log(formData);
+  res.status(200).json({
+    message:"Submit Success",
+  })
+} catch (error) {
+  console.error('Error:', error);
+  res.status(500).json({
+  message: "Submit failed",
+  error: error.message
+});
+}
+});
 
 app.listen(API_PORT, () => {
   initMySQL();

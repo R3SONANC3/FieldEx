@@ -1,22 +1,101 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './localform.css'; // Import CSS file
 import Navbar from '../../Navbar';
+import axios from 'axios';
+import Swal from 'sweetalert2';
+import { useNavigate } from 'react-router-dom';
+import 'sweetalert2/dist/sweetalert2.min.css';
 
 function LocalGovernmentForm() {
-  const [organizationName, setOrganizationName] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [faxNumber, setFaxNumber] = useState('');
-  const [email, setEmail] = useState('');
-  const [subDistrict, setSubDistrict] = useState('');
-  const [district, setDistrict] = useState('');
-  const [province, setProvince] = useState('');
-  const [supervision, setSupervision] = useState('');
-  const [headName, setHeadName] = useState('');
-  const [highlightedActivities, setHighlightedActivities] = useState('');
+  const navigate = useNavigate();
 
-  const handleSubmit = (event) => {
+  const [formData, setFormData] = useState({
+    organizationName: "",
+    localID: "",
+    phoneNumber: "",
+    faxNumber: "",
+    email: "",
+    subDistrict: "",
+    district: "",
+    province: "",
+    affiliation: "",
+    headmasterName: "",
+    highlightedActivities: ""
+  });
+  
+  const token = localStorage.getItem("token");
+  const fetchData = localStorage.getItem("fetchData");
+  useEffect(() => {
+    if (!token) {
+      navigate("/");
+    }
+    if (fetchData === "true") {
+      fetchOldData();
+      localStorage.setItem('updateData', true)
+    }
+  }, []);
+
+
+  const fetchOldData = async () =>{
+    const response = await axios.get("http://localhost:8000/api/fetchData", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  }
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    // ส่งข้อมูลไปยัง API หรือทำการประมวลผลต่อไปที่นี่
+
+    // Validate form data
+    const requiredFields = [
+      "organizationName",
+      "localID",
+      "phoneNumber",
+      "email",
+      "subDistrict",
+      "district",
+      "province",
+      "affiliation",
+      "headmasterName",
+    ];
+
+    for (let field of requiredFields) {
+      if (!formData[field]) {
+        Swal.fire({
+          icon: "error",
+          title: "เกิดข้อผิดพลาดในการส่งข้อมูล!",
+          text: "กรุณากรอกข้อมูลให้ครบทุกช่องที่จำเป็น",
+        });
+        return; // Stop the form submission
+      }
+    }
+
+    try {
+      console.log(formData);
+      await axios.post("http://localhost:8000/api/submitlc", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      await Swal.fire({
+        icon: "success",
+        title: "ส่งข้อมูลสำเร็จ",
+        text: "ไปที่หน้าต่อไป"
+      });
+      navigate("/localconscript");
+    } catch (error) {
+      await Swal.fire({
+        icon: "error",
+        title: "เกิดข้อผิดพลาดในการส่งข้อมูล!",
+        text: "กรุณาตรวจสอบข้อมูลและรหัสองค์กรปกครองส่วนท้องถิ่นของท่านให้ครบ",
+      });
+    }
   };
 
   return (
@@ -32,43 +111,47 @@ function LocalGovernmentForm() {
       <div className='lc-body'>
         <form className='lc-form' onSubmit={handleSubmit}>
           <div className='lc-content'>
-            <label>
-              ชื่อองค์กรปกครองส่วนท้องถิ่น:
-              <input type="lc-text" value={organizationName} onChange={(e) => setOrganizationName(e.target.value)} />
-            </label>
-            <div className="phone-fax">
+            <div className='organization-form'>
               <label>
-                <span>โทรศัพท์:</span>
-                <input type="lc-text" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} />
+                ชื่อองค์กรปกครองส่วนท้องถิ่น:
+                <input type="text" name="organizationName" value={formData.organizationName} onChange={handleInputChange} />
               </label>
               <label>
-                <span>โทรสาร:</span>
-                <input type="lc-text" value={faxNumber} onChange={(e) => setFaxNumber(e.target.value)} />
+                รหัสองค์กรปกครองส่วนท้องถิ่น:
+                <input type="text" name="localID" value={formData.localID} onChange={handleInputChange} />
+              </label>
+            </div>
+            <div className="phone-fax">
+              <label>โทรศัพท์:
+                <input type="text" name="phoneNumber" value={formData.phoneNumber} onChange={handleInputChange} />
+              </label>
+              <label>โทรสาร:
+                <input type="text" name="faxNumber" value={formData.faxNumber} onChange={handleInputChange} />
               </label>
             </div>
             <label>
               อีเมล:
-              <input type="lc-email" value={email} onChange={(e) => setEmail(e.target.value)} />
+              <input type="email" name="email" value={formData.email} onChange={handleInputChange} />
             </label>
             <div className="address">
               <label>ตำบล:</label>
-              <input type="lc-text" value={subDistrict} onChange={(e) => setSubDistrict(e.target.value)} />
+              <input type="text" name="subDistrict" value={formData.subDistrict} onChange={handleInputChange} />
               <label>อำเภอ:</label>
-              <input type="lc-text" value={district} onChange={(e) => setDistrict(e.target.value)} />
+              <input type="text" name="district" value={formData.district} onChange={handleInputChange} />
               <label>จังหวัด:</label>
-              <input type="lc-text" value={province} onChange={(e) => setProvince(e.target.value)} />
+              <input type="text" name="province" value={formData.province} onChange={handleInputChange} />
             </div>
             <label>
               สังกัด:
-              <input type="lc-text" value={supervision} onChange={(e) => setSupervision(e.target.value)} />
+              <input type="text" name="affiliation" value={formData.affiliation} onChange={handleInputChange} />
             </label>
             <label>
               ชื่อหัวหน้าองค์กรปกครองส่วนท้องถิ่น:
-              <input type="lc-text" value={headName} onChange={(e) => setHeadName(e.target.value)} />
+              <input type="text" name="headmasterName" value={formData.headmasterName} onChange={handleInputChange} />
             </label>
             <label>
               งาน/โครงการหรือกิจกรรมดีเด่น:
-              <textarea value={highlightedActivities} rows={5} onChange={(e) => setHighlightedActivities(e.target.value)} />
+              <textarea name="highlightedActivities" value={formData.highlightedActivities} rows={5} onChange={handleInputChange} />
             </label>
           </div>
           <div className='lc-footer'>

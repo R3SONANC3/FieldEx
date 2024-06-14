@@ -3,9 +3,7 @@ body {
   font-family: Arial, sans-serif;
   margin: 0;
   height: 100vh;
-  background-color: black;
   position: relative;
-  overflow: hidden;
 }
 
 body::before {
@@ -206,6 +204,26 @@ button:hover {
   margin-top: 2rem;
 }
 
+.navbar-links a {
+  text-decoration: none;
+  color: white;
+  display: flex;
+  align-items: center;
+  font-size: 18px; /* Adjust as needed */
+}
+
+.navbar-links a:hover, .signout-button:hover {
+  color: #ddd; /* Adjust as needed */
+}
+.icon.custom-icon {
+  font-size: 22px; /* Adjust as needed */
+  margin-right: 8px; /* Space between icon and text */
+}
+
+.signout-button {
+  cursor: pointer;
+}
+
 /* Home Css */
 .wave {
   animation-name: wave-animation;
@@ -255,8 +273,4 @@ button:hover {
   50%{
       color: transparent;
   }
-}
-
-section {
-  padding: 0 15%;
 }
