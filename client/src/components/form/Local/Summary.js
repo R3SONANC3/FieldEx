@@ -1,5 +1,4 @@
 import React from 'react';
-import './Summary.css'; // Import your CSS file
 
 const Summary = () => {
     return (

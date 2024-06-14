@@ -39,9 +39,10 @@ let connector = null;
 const initMySQL = async () => {
   try {
     connector = await mysql.createPool(`mysql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}`);
-    console.log('MySQL connection established');
+    console.log('Connect to database Success!!');
   } catch (error) {
     console.error('Error connecting to MySQL:', error);
+    setTimeout(initMySQL, 5000); 
     throw error;
   }
 };
@@ -66,7 +67,7 @@ app.get("/", verifyUser, (req, res) => {
 });
 
 app.post('/api/register', async (req, res) => {
-  const connection = await pool.getConnection();
+  const connection = await connector.getConnection();
   try {
     const { email, password } = req.body;
     const passwordHash = await bcrypt.hash(password, 10);
@@ -284,31 +285,56 @@ app.post('/api/submitge', verifyUser,async (req, res) => {
 });
 
 app.get('/api/fetchData', verifyUser, async (req, res) => {
-  const userEmail = req.user.email; // Assuming verifyUser middleware sets req.user
+  const connection = await connector.getConnection();
   try {
-    // Fetch institution data
-    const [userID] = await connector.query('SELECT institutionID FROM FieldEx.users WHERE email = ?', [userEmail]);
+    // Start a transaction
+    await connection.beginTransaction();
 
-    const [institutionData] = await connector.query('SELECT * FROM FieldEx.institution WHERE institutionID = ? ', [[userID[0].institutionID]])
-    // Fetch education levels data
-    const [educationLevelsData] = await connector.query('SELECT * FROM FieldEx.educationLevels WHERE institutionID = ?', [userID[0].institutionID]);
+    // Query to find institution ID and local ID from email
+    const [userID] = await connection.query('SELECT institutionID, localID FROM FieldEx.users WHERE email = ?', [req.user.email]);
+    if (userID.length === 0) {
+      await connection.rollback();
+      return res.status(404).json({
+        message: "User not found"
+      });
+    }
+    const { institutionID, localID } = userID[0];
+    if (localID) {
+      // Fetch data from FieldEx.localGovernmentData if localID is present
+      const [localGovernmentData] = await connection.query('SELECT * FROM FieldEx.localGovernmentData WHERE localID = ?', [localID]);
+      await connection.commit();
+      return res.status(200).json({
+        localGovernmentData
+      });
+    } else {
+      // Fetch data based on institutionID
+      const [institutionData] = await connector.query('SELECT * FROM FieldEx.institution WHERE institutionID = ?', [institutionID]);
 
-    // Fetch other education levels data
-    const [otherEducationLevelsData] = await connector.query('SELECT * FROM FieldEx.otherEducationLevels WHERE institutionID = ?', [userID[0].institutionID]);
+      // Fetch education levels data
+      const [educationLevelsData] = await connector.query('SELECT * FROM FieldEx.educationLevels WHERE institutionID = ?', [institutionID]);
 
-    res.status(200).json({
-      institutionData: institutionData[0],
-      educationLevelsData,
-      otherEducationLevelsData: otherEducationLevelsData[0]
-    });
+      // Fetch other education levels data
+      const [otherEducationLevelsData] = await connector.query('SELECT * FROM FieldEx.otherEducationLevels WHERE institutionID = ?', [institutionID]);
+
+      await connection.commit();
+      return res.status(200).json({
+        institutionData: institutionData[0],
+        educationLevelsData,
+        otherEducationLevelsData: otherEducationLevelsData[0]
+      });
+    }
   } catch (error) {
+    await connection.rollback();
     console.error('Error:', error);
     res.status(500).json({
       message: "Failed to fetch data",
       error: error.message
     });
+  } finally {
+    connection.release();
   }
 });
+
 
 app.post('/api/submitlc', verifyUser,async (req,res) =>{
   const { organizationName, localID, phoneNumber, faxNumber, email, subDistrict, district, province, affiliation, headmasterName, highlightedActivities,
@@ -339,6 +365,78 @@ try {
 });
 }
 });
+
+app.put('/api/updateData', verifyUser, async (req, res) => {
+  const { organizationName, localID, phoneNumber, faxNumber, email, subDistrict, district, province, affiliation, headmasterName, highlightedActivities
+  } = req.body;
+
+  try {
+    const formData = {
+      organizationName,
+      phoneNumber,
+      faxNumber,
+      email,
+      subDistrict,
+      district,
+      province,
+      affiliation,
+      headmasterName,
+      highlightedActivities
+    };
+
+    await connector.query('UPDATE FieldEx.localGovernmentData SET ? WHERE localID = ?', [formData, localID]);
+
+    res.status(200).json({
+      message: "Update Success"
+    });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({
+      message: "Update failed",
+      error: error.message
+    });
+  }
+});
+
+app.post('/submit', async (req, res) => {
+  const { 
+      localMeetingAgenda, localMemberSignatures, meetingMinutes, photos,
+      appointmentOrder, subcommittee, managementPlan, protectionPlan,
+      surveyPlan, coordination, expenseSummary, meetingInvite, thankYouNote,
+      operationResults, analysisResults, improvementPlan, annualReport,
+      budgetDetails 
+  } = req.body;
+
+  const query = `
+      INSERT INTO FieldEx.localManageData (
+          localMeetingAgenda, localMemberSignatures, meetingMinutes, photos,
+          appointmentOrder, subcommittee, managementPlan, protectionPlan,
+          surveyPlan, coordination, expenseSummary, meetingInvite, thankYouNote,
+          operationResults, analysisResults, improvementPlan, annualReport,
+          budget1_year, budget1_budget, budget1_expense, budget1_remaining,
+          budget2_year, budget2_budget, budget2_expense, budget2_remaining
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+  `;
+
+  const values = [
+      localMeetingAgenda, localMemberSignatures, meetingMinutes, photos,
+      appointmentOrder, subcommittee, managementPlan, protectionPlan,
+      surveyPlan, coordination, expenseSummary, meetingInvite, thankYouNote,
+      operationResults, analysisResults, improvementPlan, annualReport,
+      budgetDetails[0].year, budgetDetails[0].budget, budgetDetails[0].expense, budgetDetails[0].remaining,
+      budgetDetails[1].year, budgetDetails[1].budget, budgetDetails[1].expense, budgetDetails[1].remaining
+  ];
+
+  try {
+      await connector.query(query, values);
+      res.status(200).send('Data inserted successfully');
+  } catch (error) {
+      console.error(error);
+      res.status(500).send('An error occurred while inserting data');
+  }
+});
+
+
 
 app.listen(API_PORT, () => {
   initMySQL();

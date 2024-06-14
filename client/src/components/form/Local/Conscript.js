@@ -32,10 +32,10 @@ function Conscript() {
                     </p>
                     <p ><b>รวมคะแนนเฉลี่ยไม่ต่ำกว่า 650 คะแนน</b></p>
                 </div>
-                <div class="co-content2">
+                <div className="co-content2">
                     <p><b>2.ผู้ร่วมปฏิบัติ</b> องค์กรปกครองส่วนท้องถิ่น ชุมชน สถานศึกษา มีส่วนร่วมในการจัดทำฐานทรัพยากรท้องถิ่น</p>
                 </div>
-                <div class="co-content3">
+                <div className="co-content3">
                     <p><b>3.การปฏิบัติของบุคลากรในองค์กรปกครองส่วนท้องถิ่น</b></p>
                     <p>
                         <span>1) องค์กรปกครองส่วนท้องถิ่น</span>
@@ -76,7 +76,7 @@ function Conscript() {
                         </p>
                     </p>
                 </div>
-                <div class="content4">
+                <div className="content4">
                     <p><b>4.วิธีการประเมิน</b></p>
                     <p>
                         <span >1) นำเสนอตามรายการประเมิน พิจารณาหลักฐานเอกสารที่ปรากฏย้อนหลัง 2 ปี</span>

@@ -97,7 +97,7 @@ const Navbar = () => {
                 <div className="logo-container">
                     <Link to="/" > <img src={logo} className="navbar-logo" alt="Logo" />  </Link>
                     <Link to="/" > <img src={logonu} className="navbar-logonu" alt="logonu" />  </Link>
-                    <Link to="/" > <span className="website-name">ระบบประเมินตัวเอง</span>  </Link>
+                    <strong className="website-name">ระบบประเมินตัวเอง</strong>
                 </div>
                 <ul className="navbar-links">
                     <li> <Link to="/" > <IoHome className='icon custom-icon'/> Home</Link> </li>

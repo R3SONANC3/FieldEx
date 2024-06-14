@@ -22,26 +22,49 @@ function LocalGovernmentForm() {
     headmasterName: "",
     highlightedActivities: ""
   });
-  
+
   const token = localStorage.getItem("token");
   const fetchData = localStorage.getItem("fetchData");
+
   useEffect(() => {
     if (!token) {
       navigate("/");
     }
     if (fetchData === "true") {
-      fetchOldData();
       localStorage.setItem('updateData', true)
+      fetchOldData();
     }
-  }, []);
+  }, [fetchData, navigate, token]);
 
-
-  const fetchOldData = async () =>{
-    const response = await axios.get("http://localhost:8000/api/fetchData", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+  const fetchOldData = async () => {
+    try {
+      const response = await axios.get("http://localhost:8000/api/fetchData", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = response.data.localGovernmentData[0];
+      setFormData({
+        organizationName: data.organizationName,
+        localID: data.localID,
+        phoneNumber: data.phoneNumber,
+        faxNumber: data.faxNumber,
+        email: data.email,
+        subDistrict: data.subDistrict,
+        district: data.district,
+        province: data.province,
+        affiliation: data.affiliation,
+        headmasterName: data.headmasterName,
+        highlightedActivities: data.highlightedActivities
+      });
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      Swal.fire({
+        icon: "error",
+        title: "เกิดข้อผิดพลาดในการดึงข้อมูล!",
+        text: "ไม่สามารถดึงข้อมูลจากฐานข้อมูลได้",
+      });
+    }
   }
 
   const handleInputChange = (event) => {
@@ -51,7 +74,7 @@ function LocalGovernmentForm() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+    const updateData = localStorage.getItem('updateData')
     // Validate form data
     const requiredFields = [
       "organizationName",
@@ -75,20 +98,29 @@ function LocalGovernmentForm() {
         return; // Stop the form submission
       }
     }
-
     try {
-      console.log(formData);
-      await axios.post("http://localhost:8000/api/submitlc", formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      if (updateData) {
+        await axios.put("http://localhost:8000/api/updateData", formData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      } else {
+        await axios.post("http://localhost:8000/api/submitlc", formData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      }
+
       await Swal.fire({
         icon: "success",
         title: "ส่งข้อมูลสำเร็จ",
         text: "ไปที่หน้าต่อไป"
       });
       navigate("/localconscript");
+      localStorage.removeItem('fetchData')
+      localStorage.removeItem('updateData')
     } catch (error) {
       await Swal.fire({
         icon: "error",

@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Router } from "react-router-dom";
 import Home from "./components/Home";
 import SelectForm from "./components/SelectForm";
 import AdminDashboard from "./components/AdminDashboard";
@@ -11,6 +11,7 @@ import LocalGovernmentForm from "./components/form/Local/LocalGovernmentForm ";
 import Conscript from "./components/form/Local/Conscript";
 import Summary from "./components/form/Local/Summary";
 import LocalManage from "./components/form/Local/LocalManage"
+import LocalOpera from './components/form/Local/LocalOpera'
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
         <Route path="/localconscript" element={<Conscript />} />
         <Route path="/localsummary" element={<Summary />} />
         <Route path="/localmanage" element={<LocalManage />} />
+        <Route path="/localopera" element={<LocalOpera />} />
       </Routes>
     </BrowserRouter>
   );

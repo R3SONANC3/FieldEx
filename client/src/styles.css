@@ -4,6 +4,7 @@ body {
   margin: 0;
   height: 100vh;
   position: relative;
+  background-color: gray;
 }
 
 body::before {
@@ -18,7 +19,7 @@ body::before {
   background-repeat: no-repeat;
   background-position: center center;
   background-attachment: fixed;
-  filter: blur(32px); /* Adjust the blur amount as needed */
+  filter: blur(128px); /* Adjust the blur amount as needed */
   z-index: -1; /* Ensure the blur layer is behind the content */
 }
 

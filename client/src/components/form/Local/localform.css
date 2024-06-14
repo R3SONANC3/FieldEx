@@ -79,18 +79,60 @@
 }
 
 /* LocalManaghe css */
+/* Center the text in lmf-text */
 .lmf-text {
   text-align: center;
 }
 
+/* Style the container */
 .lmf-container {
   width: 100%;
-  max-width: 100%;
+  max-width: 100%; /* Adjust the max-width as needed */
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin: 0 auto; /* Center the container horizontally */
 }
 
+/* Style the body */
 .lmf-body {
-  margin-left: 20px;
-  margin-right: 20px;
+  background-color: #fff; /* White background */
+  padding: 20px; /* Add some padding */
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Style the table */
+#lmf-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px; /* Add some space between the table and the previous element */
+}
+
+/* Style the table header */
+#lmf-table th {
+  background-color: #f0f0f0; /* Light gray background for header */
+  border: 1px solid #ddd; /* Add borders */
+  padding: 10px;
+}
+
+/* Style the table cells */
+#lmf-table td {
+  border: 1px solid #ddd; /* Add borders */
+  padding: 10px;
+}
+
+/* Style the input fields */
+.score-input, .referee-score-input, .comment, .file-input {
+  width: 100%; /* Make inputs fill the entire cell */
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc; /* Light gray border */
+  box-sizing: border-box;
+  margin-top: 4px; /* Add some space between inputs */
+}
+
+.lmf-button {
+  display: block;
+  margin: 0 auto;
+  margin-top: 15px;
 }
