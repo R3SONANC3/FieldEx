@@ -94,8 +94,6 @@ app.post('/api/register', async (req, res) => {
   }
 });
 
-
-
 app.post('/api/login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -434,11 +432,10 @@ app.post('/submit', async (req, res) => {
       res.status(200).send('Data inserted successfully');
   } catch (error) {
       console.error(error);
+      await initMySQL();
       res.status(500).send('An error occurred while inserting data');
   }
 });
-
-
 
 app.listen(API_PORT, () => {
   initMySQL();
