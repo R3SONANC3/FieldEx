@@ -7,7 +7,7 @@ import LoginModal from './Login';
 import SelectForm from './SelectForm';
 import Swal from 'sweetalert2';
 import '../styles.css';
-import { FaUser } from "react-icons/fa";
+import { FaUser, FaBars } from "react-icons/fa";
 import { FaFileWaveform } from "react-icons/fa6";
 import { MdAdminPanelSettings, MdPermContactCalendar } from "react-icons/md";
 import { IoHome, IoLogOut } from "react-icons/io5";
@@ -17,7 +17,8 @@ const Navbar = () => {
     const [selectFormOpen, setSelectFormOpen] = useState(false);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [userRole, setUserRole] = useState(null);
-    const navigate = useNavigate(); // Add useNavigate hook
+    const navigate = useNavigate();
+    const [showMobileMenu, setShowMobileMenu] = useState(false);
 
     useEffect(() => {
         const authTime = localStorage.getItem('authTime');
@@ -60,7 +61,7 @@ const Navbar = () => {
                 setIsAuthenticated(false);
                 setUserRole(null);
                 clearAuthData();
-                navigate('/'); // Redirect to home page after logout
+                navigate('/');
             });
         } catch (error) {
             console.error('Error:', error);
@@ -91,30 +92,39 @@ const Navbar = () => {
         });
     };
 
+    const toggleMobileMenu = () => {
+        setShowMobileMenu(!showMobileMenu);
+    };
+
     return (
         <nav className="navbar">
             <div className="navbar-container">
                 <div className="logo-container">
-                    <Link to="/" > <img src={logo} className="navbar-logo" alt="Logo" />  </Link>
-                    <Link to="/" > <img src={logonu} className="navbar-logonu" alt="logonu" />  </Link>
+                    <Link to="/"> <img src={logo} className="navbar-logo" alt="Logo" /> </Link>
+                    <Link to="/"> <img src={logonu} className="navbar-logonu" alt="logonu" /> </Link>
                     <strong className="website-name">ระบบประเมินตัวเอง</strong>
                 </div>
-                <ul className="navbar-links">
-                    <li> <Link to="/" > <IoHome className='icon custom-icon'/> Home</Link> </li>
-                    <li><Link to="/about"> <MdPermContactCalendar className='icon custom-icon' /> About</Link></li>
+                <button className="mobile-menu-toggle" onClick={toggleMobileMenu}>
+                    <FaBars className="mobile-menu-icon" />
+                </button>
+                <ul className={`navbar-links ${showMobileMenu ? 'show' : ''}`}>
+                    <li> <Link to="/" onClick={toggleMobileMenu}> <IoHome className='icon custom-icon' /> Home</Link> </li>
+                    <li><Link to="/about" onClick={toggleMobileMenu}> <MdPermContactCalendar className='icon custom-icon' /> About</Link></li>
                     {isAuthenticated && userRole === 'admin' && (
-                        <li><Link to="/admindashboard"> <MdAdminPanelSettings className='icon custom-icon' /> Admin Page</Link></li>
+                        <li><Link to="/admindashboard" onClick={toggleMobileMenu}> <MdAdminPanelSettings className='icon custom-icon' /> Admin Page</Link></li>
                     )}
                     <li>
                         <Link to="/" onClick={() => {
                             if (isAuthenticated) {
                                 setSelectFormOpen(true);
+                                toggleMobileMenu();
                             } else {
                                 Swal.fire({
                                     title: 'กรุณาเข้าสู่ระบบก่อนกรอกแบบฟอร์ม',
                                     icon: 'warning',
                                 }).then(() => {
                                     setLoginModalOpen(true);
+                                    toggleMobileMenu();
                                 })
                             }
                         }}> <FaFileWaveform className='icon custom-icon' /> Select Forms</Link>
@@ -122,7 +132,10 @@ const Navbar = () => {
                     {isAuthenticated ? (
                         <li><Link onClick={handleSignOut} className="signout-button"> <IoLogOut className='icon custom-icon' /> Logout</Link></li>
                     ) : (
-                        <li><Link to="/" onClick={() => setLoginModalOpen(true)}> <FaUser className='icon custom-icon' /> Login</Link></li>
+                        <li><Link to="/" onClick={() => {
+                            setLoginModalOpen(true);
+                            toggleMobileMenu();
+                        }}> <FaUser className='icon custom-icon' /> Login</Link></li>
                     )}
                 </ul>
             </div>
