@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
 import PropTypes from "prop-types";
-import { jwtDecode } from "jwt-decode";  // Corrected import statement
-import Swal from "sweetalert2";  // Import SweetAlert2
+import  { jwtDecode } from "jwt-decode"; // Corrected import statement
+import Swal from "sweetalert2"; // Import SweetAlert2
 import '../styles.css'
 
 function Login({ setOpenModal, setIsAuthenticated, setUserRole }) {
@@ -68,6 +68,12 @@ function Login({ setOpenModal, setIsAuthenticated, setUserRole }) {
     }
   };
 
+  const toggleSignUp = () => {
+    setEmail("");
+    setPassword("");
+    setIsSignUp(!isSignUp);
+  };
+
   return (
     <div className="modalBackground">
       <div className="modalContainer">
@@ -116,14 +122,14 @@ function Login({ setOpenModal, setIsAuthenticated, setUserRole }) {
             {isSignUp ? (
               <p>
                 มีบัญชีแล้วใช่หรือไม่?{" "}
-                <span onClick={() => setIsSignUp(false)} style={{ cursor: "pointer", color: "blue" }}>
+                <span onClick={toggleSignUp} style={{ cursor: "pointer", color: "blue" }}>
                   เข้าสู่ระบบ
                 </span>
               </p>
             ) : (
               <p>
                 ยังไม่มีบัญชีใช่หรือไม่?{" "}
-                <span onClick={() => setIsSignUp(true)} style={{ cursor: "pointer", color: "blue" }}>
+                <span onClick={toggleSignUp} style={{ cursor: "pointer", color: "blue" }}>
                   สร้างบัญชีใหม่
                 </span>
               </p>

@@ -1,68 +1,61 @@
-/* styles.css */
-body {
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body,
+html {
+  height: 100%;
   font-family: Arial, sans-serif;
   margin: 0;
-  height: 100vh;
-  position: relative;
-  background-color: gray;
-}
-
-body::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
+  padding: 0;
   height: 100%;
-  background-image: url('./assets/backgroung.jpg');
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-attachment: fixed;
-  filter: blur(128px); /* Adjust the blur amount as needed */
-  z-index: -1; /* Ensure the blur layer is behind the content */
-}
-
-body > * {
-  position: relative;
-  z-index: 1; /* Ensure the content is above the blur layer */
-}
-
-.container{
-  position: flex;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1000;
+  overflow-x: hidden;
+  display: relative;
 }
 
 .navbar {
   background: transparent;
+  /* Semi-transparent background to work with backdrop filter */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .navbar-container {
   display: flex;
   justify-content: space-between;
-  padding: 10px;
+  padding: 15px 30px;
+  align-items: center;
 }
 
 .logo-container {
   display: flex;
   align-items: center;
-  margin-left: 50px;
 }
 
 .website-name {
-  margin-left: 10px;
-  font-size: 1.2em;
+  margin-left: 15px;
+  font-size: 1.7em;
   font-weight: bold;
   color: white;
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);
+  font-family: "Montserrat", sans-serif;
 }
 
 .navbar-logo,
 .navbar-logonu {
-  height: 50px; 
+  height: 70px;
+  transition: transform 0.3s ease-in-out;
+}
+
+.navbar-logo:hover,
+.navbar-logonu:hover {
+  transform: scale(1.1);
 }
 
 .navbar-links {
@@ -74,35 +67,56 @@ body > * {
 }
 
 .navbar-links li {
-  margin: 0 10px;
+  margin: 0 20px;
 }
 
 .navbar-links a {
   position: relative;
-  font-size: 18px;
+  font-size: 22px;
   color: white;
-  font-weight: 500;
+  font-weight: 600;
   text-decoration: none;
-  margin-left: 20px;
-  margin-right: 20px;
+  padding: 15px 20px;
+  border-radius: 30px;
+  transition: all 0.3s ease-in-out;
+  font-family: "Montserrat", sans-serif;
 }
 
 .navbar-links a::before {
-  content: '';
+  content: "";
   position: absolute;
-  top: 100%;
-  left: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
   width: 0;
   height: 3px;
   background: #cd5ff8;
-  transition: .8s;
+  transition: all 0.3s ease-in-out;
+}
+
+.navbar-links a:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+  color: #cd5ff8;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
 }
 
 .navbar-links a:hover::before {
-  width: 100%;
+  width: 60%;
 }
 
-/* Modal Styles*/
+.navbar-links a {
+  text-decoration: none;
+  color: white;
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+}
+
+.navbar-links a:hover,
+.signout-button:hover {
+  color: #ddd;
+}
+
 /* Modal.css */
 .modalBackground {
   position: fixed;
@@ -110,22 +124,26 @@ body > * {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.7); /* เพิ่มความโปร่งใสของพื้นหลัง */
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 9999; /* ให้ Modal อยู่ด้านหน้าสุด */
 }
 
 .modalContainer {
-  background-color: white;
-  border-radius: 8px;
-  padding: 50px;
-  width: 500px; /* เพิ่มความกว้าง */
-  height: 400px; /* เพิ่มความสูง */
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 30px;
+  width: 600px;
+  max-width: 90%; /* ให้ Modal ปรับขนาดได้บนหน้าจอเล็ก */
+  max-height: 80vh; /* จำกัดความสูงของ Modal */
+  overflow-y: auto; /* เพิ่มแถบเลื่อนถ้ามีเนื้อหามากเกินไป */
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  position: relative; /* สำหรับปุ่มปิด */
 }
 
-.modal-navigate{
+.modal-navigate {
   text-align: center;
   margin-top: 50px;
 }
@@ -195,30 +213,19 @@ button:hover {
   justify-content: center;
 }
 
-
-.schoolBotanicalGardenButton, .localResourceBaseButton {
+.schoolBotanicalGardenButton,
+.localResourceBaseButton {
   margin: 0 10px;
 }
 
-.previousFormsContainer{
+.previousFormsContainer {
   text-align: center;
   margin-top: 2rem;
 }
 
-.navbar-links a {
-  text-decoration: none;
-  color: white;
-  display: flex;
-  align-items: center;
-  font-size: 18px; /* Adjust as needed */
-}
-
-.navbar-links a:hover, .signout-button:hover {
-  color: #ddd; /* Adjust as needed */
-}
 .icon.custom-icon {
-  font-size: 22px; /* Adjust as needed */
-  margin-right: 8px; /* Space between icon and text */
+  font-size: 22px;
+  margin-right: 8px;
 }
 
 .signout-button {
@@ -226,52 +233,279 @@ button:hover {
 }
 
 /* Home Css */
+.hm-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #e67e22, #4a4a4a);
+}
+
+.hm-header {
+  position: fixed;
+  width: 100%;
+  z-index: 1000;
+}
+
+.hm-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.banner {
+  width: 100%;
+  padding: 8rem 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 100px 20px;
+  text-align: center;
+  position: relative;
+}
+
+.banner::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0.1;
+  z-index: 0;
+}
+
+.banner-image {
+  margin-bottom: 2rem;
+}
+
+.banner-image img {
+  max-width: 100%;
+  height: auto;
+}
+
+.banner img {
+  margin-top: 200px;
+  max-width: 100%;
+  height: auto;
+}
+
+.banner .logo {
+  width: 30%;
+}
+
+.banner .logonu {
+  width: 8%;
+}
+
+.banner h1 {
+  font-size: 2.5rem;
+  margin-top: 1rem;
+  line-height: 1.5;
+}
+
+.banner-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+@keyframes blink-caret {
+  from,
+  to {
+    color: transparent;
+  }
+
+  50% {
+    color: #fff;
+  }
+}
+
 .wave {
   animation-name: wave-animation;
-  /* Refers to the name of your @keyframes element below */
   animation-duration: 2.5s;
-  /* Change to speed up or slow down */
   animation-iteration-count: infinite;
-  /* Never stop waving :) */
   transform-origin: 70% 70%;
-  /* Pivot around the bottom-left palm */
   display: inline-block;
 }
 
 @keyframes wave-animation {
-  0% {transform: rotate(0.0deg)}
-  10% {transform: rotate(14.0deg)}
-  20% {transform: rotate(-8.0deg)}
-  30% {transform: rotate(14.0deg)}
-  40% {transform: rotate(-4.0deg)}
-  50% {transform: rotate(10.0deg)}
-  60% {transform: rotate(0.0deg)}
-  100% {transform: rotate(0.0deg)}
-}
+  0% {
+    transform: rotate(0deg);
+  }
 
-.typewriter{
-  color: #cd5ff8;
-  position: relative;
-}
+  10% {
+    transform: rotate(14deg);
+  }
 
-.typewriter::after{
-  content: "|";
-  position: absolute;
-  right: 200px;
-  color: #cd5ff8;
-  background-color: black;
-  width: 100%;
-  animation: typing 3s steps(12) alternate infinite, line 1s infinite;
-}
+  20% {
+    transform: rotate(-8deg);
+  }
 
-@keyframes typing{
-  to{
-      width: 0%;
+  30% {
+    transform: rotate(14deg);
+  }
+
+  40% {
+    transform: rotate(-4deg);
+  }
+
+  50% {
+    transform: rotate(10deg);
+  }
+
+  60% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(0deg);
   }
 }
 
-@keyframes line {
-  50%{
-      color: transparent;
+@media screen and (max-width: 768px) {
+  h1 {
+    font-size: 2.5rem;
+  }
+
+  .banner {
+    padding: 6rem 1rem;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .banner-content {
+    max-width: 100%;
+    margin-bottom: 2rem;
+  }
+
+  .banner img {
+    max-width: 80%;
+  }
+
+  .banner button {
+    font-size: 16px;
+    padding: 10px 25px;
+  }
+}
+
+.banner img:hover {
+  transform: scale(1.05);
+}
+
+.wrap {
+  display: inline-block;
+  color: white;
+  font-weight: 600;
+  position: relative;
+}
+
+.wrap::after {
+  content: "|";
+  position: absolute;
+  right: -8px;
+  animation: blink-caret 0.75s step-end infinite;
+}
+
+.banner button {
+  color: #fff;
+  font-weight: 700;
+  font-size: 18px;
+  margin-top: 60px;
+  letter-spacing: 1px;
+  display: inline-block;
+  padding: 12px 30px;
+  border: none;
+  border-radius: 50px;
+  background: linear-gradient(to right, #e67e22, #d35400);
+  box-shadow: 0 4px 15px rgba(230, 126, 34, 0.4);
+  transition: 0.5s;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.banner button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to right, #d35400, #e67e22);
+  transition: 0.5s;
+  z-index: -1;
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+
+.banner button:hover::before {
+  transform: scaleX(1);
+}
+
+.banner button:hover {
+  box-shadow: 0 6px 20px rgba(230, 126, 34, 0.6);
+}
+
+.hm-footer {
+  background-color: rgba(74, 74, 74, 0.9);
+  color: #ecf0f1;
+  text-align: center;
+  height: 35px;
+  position: relative;
+}
+
+.hm-footer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  /* Adjust the height of the gradient line */
+  background: linear-gradient(to right, #e67e22, #d35400);
+}
+
+.banner-image,
+.banner-text {
+  opacity: 0;
+  animation: fadeIn 1s ease-in-out forwards;
+}
+
+.banner-text {
+  animation-delay: 0.5s;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes typing {
+  from {
+    width: 0;
+  }
+
+  to {
+    width: 100%;
+  }
+}
+
+@keyframes blink-caret {
+  from,
+  to {
+    border-color: transparent;
+  }
+
+  50% {
+    border-color: #fff;
   }
 }
