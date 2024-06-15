@@ -72,15 +72,6 @@
   box-sizing: border-box; /* Include padding in the element's total width and height */
 }
 
-@media (max-width: 768px) {
-  .ge-column-left,
-  .ge-column-middle,
-  .ge-column-right {
-    width: 100%; /* Stack columns vertically on small screens */
-    padding: 10px 0; /* Adjust padding for small screens */
-  }
-}
-
 .ge-text {
   text-align: center;
 }

@@ -15,6 +15,20 @@ html {
   display: relative;
 }
 
+.mobile-menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-right: 20px;
+}
+
+.mobile-menu-icon {
+  font-size: 24px;
+  color: white;
+}
+
 @media screen and (max-width: 768px) {
   h1 {
     font-size: 2.5rem;
@@ -42,6 +56,52 @@ html {
 
   .mobile-menu-toggle {
     display: block;
+    font-size: 24px;
+    color: white;
+    transition: transform 0.3s ease;
+    /* เพิ่มการเปลี่ยนแปลงเรื่องรูปร่างเมื่อ hover */
+  }
+
+  .mobile-menu-icon::before,
+  .mobile-menu-icon::after {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: white;
+    transition: transform 0.3s ease;
+    /* Add animation when hover */
+  }
+
+  .mobile-menu-icon:hover {
+    transform: rotate(90deg);
+    /* Rotate the icon when hover */
+  }
+
+  .mobile-menu-icon::before {
+    transform: translateY(-7px) rotate(-45deg);
+    /* Position and rotate the first line */
+  }
+
+  .mobile-menu-icon::after {
+    transform: translateY(4px) rotate(45deg);
+    /* Position and rotate the second line */
+  }
+
+  .mobile-menu-icon:hover::before {
+    transform: translateY(-2px) rotate(-45deg);
+    /* Adjust first line when hover */
+  }
+
+  .mobile-menu-icon:hover::after {
+    transform: translateY(2px) rotate(45deg);
+    /* Adjust second line when hover */
+  }
+
+  .navbar-links.show {
+    display: flex;
   }
 
   .navbar-links {
@@ -53,16 +113,38 @@ html {
     padding: 20px;
     position: absolute;
     top: 80px;
-    left: 0;
+    right: 0;
     z-index: 999;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
 
   .navbar-links.show {
     display: flex;
   }
 
-  .navbar-links li {
-    margin: 10px 0;
+  .navbar-links a:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+    color: #ffd700;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  }
+
+  .mobile-menu-icon:hover {
+    color: #ffd700;
+  }
+
+  .navbar-links:not(.show) {
+    display: none;
+  }
+}
+
+@keyframes rotateMenuIcon {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(90deg);
   }
 }
 
@@ -74,6 +156,7 @@ html {
   width: 100%;
   z-index: 1000;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  font-family: "Montserrat", sans-serif;
 }
 
 .navbar-container {
@@ -94,7 +177,6 @@ html {
   font-weight: bold;
   color: white;
   text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);
-  font-family: "Montserrat", sans-serif;
 }
 
 .navbar-logo,
@@ -167,17 +249,23 @@ html {
   color: #ddd;
 }
 
-.mobile-menu-toggle {
-  display: none;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
+.navbar::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: #cd5ff8;
+  transform: scaleX(0);
+  /* เริ่มต้นขีดมีความยาวเป็น 0 */
+  transition: transform 1s ease;
+  /* เพิ่มเอฟเฟกต์เพื่อเปลี่ยนความยาวของขีด */
 }
 
-.mobile-menu-icon {
-  font-size: 24px;
-  color: white;
+.navbar:hover::after {
+  transform: scaleX(1);
+  /* เมื่อ hover ขีดจะเติมขึ้น */
 }
 
 /* Modal.css */
@@ -187,13 +275,11 @@ html {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
-  /* เพิ่มความโปร่งใสของพื้นหลัง */
+  background-color: rgba(0, 0, 0, 0.7); /* เพิ่มความโปร่งใสของพื้นหลัง */
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9999;
-  /* ให้ Modal อยู่ด้านหน้าสุด */
+  z-index: 9999; /* ให้ Modal อยู่ด้านหน้าสุด */
 }
 
 .modalContainer {
@@ -201,15 +287,11 @@ html {
   border-radius: 10px;
   padding: 30px;
   width: 600px;
-  max-width: 90%;
-  /* ให้ Modal ปรับขนาดได้บนหน้าจอเล็ก */
-  max-height: 80vh;
-  /* จำกัดความสูงของ Modal */
-  overflow-y: auto;
-  /* เพิ่มแถบเลื่อนถ้ามีเนื้อหามากเกินไป */
+  max-width: 90%; /* ให้ Modal ปรับขนาดได้บนหน้าจอเล็ก */
+  max-height: 80vh; /* จำกัดความสูงของ Modal */
+  overflow-y: auto; /* เพิ่มแถบเลื่อนถ้ามีเนื้อหามากเกินไป */
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-  position: relative;
-  /* สำหรับปุ่มปิด */
+  position: relative; /* สำหรับปุ่มปิด */
 }
 
 .modal-navigate {

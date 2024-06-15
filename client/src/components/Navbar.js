@@ -6,11 +6,12 @@ import axios from 'axios';
 import LoginModal from './Login';
 import SelectForm from './SelectForm';
 import Swal from 'sweetalert2';
-import '../styles.css';
-import { FaUser, FaBars } from "react-icons/fa";
+import { FaUser } from "react-icons/fa";
 import { FaFileWaveform } from "react-icons/fa6";
 import { MdAdminPanelSettings, MdPermContactCalendar } from "react-icons/md";
 import { IoHome, IoLogOut } from "react-icons/io5";
+import { GiHamburgerMenu } from "react-icons/gi";
+import '../styles.css';
 
 const Navbar = () => {
     const [LoginModalOpen, setLoginModalOpen] = useState(false);
@@ -105,8 +106,9 @@ const Navbar = () => {
                     <strong className="website-name">ระบบประเมินตัวเอง</strong>
                 </div>
                 <button className="mobile-menu-toggle" onClick={toggleMobileMenu}>
-                    <FaBars className="mobile-menu-icon" />
+                    <GiHamburgerMenu className="mobile-menu-icon" />
                 </button>
+
                 <ul className={`navbar-links ${showMobileMenu ? 'show' : ''}`}>
                     <li> <Link to="/" onClick={toggleMobileMenu}> <IoHome className='icon custom-icon' /> Home</Link> </li>
                     <li><Link to="/about" onClick={toggleMobileMenu}> <MdPermContactCalendar className='icon custom-icon' /> About</Link></li>
@@ -129,6 +131,7 @@ const Navbar = () => {
                             }
                         }}> <FaFileWaveform className='icon custom-icon' /> Select Forms</Link>
                     </li>
+
                     {isAuthenticated ? (
                         <li><Link onClick={handleSignOut} className="signout-button"> <IoLogOut className='icon custom-icon' /> Logout</Link></li>
                     ) : (
