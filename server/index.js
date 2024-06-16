@@ -42,7 +42,7 @@ const initMySQL = async () => {
     console.log('Connect to database Success!!');
   } catch (error) {
     console.error('Error connecting to MySQL:', error);
-    setTimeout(initMySQL, 5000); 
+    setTimeout(initMySQL, 5000);
     throw error;
   }
 };
@@ -139,7 +139,7 @@ app.get('/api/usersData', verifyUser, async (req, res) => {
   try {
     // ดึงข้อมูล email, localId และ institutionID จากตาราง users
     const [userData] = await connector.query('SELECT email, localId, institutionID FROM users WHERE localId IS NOT NULL OR institutionID IS NOT NULL');
-    
+
     // สร้างอาร์เรย์ว่างเพื่อเก็บข้อมูล
     const institutionIDs = [];
     const localIDs = [];
@@ -238,7 +238,7 @@ app.get('/api/fetchforms', verifyUser, async (req, res) => {
   }
 });
 
-app.post('/api/submitge', verifyUser,async (req, res) => {
+app.post('/api/submitge', verifyUser, async (req, res) => {
   const {
     institutionID, institutionName, telephone, fax, email, subdistrict, district, province,
     affiliation, headmasterName, projectDetail, educationLevels, studentCounts, teacherCounts,
@@ -253,12 +253,12 @@ app.post('/api/submitge', verifyUser,async (req, res) => {
       affiliation, headmasterName, projectDetail
     };
     const [userResult] = await connector.query('SELECT * FROM users WHERE email = ?', [userEmail]);
-    
+
     if (userResult.length === 0) {
       return res.status(404).json({
         message: "User not found"
       });
-    } 
+    }
 
     // Update institutionID in users table
     await connector.query('UPDATE users SET institutionID = ? WHERE email = ?', [institutionID, userEmail]);
@@ -349,34 +349,35 @@ app.get('/api/fetchData', verifyUser, async (req, res) => {
   }
 });
 
-app.post('/api/submitlc', verifyUser,async (req,res) =>{
+app.post('/api/submitlc', verifyUser, async (req, res) => {
   const { organizationName, localID, phoneNumber, faxNumber, email, subDistrict, district, province, affiliation, headmasterName, highlightedActivities,
-  }  = req.body; 
+  } = req.body;
 
-try {
-  const formData = {organizationName, localID, phoneNumber, faxNumber, email, subDistrict, district, province, affiliation, headmasterName, highlightedActivities,
-  }
-  const userEmail = req.user.email;
-  const [userResult] = await connector.query('SELECT * FROM users WHERE email = ?', [userEmail]);
-  if (userResult.length === 0) {
-    return res.status(404).json({
-      message: "User not found"
+  try {
+    const formData = {
+      organizationName, localID, phoneNumber, faxNumber, email, subDistrict, district, province, affiliation, headmasterName, highlightedActivities,
+    }
+    const userEmail = req.user.email;
+    const [userResult] = await connector.query('SELECT * FROM users WHERE email = ?', [userEmail]);
+    if (userResult.length === 0) {
+      return res.status(404).json({
+        message: "User not found"
+      });
+    }
+    await connector.query('UPDATE users SET localID = ? WHERE email = ?', [localID, userEmail]);
+
+    await connector.query(`INSERT INTO FieldEx.localGovernmentData SET ?`, formData)
+    console.log(formData);
+    res.status(200).json({
+      message: "Submit Success",
+    })
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({
+      message: "Submit failed",
+      error: error.message
     });
   }
-  await connector.query('UPDATE users SET localID = ? WHERE email = ?', [localID, userEmail]);
-
-  await connector.query(`INSERT INTO FieldEx.localGovernmentData SET ?`, formData)
-  console.log(formData);
-  res.status(200).json({
-    message:"Submit Success",
-  })
-} catch (error) {
-  console.error('Error:', error);
-  res.status(500).json({
-  message: "Submit failed",
-  error: error.message
-});
-}
 });
 
 app.put('/api/updateData', verifyUser, async (req, res) => {
@@ -411,52 +412,131 @@ app.put('/api/updateData', verifyUser, async (req, res) => {
   }
 });
 
-app.post('/submit', async (req, res) => {
-  const { 
-      localMeetingAgenda, localMemberSignatures, meetingMinutes, photos,
-      appointmentOrder, subcommittee, managementPlan, protectionPlan,
-      surveyPlan, coordination, expenseSummary, meetingInvite, thankYouNote,
-      operationResults, analysisResults, improvementPlan, annualReport,
-      budgetDetails 
-  } = req.body;
-
-  const query = `
-      INSERT INTO FieldEx.localManageData (
-          localMeetingAgenda, localMemberSignatures, meetingMinutes, photos,
-          appointmentOrder, subcommittee, managementPlan, protectionPlan,
-          surveyPlan, coordination, expenseSummary, meetingInvite, thankYouNote,
-          operationResults, analysisResults, improvementPlan, annualReport,
-          budget1_year, budget1_budget, budget1_expense, budget1_remaining,
-          budget2_year, budget2_budget, budget2_expense, budget2_remaining
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-  `;
-
-  const values = [
-      localMeetingAgenda, localMemberSignatures, meetingMinutes, photos,
-      appointmentOrder, subcommittee, managementPlan, protectionPlan,
-      surveyPlan, coordination, expenseSummary, meetingInvite, thankYouNote,
-      operationResults, analysisResults, improvementPlan, annualReport,
-      budgetDetails[0].year, budgetDetails[0].budget, budgetDetails[0].expense, budgetDetails[0].remaining,
-      budgetDetails[1].year, budgetDetails[1].budget, budgetDetails[1].expense, budgetDetails[1].remaining
-  ];
+app.post('/api/localsubmit', verifyUser, async (req, res) => {
+  const role = req.user.role;
+  const { emailUser } = req.body;
 
   try {
-      await connector.query(query, values);
-      res.status(200).send('Data inserted successfully');
+    // Fetch user data including localId and institutionID
+    const [userData] = await connector.query('SELECT localId, institutionID FROM FieldEx.users WHERE email = ?', emailUser);
+
+    let institutionID = null;
+    let localID = null;
+
+    // Extract localId and institutionID from userData
+    userData.forEach(user => {
+      if (user.institutionID !== null && institutionID === null) {
+        institutionID = user.institutionID;
+      }
+      if (user.localId !== null && localID === null) {
+        localID = user.localId;
+      }
+
+      // Break out of loop if both values are found
+      if (institutionID !== null && localID !== null) {
+        return;
+      }
+    });
+
+    // Determine which table to insert based on user role
+    if (role === 'admin') {
+      const {
+        refereeLocalMeetingAgenda, commentLocalMeetingAgenda, refereeLocalMemberSignatures, commentLocalMemberSignatures, refereeMeetingMinutes, commentMeetingMinutes, refereePhotos,
+        commentPhotos, refereeAppointmentOrder, commentAppointmentOrder, refereeSubcommittee, commentSubcommittee, refereeManagementPlan, commentManagementPlan, refereeProtectionPlan, commentProtectionPlan,
+        refereeSurveyPlan, commentSurveyPlan, refereeCoordination, commentCoordination, refereeExpenseSummary, commentExpenseSummary, refereeMeetingInvite, commentMeetingInvite, refereeThankYouNote,
+        commentThankYouNote, refereeOperationResults, commentOperationResults, refereeAnalysisResults, commentAnalysisResults, refereeImprovementPlan, commentImprovementPlan, refereeAnnualReport,
+        commentAnnualReport
+      } = req.body;
+
+      // Construct SQL query for admin insert
+      const adminUpdateQuery = `
+      UPDATE FieldEx.localManageData
+      SET 
+        refereeLocalMeetingAgenda = ?, commentLocalMeetingAgenda = ?, 
+        refereeLocalMemberSignatures = ?, commentLocalMemberSignatures = ?, 
+        refereeMeetingMinutes = ?, commentMeetingMinutes = ?, 
+        refereePhotos = ?, commentPhotos = ?, 
+        refereeAppointmentOrder = ?, commentAppointmentOrder = ?, 
+        refereeSubcommittee = ?, commentSubcommittee = ?, 
+        refereeManagementPlan = ?, commentManagementPlan = ?, 
+        refereeProtectionPlan = ?, commentProtectionPlan = ?, 
+        refereeSurveyPlan = ?, commentSurveyPlan = ?, 
+        refereeCoordination = ?, commentCoordination = ?, 
+        refereeExpenseSummary = ?, commentExpenseSummary = ?, 
+        refereeMeetingInvite = ?, commentMeetingInvite = ?, 
+        refereeThankYouNote = ?, commentThankYouNote = ?, 
+        refereeOperationResults = ?, commentOperationResults = ?, 
+        refereeAnalysisResults = ?, commentAnalysisResults = ?, 
+        refereeImprovementPlan = ?, commentImprovementPlan = ?, 
+        refereeAnnualReport = ?, commentAnnualReport = ?
+      WHERE localID = ?
+    `;
+
+      // Execute admin insert query
+      await connector.query(adminUpdateQuery, [
+        refereeLocalMeetingAgenda, commentLocalMeetingAgenda, 
+        refereeLocalMemberSignatures, commentLocalMemberSignatures, 
+        refereeMeetingMinutes, commentMeetingMinutes, 
+        refereePhotos, commentPhotos, 
+        refereeAppointmentOrder, commentAppointmentOrder, 
+        refereeSubcommittee, commentSubcommittee, 
+        refereeManagementPlan, commentManagementPlan, 
+        refereeProtectionPlan, commentProtectionPlan, 
+        refereeSurveyPlan, commentSurveyPlan, 
+        refereeCoordination, commentCoordination, 
+        refereeExpenseSummary, commentExpenseSummary, 
+        refereeMeetingInvite, commentMeetingInvite, 
+        refereeThankYouNote, commentThankYouNote, 
+        refereeOperationResults, commentOperationResults, 
+        refereeAnalysisResults, commentAnalysisResults, 
+        refereeImprovementPlan, commentImprovementPlan, 
+        refereeAnnualReport, commentAnnualReport,
+        localID
+      ]);
+
+      res.status(200).send('Admin data inserted successfully');
+    } else {
+      const {
+        localMeetingAgenda, localMemberSignatures, meetingMinutes, photos, appointmentOrder, subcommittee, managementPlan,
+        protectionPlan, surveyPlan, coordination, expenseSummary, meetingInvite, thankYouNote, operationResults,
+        analysisResults, improvementPlan, annualReport, budgetDetails
+      } = req.body;
+
+      // Construct SQL query for non-admin insert
+      const nonAdminInsertQuery = `
+        INSERT INTO FieldEx.localManageData (
+          localId, institutionID, localMeetingAgenda, localMemberSignatures, meetingMinutes, photos, appointmentOrder, 
+          subcommittee, managementPlan, protectionPlan, surveyPlan, coordination, expenseSummary, meetingInvite, thankYouNote, 
+          operationResults, analysisResults, improvementPlan, annualReport, budgetYear1, budget1, expense1, remaining1, 
+          budgetYear2, budget2, expense2, remaining2
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `;
+
+      // Execute non-admin insert query
+      await connector.query(nonAdminInsertQuery, [
+        localID, institutionID, localMeetingAgenda, localMemberSignatures, meetingMinutes, photos, appointmentOrder,
+        subcommittee, managementPlan, protectionPlan, surveyPlan, coordination, expenseSummary, meetingInvite, thankYouNote,
+        operationResults, analysisResults, improvementPlan, annualReport, budgetDetails[0].year, budgetDetails[0].budget,
+        budgetDetails[0].expense, budgetDetails[0].remaining, budgetDetails[1].year, budgetDetails[1].budget,
+        budgetDetails[1].expense, budgetDetails[1].remaining
+      ]);
+
+      res.status(200).send('Non-admin data inserted successfully');
+    }
   } catch (error) {
-      console.error(error);
-      await initMySQL();
-      res.status(500).send('An error occurred while inserting data');
+    console.error(error);
+    await initMySQL();
+    res.status(500).send('An error occurred while processing the request');
   }
 });
 
 
 app.get('/api/getDataEmail/:email', async (req, res) => {
-  const email  = req.params.email; // รับอีเมลผู้ใช้จาก request body
+  const email = req.params.email; // รับอีเมลผู้ใช้จาก request body
   try {
     // สร้าง SQL query เพื่อดึงข้อมูลจาก MySQL โดยใช้อีเมล
     const [userResults] = await connector.query('SELECT * FROM FieldEx.users WHERE email = ?', email);
-    
+
     if (userResults.length === 0) {
       res.status(404).send('ไม่พบผู้ใช้ด้วยอีเมลที่ระบุ');
       return;
@@ -468,19 +548,17 @@ app.get('/api/getDataEmail/:email', async (req, res) => {
     if (user.institutionID) {
       // ถ้าเป็น institutionID ให้ดึงข้อมูลจากตาราง FieldEx.institution
       [dataResults] = await connector.query('SELECT * FROM FieldEx.institution WHERE institutionID = ?', user.institutionID);
-      
+
     } else if (user.localID) {
       // ถ้าเป็น localID ให้ดึงข้อมูลจากตาราง FieldEx.localGovernmentData
       [dataResults] = await connector.query('SELECT * FROM FieldEx.localGovernmentData WHERE localID = ?', user.localID);
       [localManageData] = await connector.query(`SELECT * FROM FieldEx.localManageData WHERE localID = ?`, user.localID);
     }
-
     if (!dataResults || dataResults.length === 0) {
       res.status(404).send('ไม่พบข้อมูลที่เกี่ยวข้อง');
       return;
     }
-
-    res.json({dataResults, localManageData}); // ส่งข้อมูลที่ดึงได้กลับไปยังผู้ใช้
+    res.json({ dataResults, localManageData }); // ส่งข้อมูลที่ดึงได้กลับไปยังผู้ใช้
   } catch (error) {
     console.error('เกิดข้อผิดพลาด: ' + error.message);
     res.status(500).send('เกิดข้อผิดพลาดบางอย่าง');

@@ -7,26 +7,61 @@ import { useNavigate, useLocation } from 'react-router-dom';
 function LocalManage() {
     const [isAdmin, setIsAdmin] = useState(false);
     const location = useLocation();
-    const emailUser = location.state?.emailUser;
     const navigate = useNavigate();
+    const emailUser = location.state?.emailUser;
     const [formData, setFormData] = useState({
         localMeetingAgenda: 0,
+        refereeLocalMeetingAgenda: 0,
+        commentLocalMeetingAgenda: '',
         localMemberSignatures: 0,
+        refereeLocalMemberSignatures: 0,
+        commentLocalMemberSignatures: '',
         meetingMinutes: 0,
+        refereeMeetingMinutes: 0,
+        commentMeetingMinutes: '',
         photos: 0,
+        refereePhotos: 0,
+        commentPhotos: '',
         appointmentOrder: 0,
+        refereeAppointmentOrder: 0,
+        commentAppointmentOrder: '',
         subcommittee: 0,
+        refereeSubcommittee: 0,
+        commentSubcommittee: '',
         managementPlan: 0,
+        refereeManagementPlan: 0,
+        commentManagementPlan: '',
         protectionPlan: 0,
+        refereeProtectionPlan: 0,
+        commentProtectionPlan: '',
         surveyPlan: 0,
+        refereeSurveyPlan: 0,
+        commentSurveyPlan: '',
         coordination: 0,
+        refereeCoordination: 0,
+        commentCoordination: '',
         expenseSummary: 0,
+        refereeExpenseSummary: 0,
+        commentExpenseSummary: '',
         meetingInvite: 0,
+        refereeMeetingInvite: 0,
+        commentMeetingInvite: '',
         thankYouNote: 0,
+        refereeThankYouNote: 0,
+        commentThankYouNote: '',
         operationResults: 0,
+        refereeOperationResults: 0,
+        commentOperationResults: '',
         analysisResults: 0,
+        refereeAnalysisResults: 0,
+        commentAnalysisResults: '',
         improvementPlan: 0,
+        refereeImprovementPlan: 0,
+        commentImprovementPlan: '',
         annualReport: 0,
+        refereeAnnualReport: 0,
+        commentAnnualReport: '',
+        emailUser: emailUser,
         budgetDetails: [
             { year: 0, budget: 0, expense: 0, remaining: 0 },
             { year: 0, budget: 0, expense: 0, remaining: 0 }
@@ -40,25 +75,27 @@ function LocalManage() {
         if (!token) {
             navigate('/');
         } else {
-            fetchUserData();
+            if (emailUser) {
+                fetchUserData();
+            } else {
+                fetchOldData();
+            }
         }
     }, [navigate, token]);
 
     const handleInputChange = (e) => {
-        const { name, value, dataset } = e.target;
-        const { index, field } = dataset;
+        const { name, value } = e.target;
 
-        const numericValue = value === '' ? 0 : parseFloat(value);
-
-        if (index !== undefined) {
-            const updatedBudgetDetails = formData.budgetDetails.map((detail, i) =>
-                i === parseInt(index) ? { ...detail, [field]: numericValue } : detail
-            );
+        // Check if the input name starts with 'comment'
+        if (name.startsWith('comment')) {
+            const fieldName = name.substring(7); // Remove 'comment' prefix
             setFormData(prevFormData => ({
                 ...prevFormData,
-                budgetDetails: updatedBudgetDetails
+                [`comment${fieldName}`]: value  // Update comment field
             }));
         } else {
+            // Handle numeric score or other fields here
+            const numericValue = value === '' ? 0 : parseFloat(value);
             setFormData(prevFormData => ({
                 ...prevFormData,
                 [name]: numericValue
@@ -68,77 +105,61 @@ function LocalManage() {
 
     const fetchUserData = async () => {
         try {
-          const response = await axios.get(`http://localhost:8000/api/getDataEmail/${emailUser}`);
-          const data = response.data.localManageData[0] || {}; // Assuming there's only one object in the array
-
-          const updatedFormData = {
-              localMeetingAgenda: data.localMeetingAgenda || 0,
-              localMemberSignatures: data.localMemberSignatures || 0,
-              meetingMinutes: data.meetingMinutes || 0,
-              photos: data.photos || 0,
-              appointmentOrder: data.appointmentOrder || 0,
-              subcommittee: data.subcommittee || 0,
-              managementPlan: data.managementPlan || 0,
-              protectionPlan: data.protectionPlan || 0,
-              surveyPlan: data.surveyPlan || 0,
-              coordination: data.coordination || 0,
-              expenseSummary: data.expenseSummary || 0,
-              meetingInvite: data.meetingInvite || 0,
-              thankYouNote: data.thankYouNote || 0,
-              operationResults: data.operationResults || 0,
-              analysisResults: data.analysisResults || 0,
-              improvementPlan: data.improvementPlan || 0,
-              annualReport: data.annualReport || 0,
-              budgetDetails: [
-                  {
-                      year: data.budget1_year || 0,
-                      budget: parseFloat(data.budget1_budget) || 0,
-                      expense: parseFloat(data.budget1_expense) || 0,
-                      remaining: parseFloat(data.budget1_remaining) || 0,
-                  },
-                  {
-                      year: data.budget2_year || 0,
-                      budget: parseFloat(data.budget2_budget) || 0,
-                      expense: parseFloat(data.budget2_expense) || 0,
-                      remaining: parseFloat(data.budget2_remaining) || 0,
-                  },
-              ],
-          };
-          setFormData(updatedFormData);
-        } catch (error) {
-          console.error("Error fetching user data", error);
-        }
-      };
-    
-
-    const fetchOldData = async () => {
-        try {
-            const response = await axios.get('http://localhost:8000/api/fetchData', {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-
-            const data = response.data.localManageData[0] || {}; // Assuming there's only one object in the array
+            const response = await axios.get(`http://localhost:8000/api/getDataEmail/${emailUser}`);
+            const data = response.data.localManageData[0] || {};
 
             const updatedFormData = {
                 localMeetingAgenda: data.localMeetingAgenda || 0,
+                refereeLocalMeetingAgenda: data.refereeLocalMeetingAgenda || 0,
+                commentLocalMeetingAgenda: data.commentLocalMeetingAgenda || '',
                 localMemberSignatures: data.localMemberSignatures || 0,
+                refereeLocalMemberSignatures: data.refereeLocalMemberSignatures || 0,
+                commentLocalMemberSignatures: data.commentLocalMemberSignatures || '',
                 meetingMinutes: data.meetingMinutes || 0,
+                refereeMeetingMinutes: data.refereeMeetingMinutes || 0,
+                commentMeetingMinutes: data.commentMeetingMinutes || '',
                 photos: data.photos || 0,
+                refereePhotos: data.refereePhotos || 0,
+                commentPhotos: data.commentPhotos || '',
                 appointmentOrder: data.appointmentOrder || 0,
+                refereeAppointmentOrder: data.refereeAppointmentOrder || 0,
+                commentAppointmentOrder: data.commentAppointmentOrder || '',
                 subcommittee: data.subcommittee || 0,
+                refereeSubcommittee: data.refereeSubcommittee || 0,
+                commentSubcommittee: data.commentSubcommittee || '',
                 managementPlan: data.managementPlan || 0,
+                refereeManagementPlan: data.refereeManagementPlan || 0,
+                commentManagementPlan: data.commentManagementPlan || '',
                 protectionPlan: data.protectionPlan || 0,
+                refereeProtectionPlan: data.refereeProtectionPlan || 0,
+                commentProtectionPlan: data.commentProtectionPlan || '',
                 surveyPlan: data.surveyPlan || 0,
+                refereeSurveyPlan: data.refereeSurveyPlan || 0,
+                commentSurveyPlan: data.commentSurveyPlan || '',
                 coordination: data.coordination || 0,
+                refereeCoordination: data.refereeCoordination || 0,
+                commentCoordination: data.commentCoordination || '',
                 expenseSummary: data.expenseSummary || 0,
+                refereeExpenseSummary: data.refereeExpenseSummary || 0,
+                commentExpenseSummary: data.commentExpenseSummary || '',
                 meetingInvite: data.meetingInvite || 0,
+                refereeMeetingInvite: data.refereeMeetingInvite || 0,
+                commentMeetingInvite: data.commentMeetingInvite || '',
                 thankYouNote: data.thankYouNote || 0,
+                refereeThankYouNote: data.refereeThankYouNote || 0,
+                commentThankYouNote: data.commentThankYouNote || '',
                 operationResults: data.operationResults || 0,
+                refereeOperationResults: data.refereeOperationResults || 0,
+                commentOperationResults: data.commentOperationResults || '',
                 analysisResults: data.analysisResults || 0,
+                refereeAnalysisResults: data.refereeAnalysisResults || 0,
+                commentAnalysisResults: data.commentAnalysisResults || '',
                 improvementPlan: data.improvementPlan || 0,
+                refereeImprovementPlan: data.refereeImprovementPlan || 0,
+                commentImprovementPlan: data.commentImprovementPlan || '',
                 annualReport: data.annualReport || 0,
+                refereeAnnualReport: data.refereeAnnualReport || 0,
+                commentAnnualReport: data.commentAnnualReport || '',
                 budgetDetails: [
                     {
                         year: data.budget1_year || 0,
@@ -154,28 +175,122 @@ function LocalManage() {
                     },
                 ],
             };
-
             setFormData(updatedFormData);
         } catch (error) {
-            console.error('There was an error fetching the form data!', error);
+            console.error("Error fetching user data", error);
         }
     };
 
-    const handleSubmit = async () => {
+    const fetchOldData = async () => {
         try {
-            const response = await axios.post('http://localhost:8000/submit', formData, {
+            const response = await axios.get('http://localhost:8000/api/fetchData', {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            console.log(response.data);
-            // Optionally, perform navigation or display success message
+
+            const data = response.data.localManageData[0] || {};
+
+            const updatedFormData = {
+                localMeetingAgenda: data.localMeetingAgenda || 0,
+                refereeLocalMeetingAgenda: data.refereeLocalMeetingAgenda || 0,
+                commentLocalMeetingAgenda: data.commentLocalMeetingAgenda || '',
+                localMemberSignatures: data.localMemberSignatures || 0,
+                refereeLocalMemberSignatures: data.refereeLocalMemberSignatures || 0,
+                commentLocalMemberSignatures: data.commentLocalMemberSignatures || '',
+                meetingMinutes: data.meetingMinutes || 0,
+                refereeMeetingMinutes: data.refereeMeetingMinutes || 0,
+                commentMeetingMinutes: data.commentMeetingMinutes || '',
+                photos: data.photos || 0,
+                refereePhotos: data.refereePhotos || 0,
+                commentPhotos: data.commentPhotos || '',
+                appointmentOrder: data.appointmentOrder || 0,
+                refereeAppointmentOrder: data.refereeAppointmentOrder || 0,
+                commentAppointmentOrder: data.commentAppointmentOrder || '',
+                subcommittee: data.subcommittee || 0,
+                refereeSubcommittee: data.refereeSubcommittee || 0,
+                commentSubcommittee: data.commentSubcommittee || '',
+                managementPlan: data.managementPlan || 0,
+                refereeManagementPlan: data.refereeManagementPlan || 0,
+                commentManagementPlan: data.commentManagementPlan || '',
+                protectionPlan: data.protectionPlan || 0,
+                refereeProtectionPlan: data.refereeProtectionPlan || 0,
+                commentProtectionPlan: data.commentProtectionPlan || '',
+                surveyPlan: data.surveyPlan || 0,
+                refereeSurveyPlan: data.refereeSurveyPlan || 0,
+                commentSurveyPlan: data.commentSurveyPlan || '',
+                coordination: data.coordination || 0,
+                refereeCoordination: data.refereeCoordination || 0,
+                commentCoordination: data.commentCoordination || '',
+                expenseSummary: data.expenseSummary || 0,
+                refereeExpenseSummary: data.refereeExpenseSummary || 0,
+                commentExpenseSummary: data.commentExpenseSummary || '',
+                meetingInvite: data.meetingInvite || 0,
+                refereeMeetingInvite: data.refereeMeetingInvite || 0,
+                commentMeetingInvite: data.commentMeetingInvite || '',
+                thankYouNote: data.thankYouNote || 0,
+                refereeThankYouNote: data.refereeThankYouNote || 0,
+                commentThankYouNote: data.commentThankYouNote || '',
+                operationResults: data.operationResults || 0,
+                refereeOperationResults: data.refereeOperationResults || 0,
+                commentOperationResults: data.commentOperationResults || '',
+                analysisResults: data.analysisResults || 0,
+                refereeAnalysisResults: data.refereeAnalysisResults || 0,
+                commentAnalysisResults: data.commentAnalysisResults || '',
+                improvementPlan: data.improvementPlan || 0,
+                refereeImprovementPlan: data.refereeImprovementPlan || 0,
+                commentImprovementPlan: data.commentImprovementPlan || '',
+                annualReport: data.annualReport || 0,
+                refereeAnnualReport: data.refereeAnnualReport || 0,
+                commentAnnualReport: data.commentAnnualReport || '',
+                budgetDetails: [
+                    {
+                        year: data.budget1_year || 0,
+                        budget: parseFloat(data.budget1_budget) || 0,
+                        expense: parseFloat(data.budget1_expense) || 0,
+                        remaining: parseFloat(data.budget1_remaining) || 0,
+                    },
+                    {
+                        year: data.budget2_year || 0,
+                        budget: parseFloat(data.budget2_budget) || 0,
+                        expense: parseFloat(data.budget2_expense) || 0,
+                        remaining: parseFloat(data.budget2_remaining) || 0,
+                    },
+                ],
+            };
+            setFormData(updatedFormData);
         } catch (error) {
-            console.error('There was an error submitting the form!', error);
-            // Optionally, display an error message to the user
+            console.error("Error fetching user data", error);
         }
     };
 
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        try {
+            const response = await axios.post('http://localhost:8000/api/postData', formData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            console.log('Data submitted successfully!', response.data);
+            navigate('/');
+        } catch (error) {
+            console.error('Error submitting data:', error);
+        }
+    };
+    const handleCommentInputChange = (e) => {
+        const { name, value } = e.target;
+
+        // Check if the input name starts with 'comment'
+        if (name.startsWith('comment')) {
+            const fieldName = name.substring(7); // Remove 'comment' prefix
+            setFormData(prevFormData => ({
+                ...prevFormData,
+                [`comment${fieldName}`]: value  // Update comment field
+            }));
+        }
+    };
     const rows = [
         { colSpan: 6, title: "1.1 องค์กรปกครองส่วนท้องถิ่น ชุมชน และสถานศึกษา มีส่วนร่วมในการจัดทำฐานทรัพยากรท้องถิ่น (30 คะแนน)" },
         { colSpan: 6, title: "1) รายงานการประชุม (20 คะแนน)" },
@@ -265,9 +380,9 @@ function LocalManage() {
                                                     <tbody>
                                                         {formData.budgetDetails.map((detail, i) => (
                                                             <tr key={`nested-${i}`}>
-                                                                <td><input type="number" className="score-input" data-index={i} data-field="year" value={detail.year} min="0" max="99" onChange={handleInputChange} disabled={isAdmin}/></td>
-                                                                <td><input type="number" className={`r${i}d1-input`} data-index={i} data-field="budget" value={detail.budget} min="0" max={9007199254740991} onChange={handleInputChange} disabled={isAdmin}/></td>
-                                                                <td><input type="number" className={`r${i}d2-input`} data-index={i} data-field="expense" value={detail.expense} min="0" max={9007199254740991} onChange={handleInputChange} disabled={isAdmin}/></td>
+                                                                <td><input type="number" className="score-input" data-index={i} data-field="year" value={detail.year} min="0" max="99" onChange={handleInputChange} disabled={isAdmin} /></td>
+                                                                <td><input type="number" className={`r${i}d1-input`} data-index={i} data-field="budget" value={detail.budget} min="0" max={9007199254740991} onChange={handleInputChange} disabled={isAdmin} /></td>
+                                                                <td><input type="number" className={`r${i}d2-input`} data-index={i} data-field="expense" value={detail.expense} min="0" max={9007199254740991} onChange={handleInputChange} disabled={isAdmin} /></td>
                                                                 <td><input type="number" className={`r${i}d3-input`} data-index={i} data-field="remaining" value={detail.remaining} min="0" max={9007199254740991} onChange={handleInputChange} disabled={isAdmin} /></td>
                                                             </tr>
                                                         ))}
@@ -297,18 +412,21 @@ function LocalManage() {
                                                 name={`referee${name.charAt(0).toUpperCase() + name.slice(1)}`}
                                                 min="0"
                                                 max={max}
+                                                value={formData[`referee${name.charAt(0).toUpperCase() + name.slice(1)}`]}
                                                 onChange={handleInputChange}
                                                 data-min="0"
                                                 data-max={max}
                                                 disabled={!isAdmin}
                                             />
+
                                         </td>
                                         <td>
                                             <input
                                                 type="text"
                                                 className="comment"
                                                 name={`comment${name.charAt(0).toUpperCase() + name.slice(1)}`}
-                                                onChange={handleInputChange}
+                                                onChange={handleCommentInputChange}
+                                                value={formData[`comment${name.charAt(0).toUpperCase() + name.slice(1)}`]}
                                                 disabled={!isAdmin}
                                             />
                                         </td>
