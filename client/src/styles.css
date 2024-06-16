@@ -149,7 +149,6 @@ html {
 
 .navbar {
   background: linear-gradient(to right, rgba(52, 73, 94, 0.8), rgba(44, 62, 80, 0.8));
-  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
