@@ -28,64 +28,55 @@ function LocalGovernmentForm() {
   });
 
   useEffect(() => {
-    if (!token){
-      navigate('/')
-    }else{
-      if (emailUser) {
-          localStorage.setItem('updateData', true)
-        fetchUserData();
-      } else {
-          localStorage.setItem('updateData', true)
-        fetchOldData()
-      }
+    if (!token) {
+      navigate('/');
+    } else if (fetchData === 'false'){
+      navigate('/localform')
+    }else {
+        localStorage.setItem('updateData', true);
+          fetchOldData();
     }
-
-  }, [emailUser]);
-  
-
-  const fetchUserData = async () => {
-    try {
-      const response = await axios.get(`http://localhost:8000/api/getDataEmail/${emailUser}`);
-      const data = response.data.dataResults[0];
-      setFormData({
-        organizationName: data.organizationName,
-        localID: data.localID,
-        phoneNumber: data.phoneNumber,
-        faxNumber: data.faxNumber,
-        email: data.email,
-        subDistrict: data.subDistrict,
-        district: data.district,
-        province: data.province,
-        affiliation: data.affiliation,
-        headmasterName: data.headmasterName,
-        highlightedActivities: data.highlightedActivities
-      });
-    } catch (error) {
-      console.error("Error fetching user data", error);
-    }
-  };
+  },[emailUser, fetchData, token]);
 
   const fetchOldData = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/api/fetchData", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const data = response.data.localGovernmentData[0];
-      setFormData({
-        organizationName: data.organizationName,
-        localID: data.localID,
-        phoneNumber: data.phoneNumber,
-        faxNumber: data.faxNumber,
-        email: data.email,
-        subDistrict: data.subDistrict,
-        district: data.district,
-        province: data.province,
-        affiliation: data.affiliation,
-        headmasterName: data.headmasterName,
-        highlightedActivities: data.highlightedActivities
-      });
+      if (emailUser) {
+        const response = await axios.get(`http://localhost:8000/api/getDataEmail/${emailUser}`);
+        const data = response.data.dataResults[0];
+        setFormData({
+          organizationName: data.organizationName,
+          localID: data.localID,
+          phoneNumber: data.phoneNumber,
+          faxNumber: data.faxNumber,
+          email: data.email,
+          subDistrict: data.subDistrict,
+          district: data.district,
+          province: data.province,
+          affiliation: data.affiliation,
+          headmasterName: data.headmasterName,
+          highlightedActivities: data.highlightedActivities
+        });
+      } else {
+        const response = await axios.get("http://localhost:8000/api/fetchData", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const data = response.data.localGovernmentData[0];
+        setFormData({
+          organizationName: data.organizationName,
+          localID: data.localID,
+          phoneNumber: data.phoneNumber,
+          faxNumber: data.faxNumber,
+          email: data.email,
+          subDistrict: data.subDistrict,
+          district: data.district,
+          province: data.province,
+          affiliation: data.affiliation,
+          headmasterName: data.headmasterName,
+          highlightedActivities: data.highlightedActivities
+        });
+      }
     } catch (error) {
       console.error("Error fetching data:", error);
       Swal.fire({
@@ -94,7 +85,8 @@ function LocalGovernmentForm() {
         text: "ไม่สามารถดึงข้อมูลจากฐานข้อมูลได้",
       });
     }
-  }
+  };
+  
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
