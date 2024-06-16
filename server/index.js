@@ -531,7 +531,7 @@ app.post('/api/localsubmit', verifyUser, async (req, res) => {
 });
 
 
-app.get('/api/getDataEmail/:email', async (req, res) => {
+app.get('/api/getDataEmail/:email', verifyUser, async (req, res) => {
   const email = req.params.email; // รับอีเมลผู้ใช้จาก request body
   try {
     // สร้าง SQL query เพื่อดึงข้อมูลจาก MySQL โดยใช้อีเมล

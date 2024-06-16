@@ -41,7 +41,11 @@ function LocalGovernmentForm() {
   const fetchOldData = async () => {
     try {
       if (emailUser) {
-        const response = await axios.get(`http://localhost:8000/api/getDataEmail/${emailUser}`);
+        const response = await axios.get(`http://localhost:8000/api/getDataEmail/${emailUser}`,{
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         const data = response.data.dataResults[0];
         setFormData({
           organizationName: data.organizationName,
