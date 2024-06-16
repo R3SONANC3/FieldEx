@@ -46,7 +46,7 @@ function LocalGovernmentForm() {
   const fetchUserData = async () => {
     try {
       const response = await axios.get(`http://localhost:8000/api/getDataEmail/${emailUser}`);
-      const data = response.data[0];
+      const data = response.data.dataResults[0];
       setFormData({
         organizationName: data.organizationName,
         localID: data.localID,
@@ -147,7 +147,7 @@ function LocalGovernmentForm() {
         title: "ส่งข้อมูลสำเร็จ",
         text: "ไปที่หน้าต่อไป"
       });
-      navigate("/localconscript");
+      navigate("/localconscript", {state:{emailUser}});
     } catch (error) {
       await Swal.fire({
         icon: "error",

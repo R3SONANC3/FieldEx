@@ -468,9 +468,11 @@ app.get('/api/getDataEmail/:email', async (req, res) => {
     if (user.institutionID) {
       // ถ้าเป็น institutionID ให้ดึงข้อมูลจากตาราง FieldEx.institution
       [dataResults] = await connector.query('SELECT * FROM FieldEx.institution WHERE institutionID = ?', user.institutionID);
+      
     } else if (user.localID) {
       // ถ้าเป็น localID ให้ดึงข้อมูลจากตาราง FieldEx.localGovernmentData
       [dataResults] = await connector.query('SELECT * FROM FieldEx.localGovernmentData WHERE localID = ?', user.localID);
+      [localManageData] = await connector.query(`SELECT * FROM FieldEx.localManageData WHERE localID = ?`, user.localID);
     }
 
     if (!dataResults || dataResults.length === 0) {
@@ -478,7 +480,7 @@ app.get('/api/getDataEmail/:email', async (req, res) => {
       return;
     }
 
-    res.json(dataResults); // ส่งข้อมูลที่ดึงได้กลับไปยังผู้ใช้
+    res.json({dataResults, localManageData}); // ส่งข้อมูลที่ดึงได้กลับไปยังผู้ใช้
   } catch (error) {
     console.error('เกิดข้อผิดพลาด: ' + error.message);
     res.status(500).send('เกิดข้อผิดพลาดบางอย่าง');

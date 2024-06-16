@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../../Navbar';
 import './localform.css';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 function LocalManage() {
     const [isAdmin, setIsAdmin] = useState(false);
+    const location = useLocation();
+    const emailUser = location.state?.emailUser;
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
         localMeetingAgenda: 0,
@@ -38,7 +40,7 @@ function LocalManage() {
         if (!token) {
             navigate('/');
         } else {
-            fetchOldData();
+            fetchUserData();
         }
     }, [navigate, token]);
 
@@ -63,6 +65,51 @@ function LocalManage() {
             }));
         }
     };
+
+    const fetchUserData = async () => {
+        try {
+          const response = await axios.get(`http://localhost:8000/api/getDataEmail/${emailUser}`);
+          const data = response.data.localManageData[0] || {}; // Assuming there's only one object in the array
+
+          const updatedFormData = {
+              localMeetingAgenda: data.localMeetingAgenda || 0,
+              localMemberSignatures: data.localMemberSignatures || 0,
+              meetingMinutes: data.meetingMinutes || 0,
+              photos: data.photos || 0,
+              appointmentOrder: data.appointmentOrder || 0,
+              subcommittee: data.subcommittee || 0,
+              managementPlan: data.managementPlan || 0,
+              protectionPlan: data.protectionPlan || 0,
+              surveyPlan: data.surveyPlan || 0,
+              coordination: data.coordination || 0,
+              expenseSummary: data.expenseSummary || 0,
+              meetingInvite: data.meetingInvite || 0,
+              thankYouNote: data.thankYouNote || 0,
+              operationResults: data.operationResults || 0,
+              analysisResults: data.analysisResults || 0,
+              improvementPlan: data.improvementPlan || 0,
+              annualReport: data.annualReport || 0,
+              budgetDetails: [
+                  {
+                      year: data.budget1_year || 0,
+                      budget: parseFloat(data.budget1_budget) || 0,
+                      expense: parseFloat(data.budget1_expense) || 0,
+                      remaining: parseFloat(data.budget1_remaining) || 0,
+                  },
+                  {
+                      year: data.budget2_year || 0,
+                      budget: parseFloat(data.budget2_budget) || 0,
+                      expense: parseFloat(data.budget2_expense) || 0,
+                      remaining: parseFloat(data.budget2_remaining) || 0,
+                  },
+              ],
+          };
+          setFormData(updatedFormData);
+        } catch (error) {
+          console.error("Error fetching user data", error);
+        }
+      };
+    
 
     const fetchOldData = async () => {
         try {
@@ -218,10 +265,10 @@ function LocalManage() {
                                                     <tbody>
                                                         {formData.budgetDetails.map((detail, i) => (
                                                             <tr key={`nested-${i}`}>
-                                                                <td><input type="number" className="score-input" data-index={i} data-field="year" value={detail.year} min="0" max="99" onChange={handleInputChange} /></td>
-                                                                <td><input type="number" className={`r${i}d1-input`} data-index={i} data-field="budget" value={detail.budget} min="0" max={9007199254740991} onChange={handleInputChange} /></td>
-                                                                <td><input type="number" className={`r${i}d2-input`} data-index={i} data-field="expense" value={detail.expense} min="0" max={9007199254740991} onChange={handleInputChange} /></td>
-                                                                <td><input type="number" className={`r${i}d3-input`} data-index={i} data-field="remaining" value={detail.remaining} min="0" max={9007199254740991} onChange={handleInputChange} /></td>
+                                                                <td><input type="number" className="score-input" data-index={i} data-field="year" value={detail.year} min="0" max="99" onChange={handleInputChange} disabled={isAdmin}/></td>
+                                                                <td><input type="number" className={`r${i}d1-input`} data-index={i} data-field="budget" value={detail.budget} min="0" max={9007199254740991} onChange={handleInputChange} disabled={isAdmin}/></td>
+                                                                <td><input type="number" className={`r${i}d2-input`} data-index={i} data-field="expense" value={detail.expense} min="0" max={9007199254740991} onChange={handleInputChange} disabled={isAdmin}/></td>
+                                                                <td><input type="number" className={`r${i}d3-input`} data-index={i} data-field="remaining" value={detail.remaining} min="0" max={9007199254740991} onChange={handleInputChange} disabled={isAdmin} /></td>
                                                             </tr>
                                                         ))}
                                                     </tbody>

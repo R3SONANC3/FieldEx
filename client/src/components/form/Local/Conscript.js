@@ -1,13 +1,16 @@
 import React from 'react';
 import Navbar from '../../Navbar';
 import './localform.css';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 function Conscript() {
+    const location = useLocation();
     const navigate = useNavigate();
+    const emailUser = location.state?.emailUser;
 
     const handleNextPage = () => {
-        navigate('/localmanage');
+        navigate('/localmanage', {state:{emailUser}});
+        console.log(emailUser);
     }
 
     return (

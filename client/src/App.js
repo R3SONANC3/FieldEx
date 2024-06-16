@@ -11,7 +11,7 @@ import LocalGovernmentForm from "./components/form/Local/LocalGovernmentForm ";
 import Conscript from "./components/form/Local/Conscript";
 import Summary from "./components/form/Local/Summary";
 import LocalManage from "./components/form/Local/LocalManage"
-import LocalOpera from './components/form/Local/LocalOpera'
+import LocalOpera from './components/form/Local/LocalOperaFirst'
 
 function App() {
   return (
