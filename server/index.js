@@ -415,7 +415,6 @@ app.put('/api/updateData', verifyUser, async (req, res) => {
 app.post('/api/localsubmit', verifyUser, async (req, res) => {
   const role = req.user.role;
   const { emailUser } = req.body;
-
   try {
     // Fetch user data including localId and institutionID
     const [userData] = await connector.query('SELECT localId, institutionID FROM FieldEx.users WHERE email = ?', emailUser);
@@ -471,7 +470,6 @@ app.post('/api/localsubmit', verifyUser, async (req, res) => {
         refereeAnnualReport = ?, commentAnnualReport = ?
       WHERE localID = ?
     `;
-
       // Execute admin insert query
       await connector.query(adminUpdateQuery, [
         refereeLocalMeetingAgenda, commentLocalMeetingAgenda, 

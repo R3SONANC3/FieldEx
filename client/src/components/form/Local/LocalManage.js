@@ -3,7 +3,6 @@ import Navbar from '../../Navbar';
 import './localform.css';
 import axios from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
-import Swal from 'sweetalert2'
 
 function LocalManage() {
     const [isAdmin, setIsAdmin] = useState(false);
@@ -75,8 +74,12 @@ function LocalManage() {
         setIsAdmin(localStorage.getItem('userRole') === 'admin');
         if (!token) {
             navigate('/');
-        } else { 
-            fetchData();
+        } else {
+            if (emailUser) {
+                fetchUserData();
+            } else {
+                fetchOldData();
+            }
         }
     }, [navigate, token]);
 
@@ -99,119 +102,193 @@ function LocalManage() {
             }));
         }
     };
-    const fetchData = async () => {
-        try {
-          let response;
-          if (emailUser) {
-            response = await axios.get(`http://localhost:8000/api/getDataEmail/${emailUser}`, {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            });
-          } else {
-            response = await axios.get('http://localhost:8000/api/fetchData', {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            });
-          }
-      
-          const data = response.data.localManageData[0] || {};
-      
-          const updatedFormData = {
-            localMeetingAgenda: data.localMeetingAgenda || 0,
-            refereeLocalMeetingAgenda: data.refereeLocalMeetingAgenda || 0,
-            commentLocalMeetingAgenda: data.commentLocalMeetingAgenda || '',
-            localMemberSignatures: data.localMemberSignatures || 0,
-            refereeLocalMemberSignatures: data.refereeLocalMemberSignatures || 0,
-            commentLocalMemberSignatures: data.commentLocalMemberSignatures || '',
-            meetingMinutes: data.meetingMinutes || 0,
-            refereeMeetingMinutes: data.refereeMeetingMinutes || 0,
-            commentMeetingMinutes: data.commentMeetingMinutes || '',
-            photos: data.photos || 0,
-            refereePhotos: data.refereePhotos || 0,
-            commentPhotos: data.commentPhotos || '',
-            appointmentOrder: data.appointmentOrder || 0,
-            refereeAppointmentOrder: data.refereeAppointmentOrder || 0,
-            commentAppointmentOrder: data.commentAppointmentOrder || '',
-            subcommittee: data.subcommittee || 0,
-            refereeSubcommittee: data.refereeSubcommittee || 0,
-            commentSubcommittee: data.commentSubcommittee || '',
-            managementPlan: data.managementPlan || 0,
-            refereeManagementPlan: data.refereeManagementPlan || 0,
-            commentManagementPlan: data.commentManagementPlan || '',
-            protectionPlan: data.protectionPlan || 0,
-            refereeProtectionPlan: data.refereeProtectionPlan || 0,
-            commentProtectionPlan: data.commentProtectionPlan || '',
-            surveyPlan: data.surveyPlan || 0,
-            refereeSurveyPlan: data.refereeSurveyPlan || 0,
-            commentSurveyPlan: data.commentSurveyPlan || '',
-            coordination: data.coordination || 0,
-            refereeCoordination: data.refereeCoordination || 0,
-            commentCoordination: data.commentCoordination || '',
-            expenseSummary: data.expenseSummary || 0,
-            refereeExpenseSummary: data.refereeExpenseSummary || 0,
-            commentExpenseSummary: data.commentExpenseSummary || '',
-            meetingInvite: data.meetingInvite || 0,
-            refereeMeetingInvite: data.refereeMeetingInvite || 0,
-            commentMeetingInvite: data.commentMeetingInvite || '',
-            thankYouNote: data.thankYouNote || 0,
-            refereeThankYouNote: data.refereeThankYouNote || 0,
-            commentThankYouNote: data.commentThankYouNote || '',
-            operationResults: data.operationResults || 0,
-            refereeOperationResults: data.refereeOperationResults || 0,
-            commentOperationResults: data.commentOperationResults || '',
-            analysisResults: data.analysisResults || 0,
-            refereeAnalysisResults: data.refereeAnalysisResults || 0,
-            commentAnalysisResults: data.commentAnalysisResults || '',
-            improvementPlan: data.improvementPlan || 0,
-            refereeImprovementPlan: data.refereeImprovementPlan || 0,
-            commentImprovementPlan: data.commentImprovementPlan || '',
-            annualReport: data.annualReport || 0,
-            refereeAnnualReport: data.refereeAnnualReport || 0,
-            commentAnnualReport: data.commentAnnualReport || '',
-            budgetDetails: [
-              {
-                year: data.budget1_year || 0,
-                budget: parseFloat(data.budget1_budget) || 0,
-                expense: parseFloat(data.budget1_expense) || 0,
-                remaining: parseFloat(data.budget1_remaining) || 0,
-              },
-              {
-                year: data.budget2_year || 0,
-                budget: parseFloat(data.budget2_budget) || 0,
-                expense: parseFloat(data.budget2_expense) || 0,
-                remaining: parseFloat(data.budget2_remaining) || 0,
-              },
-            ],
-          };
-          setFormData(updatedFormData);
-        } catch (error) {
-          console.error("Error fetching data:", error);
-          Swal.fire({
-            icon: "error",
-            title: "เกิดข้อผิดพลาดในการดึงข้อมูล!",
-            text: "ไม่สามารถดึงข้อมูลจากฐานข้อมูลได้",
-          });
-        }
-      };
-      
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
+    const fetchUserData = async () => {
         try {
-            const response = await axios.post('http://localhost:8000/api/postData', formData, {
+            const response = await axios.get(`http://localhost:8000/api/getDataEmail/${emailUser}`,{
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            console.log('Data submitted successfully!', response.data);
-            navigate('/');
+            const data = response.data.localManageData[0] || {};
+
+            const updatedFormData = {
+                localMeetingAgenda: data.localMeetingAgenda || 0,
+                refereeLocalMeetingAgenda: data.refereeLocalMeetingAgenda || 0,
+                commentLocalMeetingAgenda: data.commentLocalMeetingAgenda || '',
+                localMemberSignatures: data.localMemberSignatures || 0,
+                refereeLocalMemberSignatures: data.refereeLocalMemberSignatures || 0,
+                commentLocalMemberSignatures: data.commentLocalMemberSignatures || '',
+                meetingMinutes: data.meetingMinutes || 0,
+                refereeMeetingMinutes: data.refereeMeetingMinutes || 0,
+                commentMeetingMinutes: data.commentMeetingMinutes || '',
+                photos: data.photos || 0,
+                refereePhotos: data.refereePhotos || 0,
+                commentPhotos: data.commentPhotos || '',
+                appointmentOrder: data.appointmentOrder || 0,
+                refereeAppointmentOrder: data.refereeAppointmentOrder || 0,
+                commentAppointmentOrder: data.commentAppointmentOrder || '',
+                subcommittee: data.subcommittee || 0,
+                refereeSubcommittee: data.refereeSubcommittee || 0,
+                commentSubcommittee: data.commentSubcommittee || '',
+                managementPlan: data.managementPlan || 0,
+                refereeManagementPlan: data.refereeManagementPlan || 0,
+                commentManagementPlan: data.commentManagementPlan || '',
+                protectionPlan: data.protectionPlan || 0,
+                refereeProtectionPlan: data.refereeProtectionPlan || 0,
+                commentProtectionPlan: data.commentProtectionPlan || '',
+                surveyPlan: data.surveyPlan || 0,
+                refereeSurveyPlan: data.refereeSurveyPlan || 0,
+                commentSurveyPlan: data.commentSurveyPlan || '',
+                coordination: data.coordination || 0,
+                refereeCoordination: data.refereeCoordination || 0,
+                commentCoordination: data.commentCoordination || '',
+                expenseSummary: data.expenseSummary || 0,
+                refereeExpenseSummary: data.refereeExpenseSummary || 0,
+                commentExpenseSummary: data.commentExpenseSummary || '',
+                meetingInvite: data.meetingInvite || 0,
+                refereeMeetingInvite: data.refereeMeetingInvite || 0,
+                commentMeetingInvite: data.commentMeetingInvite || '',
+                thankYouNote: data.thankYouNote || 0,
+                refereeThankYouNote: data.refereeThankYouNote || 0,
+                commentThankYouNote: data.commentThankYouNote || '',
+                operationResults: data.operationResults || 0,
+                refereeOperationResults: data.refereeOperationResults || 0,
+                commentOperationResults: data.commentOperationResults || '',
+                analysisResults: data.analysisResults || 0,
+                refereeAnalysisResults: data.refereeAnalysisResults || 0,
+                commentAnalysisResults: data.commentAnalysisResults || '',
+                improvementPlan: data.improvementPlan || 0,
+                refereeImprovementPlan: data.refereeImprovementPlan || 0,
+                commentImprovementPlan: data.commentImprovementPlan || '',
+                annualReport: data.annualReport || 0,
+                refereeAnnualReport: data.refereeAnnualReport || 0,
+                commentAnnualReport: data.commentAnnualReport || '',
+                budgetDetails: [
+                    {
+                        year: data.budget1_year || 0,
+                        budget: parseFloat(data.budget1_budget) || 0,
+                        expense: parseFloat(data.budget1_expense) || 0,
+                        remaining: parseFloat(data.budget1_remaining) || 0,
+                    },
+                    {
+                        year: data.budget2_year || 0,
+                        budget: parseFloat(data.budget2_budget) || 0,
+                        expense: parseFloat(data.budget2_expense) || 0,
+                        remaining: parseFloat(data.budget2_remaining) || 0,
+                    },
+                ],
+            };
+            setFormData(updatedFormData);
         } catch (error) {
-            console.error('Error submitting data:', error);
+            console.error("Error fetching user data", error);
         }
     };
+
+    const fetchOldData = async () => {
+        try {
+            const response = await axios.get('http://localhost:8000/api/fetchData', {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            const data = response.data.localManageData[0] || {};
+
+            const updatedFormData = {
+                localMeetingAgenda: data.localMeetingAgenda || 0,
+                refereeLocalMeetingAgenda: data.refereeLocalMeetingAgenda || 0,
+                commentLocalMeetingAgenda: data.commentLocalMeetingAgenda || '',
+                localMemberSignatures: data.localMemberSignatures || 0,
+                refereeLocalMemberSignatures: data.refereeLocalMemberSignatures || 0,
+                commentLocalMemberSignatures: data.commentLocalMemberSignatures || '',
+                meetingMinutes: data.meetingMinutes || 0,
+                refereeMeetingMinutes: data.refereeMeetingMinutes || 0,
+                commentMeetingMinutes: data.commentMeetingMinutes || '',
+                photos: data.photos || 0,
+                refereePhotos: data.refereePhotos || 0,
+                commentPhotos: data.commentPhotos || '',
+                appointmentOrder: data.appointmentOrder || 0,
+                refereeAppointmentOrder: data.refereeAppointmentOrder || 0,
+                commentAppointmentOrder: data.commentAppointmentOrder || '',
+                subcommittee: data.subcommittee || 0,
+                refereeSubcommittee: data.refereeSubcommittee || 0,
+                commentSubcommittee: data.commentSubcommittee || '',
+                managementPlan: data.managementPlan || 0,
+                refereeManagementPlan: data.refereeManagementPlan || 0,
+                commentManagementPlan: data.commentManagementPlan || '',
+                protectionPlan: data.protectionPlan || 0,
+                refereeProtectionPlan: data.refereeProtectionPlan || 0,
+                commentProtectionPlan: data.commentProtectionPlan || '',
+                surveyPlan: data.surveyPlan || 0,
+                refereeSurveyPlan: data.refereeSurveyPlan || 0,
+                commentSurveyPlan: data.commentSurveyPlan || '',
+                coordination: data.coordination || 0,
+                refereeCoordination: data.refereeCoordination || 0,
+                commentCoordination: data.commentCoordination || '',
+                expenseSummary: data.expenseSummary || 0,
+                refereeExpenseSummary: data.refereeExpenseSummary || 0,
+                commentExpenseSummary: data.commentExpenseSummary || '',
+                meetingInvite: data.meetingInvite || 0,
+                refereeMeetingInvite: data.refereeMeetingInvite || 0,
+                commentMeetingInvite: data.commentMeetingInvite || '',
+                thankYouNote: data.thankYouNote || 0,
+                refereeThankYouNote: data.refereeThankYouNote || 0,
+                commentThankYouNote: data.commentThankYouNote || '',
+                operationResults: data.operationResults || 0,
+                refereeOperationResults: data.refereeOperationResults || 0,
+                commentOperationResults: data.commentOperationResults || '',
+                analysisResults: data.analysisResults || 0,
+                refereeAnalysisResults: data.refereeAnalysisResults || 0,
+                commentAnalysisResults: data.commentAnalysisResults || '',
+                improvementPlan: data.improvementPlan || 0,
+                refereeImprovementPlan: data.refereeImprovementPlan || 0,
+                commentImprovementPlan: data.commentImprovementPlan || '',
+                annualReport: data.annualReport || 0,
+                refereeAnnualReport: data.refereeAnnualReport || 0,
+                commentAnnualReport: data.commentAnnualReport || '',
+                budgetDetails: [
+                    {
+                        year: data.budget1_year || 0,
+                        budget: parseFloat(data.budget1_budget) || 0,
+                        expense: parseFloat(data.budget1_expense) || 0,
+                        remaining: parseFloat(data.budget1_remaining) || 0,
+                    },
+                    {
+                        year: data.budget2_year || 0,
+                        budget: parseFloat(data.budget2_budget) || 0,
+                        expense: parseFloat(data.budget2_expense) || 0,
+                        remaining: parseFloat(data.budget2_remaining) || 0,
+                    },
+                ],
+            };
+            setFormData(updatedFormData);
+        } catch (error) {
+            console.error("Error fetching user data", error);
+        }
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const emailUser = location.state?.emailUser;
+        try {
+            const response = await axios.post('http://localhost:8000/api/localsubmit', {
+                ...formData,
+                emailUser: emailUser
+            }, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            console.log(formData);
+            console.log("Submit response:", response.data);
+            // Redirect or show success message
+        } catch (error) {
+            console.error("Error submitting data:", error);
+            // Handle error, show error message
+        }
+    };
+
     const handleCommentInputChange = (e) => {
         const { name, value } = e.target;
 
