@@ -124,26 +124,11 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
-
 app.get('/api/logout', (req, res) => {
   return res.json({
     Status: "Logout Success"
   });
 });
-
-app.get('/api/users', verifyUser, async (req, res) => {
-  if (req.user.role !== 'admin') {
-    return res.status(403).json({ message: "Access denied" });
-  }
-  try {
-    const results = await connector.query('SELECT * FROM FieldEx.users');
-    res.json(results);
-  } catch (error) {
-    console.error('Error retrieving users:', error);
-    res.status(500).json({ message: "Failed to retrieve users", error });
-  }
-});
-
 
 app.get('/api/usersData', verifyUser, async (req, res) => {
   if (req.user.role !== 'admin') {
@@ -151,11 +136,41 @@ app.get('/api/usersData', verifyUser, async (req, res) => {
       message: "Access denied"
     });
   }
-
   try {
-    const [results] = await connector.query('SELECT institutionID, institutionName FROM FieldEx.institution');
+    // ดึงข้อมูล email, localId และ institutionID จากตาราง users
+    const [userData] = await connector.query('SELECT email, localId, institutionID FROM users WHERE localId IS NOT NULL OR institutionID IS NOT NULL');
+    
+    // สร้างอาร์เรย์ว่างเพื่อเก็บข้อมูล
+    const institutionIDs = [];
+    const localIDs = [];
+
+    // วนลูปผ่านข้อมูลทุกตัวใน userData เพื่อแยก email และ institutionID หรือ localID
+    userData.forEach(user => {
+      // เก็บ email ไว้ทุกครั้ง
+      const userEmail = user.email;
+      if (user.institutionID !== null) {
+        institutionIDs.push({ userEmail, id: user.institutionID });
+      }
+      if (user.localId !== null) {
+        localIDs.push({ userEmail, id: user.localId });
+      }
+    });
+
+    // ดึงข้อมูล institutionName จาก FieldEx.institution
+    const institutionNames = await Promise.all(institutionIDs.map(async ({ id }) => {
+      const [institutionData] = await connector.query('SELECT institutionName FROM FieldEx.institution WHERE institutionID = ?', [id]);
+      return institutionData.length > 0 ? institutionData[0].institutionName : null;
+    }));
+
+    // ดึงข้อมูล organizationName จาก FieldEx.localGovernmentData
+    const organizationNames = await Promise.all(localIDs.map(async ({ id }) => {
+      const [organizationData] = await connector.query('SELECT organizationName FROM FieldEx.localGovernmentData WHERE localID = ?', [id]);
+      return organizationData.length > 0 ? organizationData[0].organizationName : null;
+    }));
+
     res.status(200).json({
-      results
+      institutionIDs: institutionIDs.map((data, index) => ({ ...data, institutionName: institutionNames[index] })),
+      localIDs: localIDs.map((data, index) => ({ ...data, organizationName: organizationNames[index] }))
     });
   } catch (error) {
     console.log('error', error);
@@ -165,7 +180,6 @@ app.get('/api/usersData', verifyUser, async (req, res) => {
     });
   }
 });
-
 
 app.get('/api/fetchforms', verifyUser, async (req, res) => {
   const connection = await connector.getConnection();
@@ -335,7 +349,6 @@ app.get('/api/fetchData', verifyUser, async (req, res) => {
   }
 });
 
-
 app.post('/api/submitlc', verifyUser,async (req,res) =>{
   const { organizationName, localID, phoneNumber, faxNumber, email, subDistrict, district, province, affiliation, headmasterName, highlightedActivities,
   }  = req.body; 
@@ -434,6 +447,41 @@ app.post('/submit', async (req, res) => {
       console.error(error);
       await initMySQL();
       res.status(500).send('An error occurred while inserting data');
+  }
+});
+
+
+app.get('/api/getDataEmail/:email', async (req, res) => {
+  const email  = req.params.email; // รับอีเมลผู้ใช้จาก request body
+  try {
+    // สร้าง SQL query เพื่อดึงข้อมูลจาก MySQL โดยใช้อีเมล
+    const [userResults] = await connector.query('SELECT * FROM FieldEx.users WHERE email = ?', email);
+    
+    if (userResults.length === 0) {
+      res.status(404).send('ไม่พบผู้ใช้ด้วยอีเมลที่ระบุ');
+      return;
+    }
+
+    const user = userResults[0];
+    let dataResults;
+
+    if (user.institutionID) {
+      // ถ้าเป็น institutionID ให้ดึงข้อมูลจากตาราง FieldEx.institution
+      [dataResults] = await connector.query('SELECT * FROM FieldEx.institution WHERE institutionID = ?', user.institutionID);
+    } else if (user.localID) {
+      // ถ้าเป็น localID ให้ดึงข้อมูลจากตาราง FieldEx.localGovernmentData
+      [dataResults] = await connector.query('SELECT * FROM FieldEx.localGovernmentData WHERE localID = ?', user.localID);
+    }
+
+    if (!dataResults || dataResults.length === 0) {
+      res.status(404).send('ไม่พบข้อมูลที่เกี่ยวข้อง');
+      return;
+    }
+
+    res.json(dataResults); // ส่งข้อมูลที่ดึงได้กลับไปยังผู้ใช้
+  } catch (error) {
+    console.error('เกิดข้อผิดพลาด: ' + error.message);
+    res.status(500).send('เกิดข้อผิดพลาดบางอย่าง');
   }
 });
 

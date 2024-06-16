@@ -3,11 +3,15 @@ import './localform.css'; // Import CSS file
 import Navbar from '../../Navbar';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation  } from 'react-router-dom';
 import 'sweetalert2/dist/sweetalert2.min.css';
 
 function LocalGovernmentForm() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const emailUser = location.state?.emailUser;
+  const token = localStorage.getItem("token");
+  const fetchData = localStorage.getItem("fetchData");
 
   const [formData, setFormData] = useState({
     organizationName: "",
@@ -23,18 +27,43 @@ function LocalGovernmentForm() {
     highlightedActivities: ""
   });
 
-  const token = localStorage.getItem("token");
-  const fetchData = localStorage.getItem("fetchData");
-
   useEffect(() => {
-    if (!token) {
-      navigate("/");
+    if (!token){
+      navigate('/')
+    }else{
+      if (emailUser) {
+          localStorage.setItem('updateData', true)
+        fetchUserData();
+      } else {
+          localStorage.setItem('updateData', true)
+        fetchOldData()
+      }
     }
-    if (fetchData === "true") {
-      localStorage.setItem('updateData', true)
-      fetchOldData();
+
+  }, [emailUser]);
+  
+
+  const fetchUserData = async () => {
+    try {
+      const response = await axios.get(`http://localhost:8000/api/getDataEmail/${emailUser}`);
+      const data = response.data[0];
+      setFormData({
+        organizationName: data.organizationName,
+        localID: data.localID,
+        phoneNumber: data.phoneNumber,
+        faxNumber: data.faxNumber,
+        email: data.email,
+        subDistrict: data.subDistrict,
+        district: data.district,
+        province: data.province,
+        affiliation: data.affiliation,
+        headmasterName: data.headmasterName,
+        highlightedActivities: data.highlightedActivities
+      });
+    } catch (error) {
+      console.error("Error fetching user data", error);
     }
-  }, [fetchData, navigate, token]);
+  };
 
   const fetchOldData = async () => {
     try {
