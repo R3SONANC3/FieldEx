@@ -11,7 +11,7 @@ function SelectForm({ setOpenModal }) {
         const fetchForms = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const response = await axios.get('http://localhost:8000/api/fetchforms', {
+                const response = await axios.get('http://localhost:8000/api/user/fetchforms', {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }

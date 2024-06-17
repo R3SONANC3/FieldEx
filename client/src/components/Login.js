@@ -28,7 +28,7 @@ function Login({ setOpenModal, setIsAuthenticated, setUserRole }) {
     try {
       let response;
       if (isSignUp) {
-        response = await axios.post("http://localhost:8000/api/register", {
+        response = await axios.post("http://localhost:8000/api/auth/register", {
           email,
           password,
         });
@@ -39,7 +39,7 @@ function Login({ setOpenModal, setIsAuthenticated, setUserRole }) {
           icon: 'success',
         });
       } else {
-        response = await axios.post("http://localhost:8000/api/login", {
+        response = await axios.post("http://localhost:8000/api/auth/login", {
           email,
           password,
         });

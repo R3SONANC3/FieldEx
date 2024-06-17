@@ -38,7 +38,7 @@ const AdminDashboard = () => {
 
   const fetchUsersData = async (token) => {
     try {
-      const response = await axios.get("http://localhost:8000/api/usersData", {
+      const response = await axios.get("http://localhost:8000/api/user/usersData", {
         headers: {
           Authorization: `Bearer ${token}`
         },

@@ -41,7 +41,7 @@ function LocalGovernmentForm() {
   const fetchOldData = async () => {
     try {
       if (emailUser) {
-        const response = await axios.get(`http://localhost:8000/api/getDataEmail/${emailUser}`,{
+        const response = await axios.get(`http://localhost:8000/api/data/getDataEmail/${emailUser}`,{
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -61,7 +61,7 @@ function LocalGovernmentForm() {
           highlightedActivities: data.highlightedActivities
         });
       } else {
-        const response = await axios.get("http://localhost:8000/api/fetchData", {
+        const response = await axios.get("http://localhost:8000/api/data/fetchData", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -125,13 +125,13 @@ function LocalGovernmentForm() {
     }
     try {
       if (updateData) {
-        await axios.put("http://localhost:8000/api/updateData", formData, {
+        await axios.put("http://localhost:8000/api/data/updateData", formData, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
       } else {
-        await axios.post("http://localhost:8000/api/submitlc", formData, {
+        await axios.post("http://localhost:8000/api/data/submitlc", formData, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

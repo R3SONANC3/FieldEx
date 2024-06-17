@@ -53,7 +53,7 @@ const Navbar = () => {
     const handleSignOut = async (event) => {
         event.preventDefault();
         try {
-            const response = await axios.get('http://localhost:8000/api/logout');
+            const response = await axios.get('http://localhost:8000/api/auth/logout');
             console.log(response.data);
             Swal.fire({
                 title: 'ออกจากระบบสำเร็จ',

@@ -105,7 +105,7 @@ function LocalManage() {
 
     const fetchUserData = async () => {
         try {
-            const response = await axios.get(`http://localhost:8000/api/getDataEmail/${emailUser}`,{
+            const response = await axios.get(`http://localhost:8000/api/data/getDataEmail/${emailUser}`,{
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -187,7 +187,7 @@ function LocalManage() {
 
     const fetchOldData = async () => {
         try {
-            const response = await axios.get('http://localhost:8000/api/fetchData', {
+            const response = await axios.get('http://localhost:8000/api/data/fetchData', {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -272,7 +272,7 @@ function LocalManage() {
         e.preventDefault();
         const emailUser = location.state?.emailUser;
         try {
-            const response = await axios.post('http://localhost:8000/api/localsubmit', {
+            const response = await axios.post('http://localhost:8000/api/data/localsubmit', {
                 ...formData,
                 emailUser: emailUser
             }, {
