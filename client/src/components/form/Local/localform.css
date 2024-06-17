@@ -2,10 +2,12 @@
   width: 100%;
   max-width: 100%;
   border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .lc-body {
   margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 .lc-heading {
@@ -13,7 +15,7 @@
 }
 
 .lc-content {
-  margin-bottom: 20px;
+  text-align: left;
 }
 
 .lc-content label {
@@ -32,12 +34,37 @@
   box-sizing: border-box;
 }
 
+.lc-h3 {
+  margin-top: 8px;
+  margin-bottom: -6px;
+  text-align: center;
+  width: 100%;
+}
+.lc-p {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.localform-table {
+  background-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-collapse: separate;
+  /* width: 30%; */
+  margin: 30px auto 20px;
+  table-layout: fixed;
+  margin-top: 30px;
+  border-radius: 10px;
+  border-spacing:0 ;
+  overflow: hidden;
+}
+
 .phone-fax,
 .address {
   display: flex;
   flex-wrap: wrap; /* เพิ่ม flex-wrap เพื่อให้ข้อมูลของ phone-fax และ address อยู่ในแถวเดียวกัน */
   align-items: center;
-  text-align: center;
+  text-align: left;
 }
 
 .phone-fax input,
@@ -45,91 +72,244 @@
   margin-right: 4%; /* เพิ่ม margin-right เพื่อเว้นระยะห่างระหว่าง input fields */
 }
 
+.phone-fax label {
+  width: 175px;
+  margin-right: 10px;
+}
 .address label {
-  width: 100px;
+  width: 60px;
 }
 
 .address input {
   flex: 1;
 }
 
-
 .lc-footer {
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  padding-bottom: 30px;
 }
 
 .lc-footer button {
-  padding: 12px 24px;
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+  padding: 12.5px 30px;
+  border: 0;
+  border-radius: 100px;
+  background-color: #1ca59e;
+  color: #ffffff;
+  font-weight: Bold;
+  transition: all 0.5s;
+  -webkit-transition: all 0.5s;
 }
 
 .lc-footer button:hover {
-  background-color: #0056b3;
+  background-color: #1daac5;
+  box-shadow: 0 0 20px #6fc5ff50;
+  transform: scale(1.1);
 }
 
+button:active {
+  background-color: #3d94cf;
+  transition: all 0.25s;
+  -webkit-transition: all 0.25s;
+  box-shadow: none;
+  transform: scale(0.98);
+}
+.button {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 15px;
+  padding-bottom: 35px;
+}
+.button button {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
 
 /* Conscript css */
 .co-body-head {
   text-align: center;
+  width: 100%;
+}
+.co-content1,.co-content2,.co-content3,.co-content4 {
+  text-align: left;
+}
+.box {
+  text-align:center;
+}
+.co-footer {
+  display: flex;
+  justify-content: center;
+  padding-bottom: 30px;
+}
+.conscript-table {
+  background-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-collapse: separate;
+  margin: 30px auto 20px;
+  table-layout: fixed;
+  border-radius: 10px;
+  border-spacing:0 ;
+  overflow: hidden;
+  
+}
+td {
+  border: 1px solid #ddd;
+  padding: 15px;
+  text-align:center;
+  overflow-wrap: break-word; /* ทำให้ข้อความยาวๆ ถูกตัดและย้ายลงบรรทัดใหม่ */
+  word-break: break-word; /* เพิ่มการตัดข้อความให้อยู่ในกรอบ */
+  line-height: 1.5;
+}
+th {
+  border: 1px solid #ddd;
+  padding: 20px;
+  text-align:center;
+  overflow-wrap: break-word; /* ทำให้ข้อความยาวๆ ถูกตัดและย้ายลงบรรทัดใหม่ */
+  word-break: break-word; /* เพิ่มการตัดข้อความให้อยู่ในกรอบ */
+  line-height: 1.5;
+}
+h2 {
+  margin-bottom: 2px;
+  text-align: center;
+  width: 100%;
+}
+h3 {
+  margin-top: 8px;
+  margin-bottom: 30px;
+  text-align: center;
+  width: 100%;
+}
+.tab{
+  padding-left: 1em;
+}
+.tabb {
+  padding-left: 2em;
+}
+.tabbb {
+  padding-left: 3em;
+}
+.tabbbb {
+  padding-left: 4em;
+}
+.tab5 {
+  padding-left: 5em;
+}
+.tab6 {
+  padding-left: 100px;
+}
+.tab7 {
+  padding-left: 7em;
+}
+
+.inline {
+  display: inline-block;
+  margin-right: 1em;
+}
+.inline2 {
+  display: inline-block;
+  padding-left: 118px;
+}
+.inline-right {
+  text-align: right;
+  margin-right: 40px;
 }
 
 /* LocalManaghe css */
-/* Ensure the container occupies the entire width */
 .lmf-container {
   width: 100%;
   max-width: 100%;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Apply styles to the body */
 .lmf-body {
-  background-color: #fff; /* White background */
-  padding: 20px; /* Add some padding */
+  margin-left: 20px;
+  margin-right: 20px;
 }
 
-/* Center the text */
-.lmf-text {
+#lmf-table {
+  background-color: rgba(255, 255, 255, 0.9);
+  border-collapse: collapse;
+  width: 100%;
+  margin: 20px 0;
+  table-layout: fixed;
+  border-spacing: 0;
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+.lmf-h2 {
+  text-align: left;
+  margin-bottom: 20px;
+  margin-left: 15px;
+}
+
+td:first-child {
+  text-align: left;
+}
+
+/* ชิดข้อความไปทางกลาง */
+th:nth-child(n+2),
+td:nth-child(n+2) {
   text-align: center;
 }
 
-/* Style the main table */
-#lmf-table {
-  width: 100%;
-  border-collapse: collapse;
+td:last-child {
+  text-align: left;
 }
 
-/* Style the table headers */
-#lmf-table th {
-  background-color: #f0f0f0; /* Light gray background for header */
-  border: 1px solid #ddd; /* Add borders */
-  padding: 10px;
+tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
 }
 
-/* Style the table cells */
-#lmf-table td {
-  border: 1px solid #ddd; /* Add borders */
-  padding: 10px;
+tbody tr:hover {
+  background-color: #f1f1f1;
+}
+.lmf-p {
+  margin-top: 5px;
 }
 
-/* Apply styles to the nested table */
-#Nested-table {
-  width: 100%;
-  border-collapse: collapse;
+/* กำหนดความกว้างของคอลัมน์ */
+#lmf-table th:nth-child(1),
+#lmf-table td:nth-child(1) {
+  width: 58%; /* คอลัมน์1 */
 }
 
-/* Style the headers of the nested table */
-#Nested-table th {
-  background-color: #f0f0f0; /* Light gray background for header */
-  border: 1px solid #ddd; /* Add borders */
-  padding: 10px;
+#lmf-table th:nth-child(2),
+#lmf-table td:nth-child(2) {
+  width: 12%; /* คอลัมน์2 */
 }
 
-/* Style the cells of the nested table */
-#Nested-table td {
-  border: 1px solid #ddd; /* Add borders */
-  padding: 10px;
+#lmf-table th:nth-child(3),
+#lmf-table td:nth-child(3) {
+  width: 20%; /* คอลัมน์3 */
+}
+
+#lmf-table th:nth-child(4),
+#lmf-table td:nth-child(4) {
+  width: 10%; /* คอลัมน์4 */
+}
+
+#lmf-table th:nth-child(5),
+#lmf-table td:nth-child(5) {
+  width: 8%; /* คอลัมน์5 */
+}
+
+#lmf-table th:nth-child(6),
+#lmf-table td:nth-child(6) {
+  width: 30%; /* คอลัมน์6 */
+}
+.passed::after {
+  content: " ✓";
+  color: green;
+  text-align: center;
+  font-weight: bold;
+}
+.not-passed::after {
+  content: " ✗";
+  color: red;
+  text-align: center;
+  font-weight: bold;
 }

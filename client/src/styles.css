@@ -338,17 +338,38 @@ input[type="password"] {
 }
 
 button {
-  padding: 10px 20px;
-  background-color: gray;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1rem;
+  padding: 12.5px 30px;
+  border: 0;
+  border-radius: 100px;
+  background-color: #1ca59e;
+  color: #ffffff;
+  font-weight: Bold;
+  transition: all 0.5s;
+  -webkit-transition: all 0.5s;
 }
-
 button:hover {
-  background-color: orangered;
+  background-color: #1daac5;
+  box-shadow: 0 0 20px #6fc5ff50;
+  transform: scale(1.1);
+}
+button:active {
+  background-color: #3d94cf;
+  transition: all 0.25s;
+  -webkit-transition: all 0.25s;
+  box-shadow: none;
+  transform: scale(0.98);
+}
+.button {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 15px;
+  padding-bottom: 35px;
+}
+.button button {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
 }
 
 .footer {

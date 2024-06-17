@@ -14,6 +14,7 @@ import LocalManage from "./components/form/Local/LocalManage"
 import LocalOpera from './components/form/Local/LocalOperaFirst'
 import LocalOperaSecond from "./components/form/Local/LocalOperaSecond";
 import LocalOperaThird from "./components/form/Local/LocalOperaThird";
+import LocalResult from "./components/form/Local/LocalResult";
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
         <Route path="/localoperafirst" element={<LocalOpera />} />
         <Route path="/localoperasec" element={<LocalOperaSecond />}/>
         <Route path="/localoperathird" element={<LocalOperaThird />}/>
+        <Route path="/localresult" element={<LocalResult />}/>
       </Routes>
     </BrowserRouter>
   );

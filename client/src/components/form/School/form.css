@@ -1,4 +1,4 @@
-/* form.css */
+/* form.css */  
 .ev-text-center {
   text-align: center;
 }
@@ -39,160 +39,157 @@
   background-color: #cccccc;
 }
 
-.ev-body {
-  margin-top: 130px;
-  /* เปลี่ยนจาก 170px เป็น 0 */
-}
-
 
 /* GeneralForm.css */
 .ge-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
+display: flex;
+flex-direction: column;
+align-items: center;
+width: 100%;
 }
 
 .ge-header {
-  width: 100%;
-  text-align: center;
-  margin-top: 130px;
+width: 100%;
+text-align: center;
 }
 
 .ge-body {
-  display: flex;
-  flex-wrap: wrap;
-  /* Allow columns to wrap */
-  justify-content: center;
-  /* Center the columns */
-  align-items: flex-start;
-  /* Align items at the top */
-  width: 100%;
-  padding: 20px;
-  box-sizing: border-box;
-  text-align: center;
+display: flex;
+flex-wrap: wrap; /* Allow columns to wrap */
+justify-content: center; /* Center the columns */
+align-items: flex-start; /* Align items at the top */
+width: 100%;
+padding: 20px;
+box-sizing: border-box;
+text-align: center;
 }
 
-.ge-column-left,
-.ge-column-middle,
-.ge-column-right {
-  width: 30%;
-  /* Set consistent width for each column */
-  padding: 0 10px;
-  /* Add some padding for spacing */
-  box-sizing: border-box;
-  /* Include padding in the element's total width and height */
-}
-
+/* หัวข้อ */
 .ge-text {
-  text-align: center;
+text-align: center;
+}
+.ge-text + .ge-text {
+margin-top: 0;
+}
+.ge-text:first-of-type {
+margin-bottom: 5px;
 }
 
-.ge-column-left .education-level,
-.ge-column-middle .form-group,
-.ge-column-right .form-group {
-  margin-bottom: 20px;
+/* formระดับบการศึกษา */
+.education-container {
+margin: 20px;
 }
-
+.education-level {
+margin-bottom: 15px;
+}
+.education-level input[type="checkbox"] {
+margin-right: 10px;
+}
 .counts {
-  margin-top: 5px;
+margin-left: 20px;
+display: flex;
+flex-direction: column;
+}
+.counts input {
+margin-top: 5px;
+margin-bottom: 5px;
+padding: 5px;
 }
 
-.ge-column-right textarea {
-  width: 100%;
-  box-sizing: border-box;
-}
 
 .submit-button {
-  display: block;
-  width: 100%;
-  padding: 10px;
-  margin-top: 20px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  cursor: pointer;
+display: block;
+width: 100%;
+padding: 10px;
+margin-top: 20px;
+background-color: #007bff;
+color: white;
+border: none;
+cursor: pointer;
 }
 
 .submit-button:hover {
-  background-color: #0056b3;
+background-color: #0056b3;
 }
 
 input[type='number'],
 input[type='text'],
 input[type='tel'],
-input[type='ge-email'] {
-  width: 200px;
-  margin: 5px;
-  padding: 8px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  font-size: 14px;
+input[type='ge-email']{
+/* width: 200px; */
+margin: 5px;
+padding: 8px;
+border-radius: 5px;
+border: 1px solid #ccc;
+font-size: 14px;
+justify-content: center;
 }
-
 textarea[type='projectDetail'] {
-  font-size: 14px;
+font-size: 14px;
 }
 
 input[type='checkbox'] {
-  height: 20px;
-  /* Increase the height of the checkbox */
-  margin-right: 5px;
+height: 20px; /* Increase the height of the checkbox */
+margin-right: 5px;
 }
-
+.passed::after {
+content: " ✓";
+color: green;
+text-align: center;
+font-weight: bold;
+}
+.not-passed::after {
+content: " ✗";
+color: red;
+text-align: center;
+font-weight: bold;
+}
 /* FormManagement css*/
-.fm-heading {
-  text-align: center;
+.fm-heading{
+text-align: center;
 }
-
 /* FormManagement.css */
 .fm-container {
-  font-family: Arial, sans-serif;
+font-family: Arial, sans-serif;
 }
 
 .fm-header {
-  margin-bottom: 20px;
+margin-bottom: 20px;
 }
 
 .fm-heading {
-  text-align: center;
-  margin-bottom: 20px;
+text-align: center;
+margin-bottom: 20px;
 }
 
 .fm-maintable {
-  width: flex;
-  border-collapse: collapse;
-  margin: 0 auto;
-  background-color: #f9f9f9;
-  margin-right: 50px;
-  margin-left: 50px;
-  word-wrap: break-word;
+width: flex;
+border-collapse: collapse;
+margin: 0 auto;
+background-color: #f9f9f9;
+margin-right: 50px;
+margin-left: 50px;
+word-wrap: break-word;
 }
 
-.fm-maintable th,
-.fm-maintable td {
-  border: 1px solid #ccc;
-  padding: 8px;
-  text-align: left;
-  word-wrap: break-word;
-  max-width: 60rem;
+.fm-maintable th, .fm-maintable td {
+border: 1px solid #ccc;
+padding: 8px;
+text-align: left;
+word-wrap: break-word;
+max-width: 60rem;
 }
 
 .fm-maintable th {
-  background-color: #f2f2f2;
+background-color: #f2f2f2;
 }
 
-.fm-col1,
-.fm-col2,
-.fm-col3,
-.fm-col4,
-.fm-col5 {
-  text-align: center;
+.fm-col1, .fm-col2, .fm-col3, .fm-col4, .fm-col5 {
+text-align: center;
 }
 
-.fm-maintable input[type="number"],
-.fm-maintable input[type="text"] {
-  width: 100%;
-  padding: 5px;
-  box-sizing: border-box;
+.fm-maintable input[type="number"], .fm-maintable input[type="text"] {
+width: 100%;
+padding: 5px;
+box-sizing: border-box;
 }

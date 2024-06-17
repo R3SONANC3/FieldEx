@@ -87,13 +87,13 @@ router.get('/fetchData', verifyUser, async (req, res) => {
       });
     } else {
       // Fetch data based on institutionID
-      const [institutionData] = await connector.query('SELECT * FROM FieldEx.institution WHERE institutionID = ?', [institutionID]);
+      const [institutionData] = await connection.query('SELECT * FROM FieldEx.institution WHERE institutionID = ?', [institutionID]);
 
       // Fetch education levels data
-      const [educationLevelsData] = await connector.query('SELECT * FROM FieldEx.educationLevels WHERE institutionID = ?', [institutionID]);
+      const [educationLevelsData] = await connection.query('SELECT * FROM FieldEx.educationLevels WHERE institutionID = ?', [institutionID]);
 
       // Fetch other education levels data
-      const [otherEducationLevelsData] = await connector.query('SELECT * FROM FieldEx.otherEducationLevels WHERE institutionID = ?', [institutionID]);
+      const [otherEducationLevelsData] = await connection.query('SELECT * FROM FieldEx.otherEducationLevels WHERE institutionID = ?', [institutionID]);
 
       await connection.commit();
       return res.status(200).json({
@@ -304,8 +304,6 @@ router.get('/getDataEmail/:email', verifyUser, async (req, res) => {
   try {
     // Query to fetch user details based on email
     const [userResults] = await connection.query('SELECT * FROM FieldEx.users WHERE email = ?', [email]);
-    console.log('User Results:', userResults);
-
     if (userResults.length === 0) {
       res.status(404).send('ไม่พบผู้ใช้ด้วยอีเมลที่ระบุ');
       return;
