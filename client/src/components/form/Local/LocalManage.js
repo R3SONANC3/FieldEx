@@ -105,7 +105,7 @@ function LocalManage() {
 
     const fetchUserData = async () => {
         try {
-            const response = await axios.get(`http://localhost:8000/api/data/getDataEmail/${emailUser}`,{
+            const response = await axios.get(`http://localhost:8000/api/data/getDataEmail/${emailUser}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -282,12 +282,18 @@ function LocalManage() {
             });
             console.log(formData);
             console.log("Submit response:", response.data);
+            navigate('/localoperafirst')
             // Redirect or show success message
         } catch (error) {
             console.error("Error submitting data:", error);
             // Handle error, show error message
         }
     };
+
+    const goBack = () => {
+        navigate('/localmanage')
+    };
+
 
     const handleCommentInputChange = (e) => {
         const { name, value } = e.target;
@@ -446,7 +452,16 @@ function LocalManage() {
                         ))}
                     </tbody>
                 </table>
-                <button onClick={handleSubmit}>Submit</button>
+            </div>
+            <div className='lmf-footer'>
+                <div className="button">
+                    <div className="button-back">
+                        <button onClick={goBack}>ย้อนกลับ</button>
+                    </div>
+                    <div className="button-next">
+                        <button onClick={handleSubmit}>ถัดไป</button>
+                    </div>
+                </div>
             </div>
         </div>
     );

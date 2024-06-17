@@ -10,25 +10,25 @@ const {
   DB_PORT
 } = process.env;
 
+const SQL_URL = `mysql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}`;
+
 let connector;
 
-const initMySQL = async () => {
+const MAX_RETRIES = 5;
+const RETRY_INTERVAL = 5000; // in milliseconds
+
+const initMySQL = async (retries = MAX_RETRIES) => {
   try {
-    connector = await mysql.createPool({
-      host: DB_HOST,
-      user: DB_USER,
-      database: DB_NAME,
-      password: DB_PASSWORD,
-      port: DB_PORT,
-      waitForConnections: true,
-      connectionLimit: 10,
-      queueLimit: 0
-    });
+    connector = await mysql.createPool(SQL_URL);
     console.log('Connected to database successfully!');
   } catch (error) {
-    console.error('Error connecting to MySQL:', error);
-    setTimeout(initMySQL, 5000);
-    throw error;
+    if (retries > 0) {
+      console.error(`Error connecting to MySQL. Retrying in ${RETRY_INTERVAL / 1000} seconds... (${retries} retries left)`, error);
+      setTimeout(() => initMySQL(retries - 1), RETRY_INTERVAL);
+    } else {
+      console.error('Failed to connect to MySQL after multiple attempts:', error);
+      throw error;
+    }
   }
 };
 

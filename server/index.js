@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { initMySQL, getConnector } = require('./config');
+const { initMySQL } = require('./config');
 const { corsOptions } = require('./middleware');
 
 const authRoutes = require('./routes/auth');
@@ -10,7 +10,6 @@ const dataRoutes = require('./routes/data');
 const app = express();
 const API_PORT = process.env.PORT || 8000;
 
-// Middleware
 app.use(express.json()); // Parse JSON bodies
 app.use(cors(corsOptions)); // Handle CORS
 app.options("*", cors(corsOptions)); // Handle preflight requests
