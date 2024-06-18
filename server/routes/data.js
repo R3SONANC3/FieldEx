@@ -341,7 +341,7 @@ router.get('/getDataEmail/:email', verifyUser, async (req, res) => {
 
 router.post('/localopera', verifyUser, async (req, res) => {
   const role = req.user.role;
-  const { emailUser, formData } = req.body; // Ensure formData is received in req.body
+  const { emailUser } = req.body; // Ensure formData is received in req.body
   
   const connection = await getConnector().getConnection();
   try {
@@ -403,28 +403,47 @@ router.post('/localopera', verifyUser, async (req, res) => {
         localID
       ];
     } else {
-      // Non-admin stores only basic fields
+      const {
+        year1BoundaryAreaProtection, area1BoundaryAreaProtection, scoreBoundary, scoreSurveyResources,
+        scoreClassifyResources, scoreTagResources, scoreMappingBoundary, scoreStudyResources,
+        scorePhotoResources, scoreSampleResources, scoreRegisterResources, scorePhotoRegisterResources,
+        scoreCareResources
+      } = req.body;
+      
       sql = `
         INSERT INTO FieldEx.localOperaFirst (
-          year1BoundaryAreaProtection, area1BoundaryAreaProtection, scoreBoundary,
-          scoreSurveyResources, scoreClassifyResources, scoreTagResources,
-          scoreMappingBoundary, scoreStudyResources, scorePhotoResources,
-          scoreSampleResources, scoreRegisterResources, scorePhotoRegisterResources,
-          scoreCareResources, localID
+          localID, year1BoundaryAreaProtection, area1BoundaryAreaProtection, scoreBoundary,
+          scoreSurveyResources, scoreClassifyResources, scoreTagResources, scoreMappingBoundary,
+          scoreStudyResources, scorePhotoResources, scoreSampleResources, scoreRegisterResources,
+          scorePhotoRegisterResources, scoreCareResources
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ON DUPLICATE KEY UPDATE
+          year1BoundaryAreaProtection = VALUES(year1BoundaryAreaProtection),
+          area1BoundaryAreaProtection = VALUES(area1BoundaryAreaProtection),
+          scoreBoundary = VALUES(scoreBoundary),
+          scoreSurveyResources = VALUES(scoreSurveyResources),
+          scoreClassifyResources = VALUES(scoreClassifyResources),
+          scoreTagResources = VALUES(scoreTagResources),
+          scoreMappingBoundary = VALUES(scoreMappingBoundary),
+          scoreStudyResources = VALUES(scoreStudyResources),
+          scorePhotoResources = VALUES(scorePhotoResources),
+          scoreSampleResources = VALUES(scoreSampleResources),
+          scoreRegisterResources = VALUES(scoreRegisterResources),
+          scorePhotoRegisterResources = VALUES(scorePhotoRegisterResources),
+          scoreCareResources = VALUES(scoreCareResources)
       `;
-      values = [
-        formData.year1BoundaryAreaProtection, formData.area1BoundaryAreaProtection, formData.scoreBoundary,
-        formData.scoreSurveyResources, formData.scoreClassifyResources, formData.scoreTagResources,
-        formData.scoreMappingBoundary, formData.scoreStudyResources, formData.scorePhotoResources,
-        formData.scoreSampleResources, formData.scoreRegisterResources, formData.scorePhotoRegisterResources,
-        formData.scoreCareResources, localID
+      
+      const values = [
+        localID, year1BoundaryAreaProtection, area1BoundaryAreaProtection, scoreBoundary, scoreSurveyResources,
+        scoreClassifyResources, scoreTagResources, scoreMappingBoundary, scoreStudyResources,
+        scorePhotoResources, scoreSampleResources, scoreRegisterResources, scorePhotoRegisterResources,
+        scoreCareResources
       ];
+      
+      // Execute the query
+      const [result] = await connection.query(sql, values);
+      
     }
-
-    // Execute the query based on the role
-    const [result] = await connection.query(sql, values);
-
     // Send response indicating success
     res.status(200).send('Form data saved successfully');
   } catch (error) {

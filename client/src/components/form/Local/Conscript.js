@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Navbar from '../../Navbar';
 import Swal from 'sweetalert2';
 import './localform.css';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 function Conscript() {
     const [isChecked, setIsChecked] = useState(false);
     const navigate = useNavigate();
+    const location = useLocation();
+    const emailUser = location.state?.emailUser;
+
 
     const handleCheckboxChange = (e) => {
         setIsChecked(e.target.checked);
@@ -20,7 +23,7 @@ function Conscript() {
                 text: 'กรุณาเลือก checkbox ก่อนดำเนินการต่อ',
             });
         } else {
-            navigate('/localmanage');
+            navigate('/localmanage',{state:{emailUser}});
         }
     };
 

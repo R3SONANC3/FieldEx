@@ -1,4 +1,4 @@
-import React, { useEffect, useState, createContext, useContext } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Navbar from './Navbar';
 import { useNavigate } from "react-router-dom";
@@ -13,7 +13,6 @@ const AdminDashboard = () => {
   const [localIDs, setLocalIDs] = useState([]);
   const [searchTerm, setSearchTerm] = useState(""); // State for search term
   const navigate = useNavigate();
-  const userEmailContext = createContext();
 
   // Filter function for filtering users based on search term
   const filterUsers = (users) => {

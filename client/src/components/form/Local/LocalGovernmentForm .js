@@ -11,8 +11,6 @@ function LocalGovernmentForm() {
   const location = useLocation();
   const emailUser = location.state?.emailUser;
   const token = localStorage.getItem("token");
-  const fetchData = localStorage.getItem("fetchData");
-
   const [formData, setFormData] = useState({
     organizationName: "",
     localID: "",
@@ -30,13 +28,10 @@ function LocalGovernmentForm() {
   useEffect(() => {
     if (!token) {
       navigate('/');
-    } else if (fetchData === 'false') {
-      navigate('/localform')
-    } else {
-      localStorage.setItem('updateData', true);
+    }else{
       fetchOldData();
     }
-  }, [emailUser, fetchData, token]);
+  }, [emailUser, token]);
 
   const fetchOldData = async () => {
     try {

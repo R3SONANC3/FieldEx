@@ -8,8 +8,7 @@ function LocalManage() {
     const [isAdmin, setIsAdmin] = useState(false);
     const location = useLocation();
     const navigate = useNavigate();
-    // const emailUser = location.state?.emailUser;
-    const emailUser = 'test2@gmail.com'
+    const emailUser = location.state?.emailUser;
     const [formData, setFormData] = useState({
         localMeetingAgenda: 0,
         refereeLocalMeetingAgenda: 0,
