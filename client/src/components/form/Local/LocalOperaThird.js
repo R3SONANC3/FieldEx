@@ -8,7 +8,7 @@ function LocalOperaThird() {
                 <Navbar />
             </div>
             <div className='lmf-body'>
-                <div className='lmf-text'><h1>ด้านที่ 2 การดำเนินงาน : <small>งานที่ 3 งานปลูกรักษาทรัพยากรท้องถิ่น</small></h1></div>
+                <div className='lmf-text'><h1 className='lmf-h1'>ด้านที่ 2 การดำเนินงาน : <small>งานที่ 3 งานปลูกรักษาทรัพยากรท้องถิ่น</small></h1></div>
                 <table id="lmf-table">
                     <thead>
                         <tr>
@@ -20,7 +20,7 @@ function LocalOperaThird() {
                     </thead>
                     <tbody>
                         <tr>
-                            <td colspan="6"><b>3.การดำเนินงานปลูกรักษาทรัพยากรท้องถิ่น (100 คะแนน)</b></td>
+                            <td colspan="4"><b>3. การดำเนินงานปลูกรักษาทรัพยากรท้องถิ่น (100 คะแนน)</b></td>
                         </tr>
                         <tr>
                             <td class="tabb">3.1 การจัดหาและรวบรวมทรัพยากรท้องถิ่น (30 คะแนน)</td>
@@ -41,11 +41,11 @@ function LocalOperaThird() {
                             <td><input type="text" class="comment" /></td>
                         </tr>
                         <tr>
-                            <td><b>รวมคะแนนที่ได้ งานที่ 3 งานปลูกรักษาทรัพยากรท้องถิ่น</b></td>
+                            <td style={{ textAlign: 'center' }}><b>รวมคะแนนที่ได้ งานที่ 3 งานปลูกรักษาทรัพยากรท้องถิ่น</b></td>
                         </tr>
                     </tbody>
                 </table>
-                <div className='lmf-text'><h1>ด้านที่ 2 การดำเนินงาน : <small>งานที่ 4 งานอนุรักษ์และใช้ประโยชน์ทรัพยากรท้องถิ่น</small></h1>
+                <div className='lmf-text'><h1 className='lmf-h1'>ด้านที่ 2 การดำเนินงาน : <small>งานที่ 4 งานอนุรักษ์และใช้ประโยชน์ทรัพยากรท้องถิ่น</small></h1>
                 </div>
                 <table id="lmf-table">
                     <thead>
@@ -57,7 +57,7 @@ function LocalOperaThird() {
                     </thead>
                     <tbody>
                         <tr>
-                            <td colspan="6"><b>4.การดำเนินงานอนุรักษ์และใช้ประโยชน์ทรัพยากรท้องถิ่น (100 คะแนน)</b></td>
+                            <td colspan="4"><b>4. การดำเนินงานอนุรักษ์และใช้ประโยชน์ทรัพยากรท้องถิ่น (100 คะแนน)</b></td>
                         </tr>
                         <tr>
                             <td class="tabb">4.1 การฟื้นฟู บำรุงรักษา ขยายพันธุ์เพิ่มขึ้นและแจกจ่ายให้กับชุมชน ตำบล (60 คะแนน)</td>
@@ -72,11 +72,11 @@ function LocalOperaThird() {
                             <td><input type="text" class="comment" /></td>
                         </tr>
                         <tr>
-                            <td ><b>รวมคะแนนที่ได้ งานที่ 4 งานอนุรักษ์และใช้ประโยชน์ทรัพยากรท้องถิ่น</b></td>
+                            <td style={{ textAlign: 'center' }}><b>รวมคะแนนที่ได้ งานที่ 4 งานอนุรักษ์และใช้ประโยชน์ทรัพยากรท้องถิ่น</b></td>
                         </tr>
                     </tbody>
                 </table>
-                <div className='lmf-text'><h1>ด้านที่ 2 การดำเนินงาน : <small>งานที่ 5 งานศูนย์ข้อมูลทรัพยากรท้องถิ่น</small></h1>
+                <div className='lmf-text'><h1 className='lmf-h1'>ด้านที่ 2 การดำเนินงาน : <small>งานที่ 5 งานศูนย์ข้อมูลทรัพยากรท้องถิ่น</small></h1>
                 </div>
                 <table id="lmf-table">
                     <thead>
@@ -89,7 +89,7 @@ function LocalOperaThird() {
                     </thead>
                     <tbody>
                         <tr>
-                            <td colspan="6"><b>5.การดำเนินงานศูนย์ข้อมูลทรัพยากรท้องถิ่น (100 คะแนน)</b></td>
+                            <td colspan="4"><b>5. การดำเนินงานศูนย์ข้อมูลทรัพยากรท้องถิ่น (100 คะแนน)</b></td>
                         </tr>
                         <tr>
                             <td class="tabb">5.1 การรวบรวมและการบันทึกข้อมูลทรัพยากรท้องถิ่น (ทรัพยากรกายภาพ  ทรัพยากรชีวภาพ ทรัพยากรวัฒนธรรมและภูมิปัญญา) (60 คะแนน)</td>
@@ -104,11 +104,11 @@ function LocalOperaThird() {
                             <td><input type="text" class="comment" /></td>
                         </tr>
                         <tr>
-                            <td><b>รวมคะแนนที่ได้ งานที่ 5 งานศูนย์ข้อมูลทรัพยากรท้องถิ่น</b></td>
+                            <td style={{ textAlign: 'center' }}><b>รวมคะแนนที่ได้ งานที่ 5 งานศูนย์ข้อมูลทรัพยากรท้องถิ่น</b></td>
                         </tr>
                     </tbody>
                 </table>
-                <div className='lmf-text'><h1><span class="main-title">ด้านที่ 2 การดำเนินงาน :</span><small> งานที่ 6 งานสนับสนุนในการอนุรักษ์และจัดทำฐานทรัพยากรท้องถิ่น</small></h1>
+                <div className='lmf-text'><h1 className='lmf-h1'>ด้านที่ 2 การดำเนินงาน :<small> งานที่ 6 งานสนับสนุนในการอนุรักษ์และจัดทำฐานทรัพยากรท้องถิ่น</small></h1>
                 </div>
                 <table id="lmf-table">
                     <thead>
@@ -121,7 +121,7 @@ function LocalOperaThird() {
                     </thead>
                     <tbody>
                         <tr>
-                            <td colspan="6"><b>6.การดำเนินงานสนับสนุนในการอนุรักษ์และจัดทำฐานทรัพยากรท้องถิ่น (100 คะแนน)</b></td>
+                            <td colspan="4"><b>6. การดำเนินงานสนับสนุนในการอนุรักษ์และจัดทำฐานทรัพยากรท้องถิ่น (100 คะแนน)</b></td>
                         </tr>
                         <tr>
                             <td class="tabb">6.1 การสนับสนุนการสร้างจิตสำนึกในการอนุรักษ์ทรัพยากรงานสวนพฤกษศาสตร์โรงเรียน (60 คะแนน)</td>
@@ -136,10 +136,10 @@ function LocalOperaThird() {
                             <td><input type="text" class="comment" /></td>
                         </tr>
                         <tr>
-                            <td><b>รวมคะแนนที่ได้ งานที่ 6 งานสนับสนุนในการอนุรักษ์และจัดทำฐานทรัพยากรท้องถิ่น</b></td>
+                            <td style={{ textAlign: 'center' }}><b>รวมคะแนนที่ได้ งานที่ 6 งานสนับสนุนในการอนุรักษ์และจัดทำฐานทรัพยากรท้องถิ่น</b></td>
                         </tr>
                         <tr>
-                            <td><b>รวมคะแนนด้านที่ 2  การดำเนินงาน</b></td>
+                            <td style={{ textAlign: 'center' }}><b>รวมคะแนนด้านที่ 2  การดำเนินงาน</b></td>
                         </tr>
                     </tbody>
                 </table>

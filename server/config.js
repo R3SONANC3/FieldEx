@@ -19,7 +19,12 @@ const RETRY_INTERVAL = 5000; // in milliseconds
 
 const initMySQL = async (retries = MAX_RETRIES) => {
   try {
-    connector = await mysql.createPool(SQL_URL);
+    connector = await mysql.createPool({
+      uri: SQL_URL,
+      waitForConnections: true,
+      connectionLimit: 10, // Adjust as needed
+      queueLimit: 0
+    });
     console.log('Connected to database successfully!');
   } catch (error) {
     if (retries > 0) {

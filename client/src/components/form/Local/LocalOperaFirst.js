@@ -3,11 +3,12 @@ import axios from 'axios';
 import Navbar from '../../Navbar';
 import { useNavigate } from 'react-router-dom';
 
+
 function LocalOperaFirst() {
-    const [isAdmin, setIsAdmin] = useState(false);
+    const [isAdmin, setIsAdmin] = useState(true);
     const navigate = useNavigate();
-    const emailUser = 'test2@gmail.com';
-    const token = localStorage.getItem('token');
+    const emailUser = 'test2@gmail.com'
+    const token = localStorage.getItem('token')
     const [formData, setFormData] = useState({
         year1BoundaryAreaProtection: 0,
         area1BoundaryAreaProtection: 0,
@@ -84,11 +85,10 @@ function LocalOperaFirst() {
         <tr>
             <td className="tabbb">{title}</td>
             <td><input type="number" name={`score${namePrefix}`} className="score-input" min="0" max={scoreMax} value={formData[`score${namePrefix}`]} onChange={handleInputChange} disabled={isAdmin} /></td>
-            <td><input type="number" name={`refereeScore${namePrefix}`} className="referee-score-input" min="0" max={scoreMax} value={formData[`refereeScore${namePrefix}`]} onChange={handleInputChange} disabled={!isAdmin} /></td>
-            <td><input type="text" name={`comment${namePrefix}`} className="comment" value={formData[`comment${namePrefix}`]} onChange={handleInputChange} disabled={!isAdmin} /></td>
+            <td><input type="number" name={`refereeScore${namePrefix}`} className="referee-score-input" min="0" max={scoreMax} value={formData[`refereeScore${namePrefix}`]} onChange={handleInputChange} disabled={!isAdmin}/></td>
+            <td><input type="text" name={`comment${namePrefix}`} className="comment" value={formData[`comment${namePrefix}`]} onChange={handleInputChange} disabled={!isAdmin}/></td>
         </tr>
     );
-
     return (
         <div className="lmf-container">
             <div className="lmf-header">
@@ -114,10 +114,10 @@ function LocalOperaFirst() {
                         <tr>
                             <td className="tabb">
                                 1.1 การกำหนดขอบเขตพื้นที่ และสำรวจทรัพยากรในพื้นที่ปกปักทรัพยากรท้องถิ่น (20 คะแนน)
-                                <div className="tab">
+                                <p className="tab">
                                     1) การกำหนดขอบเขตพื้นที่ปกปักทรัพยากรท้องถิ่น (5 คะแนน)
-                                    <div className="tabb">ตารางสรุปจำนวนพื้นที่ปกปักทรัพยากรท้องถิ่น</div>
-                                </div>
+                                    <p className="tabb">ตารางสรุปจำนวนพื้นที่ปกปักทรัพยากรท้องถิ่น</p>
+                                </p>
                                 <table className="nested-table">
                                     <thead>
                                         <tr>
@@ -127,11 +127,11 @@ function LocalOperaFirst() {
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td><input type="number" name="year1BoundaryAreaProtection" className="score-input" min="0" max="9999" value={formData.year1BoundaryAreaProtection} onChange={handleInputChange} disabled={isAdmin}/></td>
+                                            <td><span className="row1-year"></span><input type="number" name="year1BoundaryAreaProtection" className="score-input" min="0" max="9999" value={formData.year1BoundaryAreaProtection} onChange={handleInputChange} disabled={isAdmin}/></td>
                                             <td><input type="number" name="area1BoundaryAreaProtection" className="r1d1-input" min="0" max="9007199254740991" value={formData.area1BoundaryAreaProtection} onChange={handleInputChange} disabled={isAdmin}/></td>
                                         </tr>
                                         <tr>
-                                            <td><input type="number" name="year2BoundaryAreaProtection" className="score-input" min="0" max="9999" value={formData.year2BoundaryAreaProtection} onChange={handleInputChange} disabled={isAdmin}/></td>
+                                            <td><span className="row2-year"></span><input type="number" name="year2BoundaryAreaProtection" className="score-input" min="0" max="9999" value={formData.year2BoundaryAreaProtection} onChange={handleInputChange} disabled={isAdmin}/></td>
                                             <td><input type="number" name="area2BoundaryAreaProtection" className="r2d1-input" min="0" max="9007199254740991" value={formData.area2BoundaryAreaProtection} onChange={handleInputChange} disabled={isAdmin}/></td>
                                         </tr>
                                     </tbody>
@@ -147,27 +147,40 @@ function LocalOperaFirst() {
                         <tr>
                             <td className="tabb">1.2 การทำผังแสดงขอบเขตพื้นที่ปกปักทรัพยากรท้องถิ่น (10 คะแนน)</td>
                             <td><input type="number" name="scoreMappingBoundary" className="score-input" min="0" max="10" value={formData.scoreMappingBoundary} onChange={handleInputChange} disabled={isAdmin}/></td>
-                            <td><input type="number" name="refereeScoreMappingBoundary" className="referee-score-input" min="0" max="10" value={formData.refereeScoreMappingBoundary} onChange={handleInputChange} disabled={!isAdmin} /></td>
-                            <td><input type="text" name="commentMappingBoundary" className="comment" value={formData.commentMappingBoundary} onChange={handleInputChange} disabled={!isAdmin}/></td>
+                            <td><input type="number" name="refereeScoreMappingBoundary" className="referee-score-input" min="0" max="10" value={formData.refereeScoreMappingBoundary} onChange={handleInputChange}disabled={!isAdmin} /></td>
+                            <td><input type="text" name="commentMappingBoundary" className="comment" value={formData.commentMappingBoundary} onChange={handleInputChange}disabled={!isAdmin} /></td>
                         </tr>
-                        <InputRow title="1.3 การจัดทำฐานข้อมูลทรัพยากรท้องถิ่น (40 คะแนน)" scoreMax="40" namePrefix="StudyResources" handleInputChange={handleInputChange} formData={formData} />
-                        <InputRow title="1.4 การถ่ายภาพและจัดทำแหล่งข้อมูลท้องถิ่น (10 คะแนน)" scoreMax="10" namePrefix="PhotoResources" handleInputChange={handleInputChange} formData={formData} />
-                        <InputRow title="1.5 การจัดทำตัวอย่างทรัพยากร (10 คะแนน)" scoreMax="10" namePrefix="SampleResources" handleInputChange={handleInputChange} formData={formData} />
-                        <InputRow title="1.6 การลงทะเบียนทรัพยากร (10 คะแนน)" scoreMax="10" namePrefix="RegisterResources" handleInputChange={handleInputChange} formData={formData} />
-                        <InputRow title="1.7 การถ่ายภาพทรัพยากร (10 คะแนน)" scoreMax="10" namePrefix="PhotoRegisterResources" handleInputChange={handleInputChange} formData={formData} />
-                        <InputRow title="1.8 การดูแลรักษาทรัพยากร (10 คะแนน)" scoreMax="10" namePrefix="CareResources" handleInputChange={handleInputChange} formData={formData} />
+                        <InputRow title="1.3 การศึกษาทรัพยากรในพื้นที่ปกปักทรัพยากรท้องถิ่น (20 คะแนน)" scoreMax="20" namePrefix="StudyResources" handleInputChange={handleInputChange} formData={formData} />
+                        <InputRow title="2) การถ่ายภาพทรัพยากรในพื้นที่ปกปักทรัพยากรท้องถิ่น (10 คะแนน)" scoreMax="10" namePrefix="PhotoResources" handleInputChange={handleInputChange} formData={formData} />
+                        <tr>
+                            <td className="tabb">1.4 การทำตัวอย่างทรัพยากรในพื้นที่ปกปักทรัพยากรท้องถิ่น (20 คะแนน)</td>
+                            <td><input type="number" name="scoreSampleResources" className="score-input" min="0" max="10" value={formData.scoreSampleResources} onChange={handleInputChange} /></td>
+                            <td><input type="number" name="refereeScoreSampleResources" className="referee-score-input" min="0" max="10" value={formData.refereeScoreSampleResources} onChange={handleInputChange} disabled={!isAdmin}/></td>
+                            <td><input type="text" name="commentSampleResources" className="comment" value={formData.commentSampleResources} onChange={handleInputChange} disabled={!isAdmin}/></td>
+                        </tr>
+                        <tr>
+                            <td className="tabb" colSpan="4">1.5 การบันทึกข้อมูลทรัพยากรท้องถิ่นในพื้นที่ปกปักทรัพยากรท้องถิ่น (30 คะแนน)</td>
+                        </tr>
+                        <InputRow title="1) การจัดทำระบบฐานข้อมูลทรัพยากรท้องถิ่นในพื้นที่ปกปักทรัพยากรท้องถิ่น (20 คะแนน)" scoreMax="20" namePrefix="RegisterResources" handleInputChange={handleInputChange} formData={formData} />
+                        <InputRow title="2) การจัดทำระบบฐานข้อมูลเพื่อใช้ในการวางแผนการใช้ประโยชน์จากทรัพยากร (10 คะแนน)" scoreMax="10" namePrefix="PhotoRegisterResources" handleInputChange={handleInputChange} formData={formData} />
+                        <tr>
+                            <td>1.6 การดูแลรักษาทรัพยากรในพื้นที่ปกปักทรัพยากรท้องถิ่น (20 คะแนน)
+                                <p className="tabb">แบบบันทึกการดูแลรักษาทรัพยากรในพื้นที่ปกปักทรัพยากรท้องถิ่น เช่น การทำแนวกันไฟ การทำฝายชะลอน้ำ อาสาสมัครดูแลรักษาพื้นที่ปกปักทรัพยากรท้องถิ่น ฯลฯ</p>
+                            </td>
+                            <td><input type="number" name="scoreCareResources" className="score-input" min="0" max="20" value={formData.scoreCareResources} onChange={handleInputChange} disabled={isAdmin}/></td>
+                            <td><input type="number" name="refereeScoreCareResources" className="referee-score-input" min="0" max="20" value={formData.refereeScoreCareResources} onChange={handleInputChange} disabled={!isAdmin}/></td>
+                            <td><input type="text" name="commentCareResources" className="comment" value={formData.commentCareResources} onChange={handleInputChange}disabled={!isAdmin} /></td>
+                        </tr>
+                        <tr>
+                            <td><b>รวมคะแนนที่ได้  งานที่ 1 งานปกปักทรัพยากรท้องถิ่น</b></td>
+                        </tr>
                     </tbody>
                 </table>
-                <div className='lmf-footer'>
-                    <div className="button">
-                        <div className="button-back">
-                            <button onClick={goBack}>ย้อนกลับ</button>
-                        </div>
-                        <div className="button-next">
-                            <button onClick={handleSubmit}>ถัดไป</button>
-                        </div>
-                    </div>
-                </div>
+            </div>
+
+            <div className="lmf-footer">
+                <button onClick={goBack}>ย้อนกลับ</button>
+                <button onClick={goNextPage}>ถัดไป</button>
             </div>
         </div>
     );

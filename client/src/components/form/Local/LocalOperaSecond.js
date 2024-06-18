@@ -57,15 +57,15 @@ const LocalOperaSecond = () => {
     ];
 
     return (
-        <div>
-            <div className="lmf-header">
+        <div >
+            <div className="lmf-header" >
                 <Navbar />
             </div>
             <div className='lmf-body'>
-                <div className='lmf-text'>
-                    <h1>ด้านที่ 2 การดำเนินงาน : <small>งานที่ 2 งานสำรวจเก็บรวบรวมทรัพยากรท้องถิ่น</small></h1>
-                </div>
-                <table id="lmf-table">
+                <div className='lmf-text'><h1 className='lmf-h1'>ด้านที่ 2 การดำเนินงาน : <small>งานที่ 2 งานสำรวจเก็บรวบรวมทรัพยากรท้องถิ่น</small></h1></div>
+            </div>
+            <div className='lmf-table'>
+                <table id="lmf-table" >
                     <thead>
                         <tr>
                             <th>รายการประเมิน<p>(คะแนนเต็ม 100 คะแนน)</p></th>
@@ -76,59 +76,30 @@ const LocalOperaSecond = () => {
                     </thead>
                     <tbody>
                         <tr>
-                            <td colSpan="4"><b>2.การดำเนินงานสำรวจเก็บรวบรวมทรัพยากรท้องถิ่น (100 คะแนน)</b></td>
+                            <td colSpan="4"><b>2. การดำเนินงานสำรวจเก็บรวบรวมทรัพยากรท้องถิ่น (100 คะแนน)</b></td>
                         </tr>
-                        {assessmentCriteria.map((criterion, index) => (
+                        {assessmentCriteria.map((row, index) => (
                             <tr key={index}>
-                                <td className="tabb">{criterion.description}</td>
-                                <td>
-                                    <input
-                                        type="number"
-                                        className="score-input"
-                                        name={`localScore${index}`}
-                                        value={formData[`localScore${index}`] || ''}
-                                        min="0"
-                                        max={criterion.maxScore}
-                                        onChange={handleInputChange}
-                                        disabled={!isAdmin}
-                                    />
-                                </td>
-                                <td>
-                                    <input
-                                        type="number"
-                                        className="refereeScoreInput"
-                                        name={`refereeScore${index}`}
-                                        value={formData[`refereeScore${index}`] || ''}
-                                        min="0"
-                                        max={criterion.maxScore}
-                                        onChange={handleInputChange}
-                                        disabled={isAdmin}
-                                    />
-                                </td>
-                                <td>
-                                    <input
-                                        type="text"
-                                        className="commentInput"
-                                        name={`comment${index}`}
-                                        value={formData[`comment${index}`] || ''}
-                                        onChange={handleInputChange}
-                                        disabled={isAdmin}
-                                    />
-                                </td>
+                                <td className="tabb">{assessmentCriteria.description}</td>
+                                <td><input type="number" className="score-input" name={`local${index}`} value={formData[`local${index}`] || ''} min="0" max={row.max} onChange={handleInputChange} disabled={!isAdmin} /></td>
+                                <td><input type="number" className="referee-score-input" name={`referee${index}`} value={formData[`referee${index}`] || ''} min="0" max={row.max} onChange={handleInputChange} disabled={isAdmin} /></td>
+                                <td><input type="text" className="comment" name={`comment${index}`} value={formData[`comment${index}`] || ''} onChange={handleInputChange} disabled={isAdmin} /></td>
                             </tr>
                         ))}
                         <tr>
-                            <td style={{ textAlign: 'center' }} colSpan="4"><b>รวมคะแนนที่ได้ งานที่ 2 งานสำรวจเก็บรวบรวมทรัพยากรท้องถิ่น</b></td>
+                            <td style={{ textAlign: 'center' }}><b>รวมคะแนนที่ได้ งานที่ 2 งานสำรวจเก็บรวบรวมทรัพยากรท้องถิ่น</b></td>
                         </tr>
                     </tbody>
                 </table>
-            </div>
-            <div className="button" style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: '15px', paddingBottom: '35px' }}>
-                <div className="button-back">
-                    <button onClick={handleGoBack} style={{ padding: '12.5px 30px', border: 0, borderRadius: '100px', backgroundColor: '#ec6459', color: '#ffffff', fontWeight: 'Bold', transition: 'all 0.5s', WebkitTransition: 'all 0.5s' }}>ย้อนกลับ</button>
-                </div>
-                <div className="button-next">
-                    <button onClick={handleGoNextPage} style={{ padding: '12.5px 30px', border: 0, borderRadius: '100px', backgroundColor: '#1ca59e', color: '#ffffff', fontWeight: 'Bold', transition: 'all 0.5s', WebkitTransition: 'all 0.5s' }}>ถัดไป</button>
+            </div>    
+            <div className='lmf-footer'>
+                <div className="button">
+                    <div className="button-back">
+                        <button onClick={handleGoBack}>ย้อนกลับ</button>
+                    </div>
+                    <div className="button-next">
+                        <button onClick={handleGoNextPage}>ถัดไป</button>
+                    </div>
                 </div>
             </div>
         </div>

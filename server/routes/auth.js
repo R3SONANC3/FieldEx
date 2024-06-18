@@ -8,7 +8,7 @@ const { JWT_SECRET } = process.env;
 const router = express.Router();
 
 router.post('/register', async (req, res) => {
-  const connection = await getConnector();
+  const connection = await getConnector().getConnection();
   try {
     const { email, password } = req.body;
     const passwordHash = await bcrypt.hash(password, 10);

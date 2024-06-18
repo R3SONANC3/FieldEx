@@ -229,6 +229,10 @@ h3 {
   margin-left: 20px;
   margin-right: 20px;
 }
+.lmf-table {
+  margin-left: 20px;
+  margin-right: 20px;
+}
 
 #lmf-table {
   background-color: rgba(255, 255, 255, 0.9);
@@ -257,9 +261,9 @@ td:nth-child(n+2) {
   text-align: center;
 }
 
-td:last-child {
+/* td:last-child {
   text-align: left;
-}
+} */
 
 tbody tr:nth-child(even) {
   background-color: #f9f9f9;
@@ -270,38 +274,34 @@ tbody tr:hover {
 }
 .lmf-p {
   margin-top: 5px;
-}
+  margin-bottom: 5px;
 
-/* กำหนดความกว้างของคอลัมน์ */
+}
+.lmf-h2 {
+  text-align: left;
+  margin-bottom: 20px;
+  margin-left: 15px;
+  margin-top: 30px;
+}
+.lmf-h1 {
+  text-align: left;
+  margin-bottom: 20px;
+  margin-left: 15px;
+  margin-top: 30px;
+}
 #lmf-table th:nth-child(1),
 #lmf-table td:nth-child(1) {
-  width: 58%; /* คอลัมน์1 */
+  width: 50%; /* คอลัมน์1 */
 }
-
 #lmf-table th:nth-child(2),
 #lmf-table td:nth-child(2) {
-  width: 12%; /* คอลัมน์2 */
+  width: 13%; /* คอลัมน์2 */
 }
-
 #lmf-table th:nth-child(3),
 #lmf-table td:nth-child(3) {
-  width: 20%; /* คอลัมน์3 */
+  width: 8%; /* คอลัมน์3 */
 }
 
-#lmf-table th:nth-child(4),
-#lmf-table td:nth-child(4) {
-  width: 10%; /* คอลัมน์4 */
-}
-
-#lmf-table th:nth-child(5),
-#lmf-table td:nth-child(5) {
-  width: 8%; /* คอลัมน์5 */
-}
-
-#lmf-table th:nth-child(6),
-#lmf-table td:nth-child(6) {
-  width: 30%; /* คอลัมน์6 */
-}
 .passed::after {
   content: " ✓";
   color: green;
@@ -313,4 +313,117 @@ tbody tr:hover {
   color: red;
   text-align: center;
   font-weight: bold;
+}
+
+#Nested-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  margin-top: 10px; 
+}
+#Nested-table th:nth-child(1),
+#Nested-table td:nth-child(1){
+  width: 8%;
+}
+#Nested-table th:nth-child(2),
+#Nested-table td:nth-child(2){
+  width: 15%;
+}
+#Nested-table th:nth-child(3),
+#Nested-table td:nth-child(3){
+  width: 15%;
+}
+#Nested-table th:nth-child(4),
+#Nested-table td:nth-child(4){
+  width: 15%;
+}
+#Nested-table1 {
+  width: 75%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  margin-left: 40px;
+  text-align: center;
+}
+#Nested-table1 th:nth-child(1),
+#Nested-table1 td:nth-child(1){
+  width: 5%;
+  text-align: center;
+}
+#Nested-table1 th:nth-child(2),
+#Nested-table1 td:nth-child(2){
+  width: 15%;
+  text-align: center;
+
+}
+
+/* Style the headers of the nested table */
+#Nested-table th,#Nested-table1 th {
+  background-color: #f0f0f0; /* Light gray background for header */
+  border: 1px solid #ddd; /* Add borders */
+  padding: 10px;
+}
+
+/* Style the cells of the nested table */
+#Nested-table td,#Nested-table1 td {
+  border: 1px solid #ddd; /* Add borders */
+  padding: 10px;
+  
+}
+.button-next button {
+  padding: 12.5px 30px;
+  border: 0;
+  border-radius: 100px;
+  background-color: #1ca59e;
+  color: #ffffff;
+  font-weight: Bold;
+  transition: all 0.5s;
+  -webkit-transition: all 0.5s;
+}
+.button-next button:hover {
+  background-color: #1daac5;
+  box-shadow: 0 0 20px #6fc5ff50;
+  transform: scale(1.1);
+}
+.button-back button {
+  padding: 12.5px 30px;
+  border: 0;
+  border-radius: 100px;
+  background-color: #ec6459;
+  color: #ffffff;
+  font-weight: Bold;
+  transition: all 0.5s;
+  -webkit-transition: all 0.5s;
+}
+.button-back button:hover {
+  background-color: #f48064;
+  box-shadow: 0 0 20px #6fc5ff50;
+  transform: scale(1.1);
+}
+.button-next button:active {
+  background-color: #3d94cf;
+  transition: all 0.25s;
+  -webkit-transition: all 0.25s;
+  box-shadow: none;
+  transform: scale(0.98);
+}
+.button-back button:active {
+  background-color: #e65932;
+  transition: all 0.25s;
+  -webkit-transition: all 0.25s;
+  box-shadow: none;
+  transform: scale(0.98);
+}
+.button {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding-top: 10px;
+  padding-bottom: 35px;
+  padding-left: 30px;
+  padding-right: 30px; 
+}
+.button button {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
 }

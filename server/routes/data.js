@@ -115,7 +115,7 @@ router.get('/fetchData', verifyUser, async (req, res) => {
 });
 
 router.post('/submitlc', verifyUser, async (req, res) => {
-  const connection = getConnector().getConnection();
+  const connection = await getConnector().getConnection();
   const { organizationName, localID, phoneNumber, faxNumber, email, subDistrict, district, province, affiliation, headmasterName, highlightedActivities } = req.body;
 
   try {
@@ -123,19 +123,37 @@ router.post('/submitlc', verifyUser, async (req, res) => {
       organizationName, localID, phoneNumber, faxNumber, email, subDistrict, district, province, affiliation, headmasterName, highlightedActivities
     };
     const userEmail = req.user.email;
-    const [userResult] = await connection.query('SELECT * FROM users WHERE email = ?', [userEmail]);
-    if (userResult.length === 0) {
-      return res.status(404).json({
-        message: "User not found"
-      });
-    }
-    await connection.query('UPDATE users SET localID = ? WHERE email = ?', [localID, userEmail]);
+    const role = req.user.role;
+    
+    try {
+      const [userResult] = await connection.query('SELECT * FROM users WHERE email = ?', [userEmail]);
+      if (userResult.length === 0) {
+        return res.status(404).json({
+          message: "User not found"
+        });
+      }
+      
+      if (role !== 'admin') {
+        await connection.query('UPDATE users SET localID = ? WHERE email = ?', [localID, userEmail]);
+      }
 
-    await connection.query('INSERT INTO FieldEx.localGovernmentData SET ?', formData);
-    console.log(formData);
-    res.status(200).json({
-      message: "Submit Success"
-    });
+      // Check if localID already exists
+      const [localIDResult] = await connection.query('SELECT * FROM FieldEx.localGovernmentData WHERE localID = ?', [localID]);
+      if (localIDResult.length > 0) {
+        // Update existing record
+        await connection.query('UPDATE FieldEx.localGovernmentData SET ? WHERE localID = ?', [formData, localID]);
+      } else {
+        // Insert new record
+        await connection.query('INSERT INTO FieldEx.localGovernmentData SET ?', formData);
+      }
+
+      console.log(formData);
+      res.status(200).json({
+        message: "Submit Success"
+      });
+    } finally {
+      connection.release();
+    }
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({
@@ -145,42 +163,13 @@ router.post('/submitlc', verifyUser, async (req, res) => {
   }
 });
 
-router.put('/updateData', verifyUser, async (req, res) => {
-  const connection = await getConnector().getConnection();
-  const { organizationName, localID, phoneNumber, faxNumber, email, subDistrict, district, province, affiliation, headmasterName, highlightedActivities } = req.body;
 
-  try {
-    const formData = {
-      organizationName,
-      phoneNumber,
-      faxNumber,
-      email,
-      subDistrict,
-      district,
-      province,
-      affiliation,
-      headmasterName,
-      highlightedActivities
-    };
-
-    await connection.query('UPDATE FieldEx.localGovernmentData SET ? WHERE localID = ?', [formData, localID]);
-
-    res.status(200).json({
-      message: "Update Success"
-    });
-  } catch (error) {
-    console.error('Error:', error);
-    res.status(500).json({
-      message: "Update failed",
-      error: error.message
-    });
-  }
-});
 
 router.post('/localsubmit', verifyUser, async (req, res) => {
   const role = req.user.role;
-  const { emailUser } = req.body;
+  const { emailUser, ...requestBody } = req.body;
   const connection = await getConnector().getConnection();
+
   try {
     // Fetch user data including localId and institutionID
     const [userData] = await connection.query('SELECT localId, institutionID FROM FieldEx.users WHERE email = ?', emailUser);
@@ -190,114 +179,91 @@ router.post('/localsubmit', verifyUser, async (req, res) => {
 
     // Extract localId and institutionID from userData
     userData.forEach(user => {
-      if (user.institutionID !== null && institutionID === null) {
-        institutionID = user.institutionID;
-      }
-      if (user.localId !== null && localID === null) {
-        localID = user.localId;
-      }
-
-      // Break out of loop if both values are found
-      if (institutionID !== null && localID !== null) {
-        return;
-      }
+      if (!institutionID) institutionID = user.institutionID;
+      if (!localID) localID = user.localId;
+      if (institutionID && localID) return;
     });
 
-    // Determine which table to insert based on user role
+    // Check if localID exists in FieldEx.localManageData
+    const [existingData] = await connection.query('SELECT 1 FROM FieldEx.localManageData WHERE localID = ?', localID);
+
     if (role === 'admin') {
-      const {
-        refereeLocalMeetingAgenda, commentLocalMeetingAgenda, refereeLocalMemberSignatures, commentLocalMemberSignatures, refereeMeetingMinutes, commentMeetingMinutes, refereePhotos,
-        commentPhotos, refereeAppointmentOrder, commentAppointmentOrder, refereeSubcommittee, commentSubcommittee, refereeManagementPlan, commentManagementPlan, refereeProtectionPlan, commentProtectionPlan,
-        refereeSurveyPlan, commentSurveyPlan, refereeCoordination, commentCoordination, refereeExpenseSummary, commentExpenseSummary, refereeMeetingInvite, commentMeetingInvite, refereeThankYouNote,
-        commentThankYouNote, refereeOperationResults, commentOperationResults, refereeAnalysisResults, commentAnalysisResults, refereeImprovementPlan, commentImprovementPlan, refereeAnnualReport,
-        commentAnnualReport
-      } = req.body;
+      const adminFields = [
+        'refereeLocalMeetingAgenda', 'commentLocalMeetingAgenda', 
+        'refereeLocalMemberSignatures', 'commentLocalMemberSignatures',
+        'refereeMeetingMinutes', 'commentMeetingMinutes', 
+        'refereePhotos', 'commentPhotos', 
+        'refereeAppointmentOrder', 'commentAppointmentOrder', 
+        'refereeSubcommittee', 'commentSubcommittee', 
+        'refereeManagementPlan', 'commentManagementPlan', 
+        'refereeProtectionPlan', 'commentProtectionPlan', 
+        'refereeSurveyPlan', 'commentSurveyPlan', 
+        'refereeCoordination', 'commentCoordination', 
+        'refereeExpenseSummary', 'commentExpenseSummary', 
+        'refereeMeetingInvite', 'commentMeetingInvite', 
+        'refereeThankYouNote', 'commentThankYouNote', 
+        'refereeOperationResults', 'commentOperationResults', 
+        'refereeAnalysisResults', 'commentAnalysisResults', 
+        'refereeImprovementPlan', 'commentImprovementPlan', 
+        'refereeAnnualReport', 'commentAnnualReport'
+      ];
 
-      // Construct SQL query for admin insert
       const adminUpdateQuery = `
-      UPDATE FieldEx.localManageData
-      SET 
-        refereeLocalMeetingAgenda = ?, commentLocalMeetingAgenda = ?, 
-        refereeLocalMemberSignatures = ?, commentLocalMemberSignatures = ?, 
-        refereeMeetingMinutes = ?, commentMeetingMinutes = ?, 
-        refereePhotos = ?, commentPhotos = ?, 
-        refereeAppointmentOrder = ?, commentAppointmentOrder = ?, 
-        refereeSubcommittee = ?, commentSubcommittee = ?, 
-        refereeManagementPlan = ?, commentManagementPlan = ?, 
-        refereeProtectionPlan = ?, commentProtectionPlan = ?, 
-        refereeSurveyPlan = ?, commentSurveyPlan = ?, 
-        refereeCoordination = ?, commentCoordination = ?, 
-        refereeExpenseSummary = ?, commentExpenseSummary = ?, 
-        refereeMeetingInvite = ?, commentMeetingInvite = ?, 
-        refereeThankYouNote = ?, commentThankYouNote = ?, 
-        refereeOperationResults = ?, commentOperationResults = ?, 
-        refereeAnalysisResults = ?, commentAnalysisResults = ?, 
-        refereeImprovementPlan = ?, commentImprovementPlan = ?, 
-        refereeAnnualReport = ?, commentAnnualReport = ?
-      WHERE localID = ?
-    `;
-      // Execute admin insert query
-      await connection.query(adminUpdateQuery, [
-        refereeLocalMeetingAgenda, commentLocalMeetingAgenda,
-        refereeLocalMemberSignatures, commentLocalMemberSignatures,
-        refereeMeetingMinutes, commentMeetingMinutes,
-        refereePhotos, commentPhotos,
-        refereeAppointmentOrder, commentAppointmentOrder,
-        refereeSubcommittee, commentSubcommittee,
-        refereeManagementPlan, commentManagementPlan,
-        refereeProtectionPlan, commentProtectionPlan,
-        refereeSurveyPlan, commentSurveyPlan,
-        refereeCoordination, commentCoordination,
-        refereeExpenseSummary, commentExpenseSummary,
-        refereeMeetingInvite, commentMeetingInvite,
-        refereeThankYouNote, commentThankYouNote,
-        refereeOperationResults, commentOperationResults,
-        refereeAnalysisResults, commentAnalysisResults,
-        refereeImprovementPlan, commentImprovementPlan,
-        refereeAnnualReport, commentAnnualReport,
-        localID
-      ]);
+        UPDATE FieldEx.localManageData
+        SET ${adminFields.map(field => `${field} = ?`).join(', ')}
+        WHERE localID = ?`;
 
-      res.status(200).send('Admin data inserted successfully');
+      if (existingData.length > 0) {
+        await connection.query(adminUpdateQuery, [...adminFields.map(field => requestBody[field]), localID]);
+        res.status(200).send('Admin data updated successfully');
+      } else {
+        res.status(400).send('Local ID not found for update');
+      }
     } else {
-      const {
-        localMeetingAgenda, localMemberSignatures, meetingMinutes, photos,
-        appointmentOrder, subcommittee, managementPlan, protectionPlan,
-        surveyPlan, coordination, expenseSummary, meetingInvite, thankYouNote,
-        operationResults, analysisResults, improvementPlan, annualReport,
-        budgetDetails
-      } = req.body;
+      const nonAdminFields = [
+        'localMeetingAgenda', 'localMemberSignatures', 'meetingMinutes', 'photos',
+        'appointmentOrder', 'subcommittee', 'managementPlan', 'protectionPlan',
+        'surveyPlan', 'coordination', 'expenseSummary', 'meetingInvite', 'thankYouNote',
+        'operationResults', 'analysisResults', 'improvementPlan', 'annualReport',
+        'budget1_year', 'budget1_budget', 'budget1_expense', 'budget1_remaining',
+        'budget2_year', 'budget2_budget', 'budget2_expense', 'budget2_remaining'
+      ];
 
-      // Construct SQL query for non-admin insert
-      const query = `
-      INSERT INTO FieldEx.localManageData (
-          localMeetingAgenda, localMemberSignatures, meetingMinutes, photos,
-          appointmentOrder, subcommittee, managementPlan, protectionPlan,
-          surveyPlan, coordination, expenseSummary, meetingInvite, thankYouNote,
-          operationResults, analysisResults, improvementPlan, annualReport,
-          budget1_year, budget1_budget, budget1_expense, budget1_remaining,
-          budget2_year, budget2_budget, budget2_expense, budget2_remaining
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-  `;
-  const values = [
-    localMeetingAgenda, localMemberSignatures, meetingMinutes, photos,
-    appointmentOrder, subcommittee, managementPlan, protectionPlan,
-    surveyPlan, coordination, expenseSummary, meetingInvite, thankYouNote,
-    operationResults, analysisResults, improvementPlan, annualReport,
-    budgetDetails[0].year, budgetDetails[0].budget, budgetDetails[0].expense, budgetDetails[0].remaining,
-    budgetDetails[1].year, budgetDetails[1].budget, budgetDetails[1].expense, budgetDetails[1].remaining
-];
+      const nonAdminUpdateQuery = `
+        UPDATE FieldEx.localManageData
+        SET ${nonAdminFields.slice(0, -4).map(field => `${field} = ?`).join(', ')},
+        budget1_year = ?, budget1_budget = ?, budget1_expense = ?, budget1_remaining = ?,
+        budget2_year = ?, budget2_budget = ?, budget2_expense = ?, budget2_remaining = ?
+        WHERE localID = ?`;
 
-      // Execute non-admin insert query
-      await connection.query(query, values);
+      if (existingData.length > 0) {
+        await connection.query(nonAdminUpdateQuery, [
+          ...nonAdminFields.slice(0, -4).map(field => requestBody[field]),
+          requestBody.budgetDetails[0].year, requestBody.budgetDetails[0].budget, requestBody.budgetDetails[0].expense, requestBody.budgetDetails[0].remaining,
+          requestBody.budgetDetails[1].year, requestBody.budgetDetails[1].budget, requestBody.budgetDetails[1].expense, requestBody.budgetDetails[1].remaining,
+          localID
+        ]);
+        res.status(200).send('Non-admin data updated successfully');
+      } else {
+        const insertQuery = `
+          INSERT INTO FieldEx.localManageData (${nonAdminFields.join(', ')}, localID)
+          VALUES (${nonAdminFields.map(() => '?').join(', ')}, ?)`;
 
-      res.status(200).send('Non-admin data inserted successfully');
+        await connection.query(insertQuery, [
+          ...nonAdminFields.slice(0, -4).map(field => requestBody[field]),
+          requestBody.budgetDetails[0].year, requestBody.budgetDetails[0].budget, requestBody.budgetDetails[0].expense, requestBody.budgetDetails[0].remaining,
+          requestBody.budgetDetails[1].year, requestBody.budgetDetails[1].budget, requestBody.budgetDetails[1].expense, requestBody.budgetDetails[1].remaining,
+          localID
+        ]);
+        res.status(200).send('Non-admin data inserted successfully');
+      }
     }
   } catch (error) {
     console.error(error);
     res.status(500).send('An error occurred while processing the request');
   }
 });
+
 
 router.get('/getDataEmail/:email', verifyUser, async (req, res) => {
   const email = req.params.email;

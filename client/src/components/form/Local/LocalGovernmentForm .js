@@ -94,7 +94,6 @@ function LocalGovernmentForm() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const updateData = localStorage.getItem('updateData')
     // Validate form data
     const requiredFields = [
       "organizationName",
@@ -119,20 +118,11 @@ function LocalGovernmentForm() {
       }
     }
     try {
-      if (updateData) {
-        await axios.put("http://localhost:8000/api/data/updateData", formData, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-      } else {
         await axios.post("http://localhost:8000/api/data/submitlc", formData, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-      }
-
       await Swal.fire({
         icon: "success",
         title: "ส่งข้อมูลสำเร็จ",
