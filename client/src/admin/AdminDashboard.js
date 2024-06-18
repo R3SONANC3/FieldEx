@@ -1,47 +1,63 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import Navbar from './Navbar';
+import Navbar from '../components/Navbar';
 import { useNavigate } from "react-router-dom";
+import Loading from '../components/Loading';
 import '../styles.css';
-
-
+import SideNavbar from "../components/SideNavbar";
 
 const AdminDashboard = () => {
+  const token = localStorage.getItem("token");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [institutionIDs, setInstitutionIDs] = useState([]);
   const [localIDs, setLocalIDs] = useState([]);
-  const [searchTerm, setSearchTerm] = useState(""); // State for search term
+  const [searchInstitutionTerm, setSearchInstitutionTerm] = useState(""); // State for institution search term
+  const [searchLocalTerm, setSearchLocalTerm] = useState(""); // State for local search term
   const navigate = useNavigate();
 
-  // Filter function for filtering users based on search term
-  const filterUsers = (users) => {
+  // Filter function for filtering institution users based on search term
+  const filterInstitutionUsers = (users) => {
     return users.filter(user =>
-      (typeof user.userEmail === 'string' && user.userEmail.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (typeof user.id === 'string' && user.id.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (typeof user.institutionName === 'string' && user.institutionName.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (typeof user.organizationName === 'string' && user.organizationName.toLowerCase().includes(searchTerm.toLowerCase()))
+      (user.userEmail && user.userEmail.toLowerCase().includes(searchInstitutionTerm.toLowerCase())) ||
+      (user.id && user.id.toString().toLowerCase().includes(searchInstitutionTerm.toLowerCase())) ||
+      (user.institutionName && user.institutionName.toLowerCase().includes(searchInstitutionTerm.toLowerCase()))
     );
   };
 
-  // Handle change in search input
-  const handleSearch = (e) => {
-    setSearchTerm(e.target.value);
+  // Filter function for filtering local users based on search term
+  const filterLocalUsers = (users) => {
+    return users.filter(user =>
+      (user.userEmail && user.userEmail.toLowerCase().includes(searchLocalTerm.toLowerCase())) ||
+      (user.id && user.id.toString().toLowerCase().includes(searchLocalTerm.toLowerCase())) ||
+      (user.organizationName && user.organizationName.toLowerCase().includes(searchLocalTerm.toLowerCase()))
+    );
+  };
+
+  // Handle change in institution search input
+  const handleInstitutionSearch = (e) => {
+    setSearchInstitutionTerm(e.target.value);
+  };
+
+  // Handle change in local search input
+  const handleLocalSearch = (e) => {
+    setSearchLocalTerm(e.target.value);
   };
 
   // Function to handle edit button click
   const handleEdit = (emailUser) => {
-    navigate(`/localform`, {state:{emailUser}});
-    
+    navigate(`/localform`, { state: { emailUser } });
   };
 
-  const fetchUsersData = async (token) => {
+  const fetchUsersData = async () => {
     try {
+      console.log("Fetching user data..."); // Debugging log
       const response = await axios.get("http://localhost:8000/api/user/usersData", {
         headers: {
           Authorization: `Bearer ${token}`
         },
       });
+      console.log("Response:", response.data); // Debugging log
       if (response.data && response.data.institutionIDs && response.data.localIDs) {
         setInstitutionIDs(response.data.institutionIDs);
         setLocalIDs(response.data.localIDs);
@@ -49,24 +65,20 @@ const AdminDashboard = () => {
         setError("Invalid data format");
       }
     } catch (err) {
+      console.error("Error fetching data:", err); // Debugging log
       setError(err.message);
     } finally {
-      setLoading(false);
+      setTimeout(() => setLoading(false), 3000); // Set loading to false after 3 seconds
     }
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
     if (!token) {
       navigate('/');
       return; // Ensure to return here to prevent further execution
     }
-    fetchUsersData(token); // Call the fetch function here
-
-  }, [navigate, searchTerm]); // Add searchTerm as a dependency to useEffect
-
-
-  
+    fetchUsersData(); // Call the fetch function here
+  }, [navigate, token]); // Removed searchTerm as a dependency to avoid unnecessary fetches
 
   // Define table style and thTdStyle here
   const tableStyle = {
@@ -83,12 +95,12 @@ const AdminDashboard = () => {
   };
 
   // Filtered institution and local IDs based on search term
-  const filteredInstitutionIDs = filterUsers(institutionIDs);
-  const filteredLocalIDs = filterUsers(localIDs);
+  const filteredInstitutionIDs = filterInstitutionUsers(institutionIDs);
+  const filteredLocalIDs = filterLocalUsers(localIDs);
 
   // Render loading or error message if loading or error state is true
   if (loading) {
-    return <p>Loading...</p>;
+    return <Loading />;
   }
 
   if (error) {
@@ -98,21 +110,19 @@ const AdminDashboard = () => {
   // Render the actual content once loading and error checks are done
   return (
     <div className="admin-container">
-      <div className="header">
-        <Navbar />
-      </div>
+      <Navbar />
+      <SideNavbar />
       <div className="admin-body">
+        <h2>แบบประเมินสถานศึกษา</h2>
         <div className="search-bar">
           <input
             type="text"
-            placeholder="Search by name or ID..."
-            value={searchTerm}
-            onChange={handleSearch}
+            placeholder="Search Institution by email, ID, or name..."
+            value={searchInstitutionTerm}
+            onChange={handleInstitutionSearch}
           />
         </div>
-        <h2>Institution IDs</h2>
         <table style={tableStyle}>
-          {/* Table header */}
           <tbody>
             {filteredInstitutionIDs.map((user, index) => (
               <tr key={index}>
@@ -126,9 +136,16 @@ const AdminDashboard = () => {
             ))}
           </tbody>
         </table>
-        <h2>Local IDs</h2>
+        <h2>แบบประเมินองค์กรปกครองส่วนท้องถิ่น</h2>
+        <div className="search-bar">
+          <input
+            type="text"
+            placeholder="Search Local by email, ID, or name..."
+            value={searchLocalTerm}
+            onChange={handleLocalSearch}
+          />
+        </div>
         <table style={tableStyle}>
-          {/* Table header */}
           <tbody>
             {filteredLocalIDs.map((user, index) => (
               <tr key={index}>

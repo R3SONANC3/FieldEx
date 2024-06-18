@@ -1,8 +1,8 @@
 import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Router } from "react-router-dom";
 import Home from "./components/Home";
 import SelectForm from "./components/SelectForm";
-import AdminDashboard from "./components/AdminDashboard";
+import AdminDashboard from "./admin/AdminDashboard";
 import About from "./components/About";
 import FormManagement from "./components/form/School/FormManagement";
 import EvaluationPage from "./components/form/School/EvaluationPage";
@@ -15,6 +15,7 @@ import LocalOperaFirst from './components/form/Local/LocalOperaFirst'
 import LocalOperaSecond from "./components/form/Local/LocalOperaSecond";
 import LocalOperaThird from "./components/form/Local/LocalOperaThird";
 import LocalResult from "./components/form/Local/LocalResult";
+import ForgorPassword from "./admin/ForgorPassword";
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
         <Route path="/localoperasec" element={<LocalOperaSecond />}/>
         <Route path="/localoperathird" element={<LocalOperaThird />}/>
         <Route path="/localresult" element={<LocalResult />}/>
+        <Route path="/forgotpass" element={<ForgorPassword />}/>      
       </Routes>
     </BrowserRouter>
   );

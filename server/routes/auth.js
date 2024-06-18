@@ -2,7 +2,7 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const { getConnector } = require('../config');
+const { getConnector, initMySQL } = require('../config');
 const { JWT_SECRET } = process.env;
 
 const router = express.Router();
@@ -56,5 +56,47 @@ router.post('/login', async (req, res) => {
 router.get('/logout', (req, res) => {
   res.json({ message: 'Logout successful' });
 });
+
+router.post('/resetPassword', async (req, res) => {
+  const { email, newPassword } = req.body;
+
+  if (!email || !newPassword) {
+    return res.status(400).json({ message: "Email and newPassword are required" });
+  }
+
+  let connection; // Define connection variable outside the try-catch block
+
+  try {
+    connection = await getConnector().getConnection();
+
+    const [userResults] = await connection.query('SELECT * FROM FieldEx.users WHERE email = ?', [email]);
+
+    if (userResults.length === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const user = userResults[0];
+    const newPasswordHash = await bcrypt.hash(newPassword, 10);
+
+    await connection.beginTransaction();
+    await connection.query('UPDATE FieldEx.users SET password = ? WHERE id = ?', [newPasswordHash, user.id]);
+    await connection.commit();
+
+    res.json({ message: "Password reset successfully" });
+  } catch (error) {
+    console.error('Error resetting password:', error);
+    if (connection) {
+      await connection.rollback(); // Rollback transaction on error
+      connection.release(); // Release connection
+    }
+    res.status(500).json({ message: "Password reset failed", error: error.message });
+  } finally {
+    if (connection) {
+      connection.release(); // Always release connection in finally block
+    }
+  }
+});
+
+
 
 module.exports = router;

@@ -10,22 +10,26 @@ router.get("/", verifyUser, (req, res) => {
 
 router.get('/usersData', verifyUser, async (req, res) => {
   const connection = await getConnector().getConnection();
+  
+  // Check if the user has admin role
   if (req.user.role !== 'admin') {
     return res.status(403).json({
       message: "Access denied"
     });
   }
+  
   try {
-    // ดึงข้อมูล email, localId และ institutionID จากตาราง users
-    const [userData] = await connection.query('SELECT email, localId, institutionID FROM users WHERE localId IS NOT NULL OR institutionID IS NOT NULL');
+    // Start transaction
+    await connection.beginTransaction();
 
-    // สร้างอาร์เรย์ว่างเพื่อเก็บข้อมูล
+    // Fetch email, localId, and institutionID from the users table
+    const [userData] = await connection.query('SELECT email, localId, institutionID FROM users WHERE localId IS NOT NULL OR institutionID IS NOT NULL');
+    
     const institutionIDs = [];
     const localIDs = [];
 
-    // วนลูปผ่านข้อมูลทุกตัวใน userData เพื่อแยก email และ institutionID หรือ localID
+    // Loop through each user in userData to separate email and institutionID or localId
     userData.forEach(user => {
-      // เก็บ email ไว้ทุกครั้ง
       const userEmail = user.email;
       if (user.institutionID !== null) {
         institutionIDs.push({ userEmail, id: user.institutionID });
@@ -35,28 +39,37 @@ router.get('/usersData', verifyUser, async (req, res) => {
       }
     });
 
-    // ดึงข้อมูล institutionName จาก FieldEx.institution
+    // Fetch institutionName from FieldEx.institution
     const institutionNames = await Promise.all(institutionIDs.map(async ({ id }) => {
       const [institutionData] = await connection.query('SELECT institutionName FROM FieldEx.institution WHERE institutionID = ?', [id]);
       return institutionData.length > 0 ? institutionData[0].institutionName : null;
     }));
 
-    // ดึงข้อมูล organizationName จาก FieldEx.localGovernmentData
+    // Fetch organizationName from FieldEx.localGovernmentData
     const organizationNames = await Promise.all(localIDs.map(async ({ id }) => {
       const [organizationData] = await connection.query('SELECT organizationName FROM FieldEx.localGovernmentData WHERE localID = ?', [id]);
       return organizationData.length > 0 ? organizationData[0].organizationName : null;
     }));
 
+    // Commit the transaction
+    await connection.commit();
+
+    // Respond with institutionIDs and localIDs, including their names
     res.status(200).json({
       institutionIDs: institutionIDs.map((data, index) => ({ ...data, institutionName: institutionNames[index] })),
       localIDs: localIDs.map((data, index) => ({ ...data, organizationName: organizationNames[index] }))
     });
   } catch (error) {
+    // Rollback the transaction in case of error
+    await connection.rollback();
     console.log('error', error);
     res.status(500).json({
       message: "Failed to retrieve users",
       error
     });
+  } finally {
+    // Release the connection
+    connection.release();
   }
 });
 
@@ -116,5 +129,20 @@ router.get('/fetchforms', verifyUser, async (req, res) => {
     connection.release();
   }
 });
+
+router.get('/fetchUser', verifyUser, async (req,res) => {
+  const role = req.user.role;
+  const connection = await getConnector().getConnection();
+  try {
+    if (role === 'admin'){
+      const [userData] = await connection.query(`SELECT * FROM FieldEx.users`)
+      res.json(userData)
+    }else {
+      
+    }
+  } catch (error) {
+    
+  }
+})
 
 module.exports = router;

@@ -155,6 +155,7 @@ html {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   font-family: "Montserrat", sans-serif;
   z-index: 1000;
+  max-height: 100px;
 }
 
 .navbar-container {
@@ -656,46 +657,197 @@ button:active {
   }
 }
 
+/* Side Navbar Css */
+.side-navbar {
+  background-color: #2c3e50; /* สีพื้นหลัง */
+  padding: 20px;
+  position: fixed;
+  top: 100px; /* ระยะห่างจากด้านบน */
+  left: 0;
+  width: 200px;
+  height: 100%;
+  transition: left 0.3s ease-in-out;
+  font-family: "Montserrat", sans-serif;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.side-navbar.open {
+  left: 0;
+}
+
+.side-navbar.closed {
+  left: -200px;
+}
+
+.side-navbar-links {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.side-navbar-links li {
+  margin-bottom: 10px;
+  position: relative;
+}
+
+.side-navbar-links a {
+  color: #ddd; /* สีข้อความ */
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  padding: 15px 20px; /* ขนาดพื้นที่ของลิงก์ */
+  transition: all 0.3s ease-in-out;
+  border-radius: 30px; /* มุมขอบของลิงก์ */
+  font-weight: 600; /* ความหนาของตัวอักษร */
+  font-size: 18px; /* ขนาดตัวอักษร */
+}
+
+.side-navbar-links a:hover {
+  background-color: #34495e; /* สีพื้นหลังเมื่อโฮเวอร์ */
+  color: #cd5ff8; /* สีข้อความเมื่อโฮเวอร์ */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* เงาเมื่อโฮเวอร์ */
+}
+
+.side-navbar-links a::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 3px; /* ความสูงของเส้นใต้ของลิงก์ */
+  background: #cd5ff8; /* สีเส้นใต้ของลิงก์ */
+  transition: all 0.3s ease-in-out;
+}
+
+.side-navbar-links a:hover::before {
+  width: 60%; /* ความยาวของเส้นใต้ของลิงก์เมื่อโฮเวอร์ */
+}
+
+.side-navbar-links a i {
+  margin-right: 10px;
+  font-size: 16px;
+}
+
+/* สำหรับหน้าจอขนาดเล็ก */
+@media (max-width: 768px) {
+  .side-navbar {
+    width: 150px; /* กำหนดความกว้างของ Side Navbar ในหน้าจอขนาดเล็ก */
+  }
+
+  .side-navbar.closed {
+    left: -150px; /* การปิด Side Navbar ในหน้าจอขนาดเล็ก */
+  }
+}
+
+/* Loding Css styles */
+/* Scoped styles for SvgComponent */
+.svg-component * {
+	border: 0;
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+  }
+  
+  .svg-component {
+	--svg-hue: 223;
+	--svg-bg: hsl(var(--svg-hue), 90%, 95%);
+	--svg-fg: hsl(var(--svg-hue), 90%, 5%);
+	--svg-trans-dur: 0.3s;
+	background-color: var(--svg-bg);
+	color: var(--svg-fg);
+	font: 1em/1.5 sans-serif;
+	height: 100vh;
+	display: grid;
+	place-items: center;
+	transition: background-color var(--svg-trans-dur);
+  }
+  
+  .svg-component main {
+	padding: 1.5em 0;
+  }
+  
+  .svg-component .ip {
+	width: 16em;
+	height: 8em;
+  }
+  
+  .svg-component .ip__track {
+	stroke: hsl(var(--svg-hue), 90%, 90%);
+	transition: stroke var(--svg-trans-dur);
+  }
+  
+  .svg-component .ip__worm1,
+  .svg-component .ip__worm2 {
+	animation: svg-worm1 2s linear infinite;
+  }
+  
+  .svg-component .ip__worm2 {
+	animation-name: svg-worm2;
+  }
+  
+  /* Dark theme */
+  @media (prefers-color-scheme: dark) {
+	.svg-component {
+	  --svg-bg: hsl(var(--svg-hue), 90%, 5%);
+	  --svg-fg: hsl(var(--svg-hue), 90%, 95%);
+	}
+  
+	.svg-component .ip__track {
+	  stroke: hsl(var(--svg-hue), 90%, 15%);
+	}
+  }
+  
+  /* Animation */
+  @keyframes svg-worm1 {
+	from {
+	  stroke-dashoffset: 0;
+	}
+	50% {
+	  animation-timing-function: steps(1);
+	  stroke-dashoffset: -358;
+	}
+	50.01% {
+	  animation-timing-function: linear;
+	  stroke-dashoffset: 358;
+	}
+	to {
+	  stroke-dashoffset: 0;
+	}
+  }
+  
+  @keyframes svg-worm2 {
+	from {
+	  stroke-dashoffset: 358;
+	}
+	50% {
+	  stroke-dashoffset: 0;
+	}
+	to {
+	  stroke-dashoffset: -358;
+	}
+  }
+  
 /* AdminDashboard Styles */
+.admin-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 80px; /* Adjust based on your .navbar height */
+  padding-left: 250px;
+  padding-right: 50px;
+}
+
+
 .search-bar {
+  width: 100%;
   margin-bottom: 20px;
 }
 
 .search-bar input {
   width: 100%;
   padding: 10px;
-  font-size: 16px;
-  border: 1px solid #ccc;
+  border: 1px solid #ddd;
   border-radius: 5px;
-  box-sizing: border-box;
-  margin-bottom: 10px;
-}
-
-.tables {
-  margin-top: 20px;
-}
-
-.tables table {
-  border-collapse: collapse;
-  width: 100%;
-}
-
-.tables th,
-.tables td {
-  border: 1px solid #dddddd;
-  padding: 8px;
-  text-align: left;
-}
-
-.tables th {
-  background-color: #f2f2f2;
-  color: #333;
-}
-
-.tables tr:nth-child(even) {
-  background-color: #f9f9f9;
-}
-
-.tables tr:hover {
-  background-color: #f0f0f0;
+  font-size: 16px;
 }
