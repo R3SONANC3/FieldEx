@@ -131,7 +131,7 @@ router.post('/submitlc', verifyUser, async (req, res) => {
     }
     await connection.query('UPDATE users SET localID = ? WHERE email = ?', [localID, userEmail]);
 
-    await connections.query('INSERT INTO FieldEx.localGovernmentData SET ?', formData);
+    await connection.query('INSERT INTO FieldEx.localGovernmentData SET ?', formData);
     console.log(formData);
     res.status(200).json({
       message: "Submit Success"
@@ -180,6 +180,7 @@ router.put('/updateData', verifyUser, async (req, res) => {
 router.post('/localsubmit', verifyUser, async (req, res) => {
   const role = req.user.role;
   const { emailUser } = req.body;
+  const connection = await getConnector().getConnection();
   try {
     // Fetch user data including localId and institutionID
     const [userData] = await connection.query('SELECT localId, institutionID FROM FieldEx.users WHERE email = ?', emailUser);
@@ -236,7 +237,7 @@ router.post('/localsubmit', verifyUser, async (req, res) => {
       WHERE localID = ?
     `;
       // Execute admin insert query
-      await connector.query(adminUpdateQuery, [
+      await connection.query(adminUpdateQuery, [
         refereeLocalMeetingAgenda, commentLocalMeetingAgenda,
         refereeLocalMemberSignatures, commentLocalMemberSignatures,
         refereeMeetingMinutes, commentMeetingMinutes,
@@ -337,6 +338,103 @@ router.get('/getDataEmail/:email', verifyUser, async (req, res) => {
     connection.release();
   }
 });
+
+router.post('/localopera', verifyUser, async (req, res) => {
+  const role = req.user.role;
+  const { emailUser, formData } = req.body; // Ensure formData is received in req.body
+  
+  const connection = await getConnector().getConnection();
+  try {
+    // Fetch user data including localId and institutionID
+    const [userData] = await connection.query('SELECT localId, institutionID FROM FieldEx.users WHERE email = ?', emailUser);
+
+    let institutionID = null;
+    let localID = null;
+
+    // Extract localId and institutionID from userData
+    userData.forEach(user => {
+      if (user.institutionID !== null && institutionID === null) {
+        institutionID = user.institutionID;
+      }
+      if (user.localId !== null && localID === null) {
+        localID = user.localId;
+      }
+
+      // Break out of loop if both values are found
+      if (institutionID !== null && localID !== null) {
+        return;
+      }
+    });
+
+    let sql;
+    let values;
+
+    if (role === 'admin') {
+      // Admin updates existing data if localID is found
+      sql = `
+        UPDATE FieldEx.localOperaFirst SET
+          year1BoundaryAreaProtection = ?, area1BoundaryAreaProtection = ?, scoreBoundary = ?,
+          refereeScoreBoundary = ?, commentBoundaryAreaProtection = ?, scoreSurveyResources = ?,
+          refereeScoreSurveyResources = ?, commentSurveyResources = ?, scoreClassifyResources = ?,
+          refereeScoreClassifyResources = ?, commentClassifyResources = ?, scoreTagResources = ?,
+          refereeScoreTagResources = ?, commentTagResources = ?, scoreMappingBoundary = ?,
+          refereeScoreMappingBoundary = ?, commentMappingBoundary = ?, scoreStudyResources = ?,
+          refereeScoreStudyResources = ?, commentStudyResources = ?, scorePhotoResources = ?,
+          refereeScorePhotoResources = ?, commentPhotoResources = ?, scoreSampleResources = ?,
+          refereeScoreSampleResources = ?, commentSampleResources = ?, scoreRegisterResources = ?,
+          refereeScoreRegisterResources = ?, commentRegisterResources = ?, scorePhotoRegisterResources = ?,
+          refereeScorePhotoRegisterResources = ?, commentPhotoRegisterResources = ?, scoreCareResources = ?,
+          refereeScoreCareResources = ?, commentCareResources = ?
+        WHERE localID = ?
+      `;
+      values = [
+        formData.year1BoundaryAreaProtection, formData.area1BoundaryAreaProtection, formData.scoreBoundary,
+        formData.refereeScoreBoundary, formData.commentBoundaryAreaProtection, formData.scoreSurveyResources,
+        formData.refereeScoreSurveyResources, formData.commentSurveyResources, formData.scoreClassifyResources,
+        formData.refereeScoreClassifyResources, formData.commentClassifyResources, formData.scoreTagResources,
+        formData.refereeScoreTagResources, formData.commentTagResources, formData.scoreMappingBoundary,
+        formData.refereeScoreMappingBoundary, formData.commentMappingBoundary, formData.scoreStudyResources,
+        formData.refereeScoreStudyResources, formData.commentStudyResources, formData.scorePhotoResources,
+        formData.refereeScorePhotoResources, formData.commentPhotoResources, formData.scoreSampleResources,
+        formData.refereeScoreSampleResources, formData.commentSampleResources, formData.scoreRegisterResources,
+        formData.refereeScoreRegisterResources, formData.commentRegisterResources, formData.scorePhotoRegisterResources,
+        formData.refereeScorePhotoRegisterResources, formData.commentPhotoRegisterResources, formData.scoreCareResources,
+        formData.refereeScoreCareResources, formData.commentCareResources,
+        localID
+      ];
+    } else {
+      // Non-admin stores only basic fields
+      sql = `
+        INSERT INTO FieldEx.localOperaFirst (
+          year1BoundaryAreaProtection, area1BoundaryAreaProtection, scoreBoundary,
+          scoreSurveyResources, scoreClassifyResources, scoreTagResources,
+          scoreMappingBoundary, scoreStudyResources, scorePhotoResources,
+          scoreSampleResources, scoreRegisterResources, scorePhotoRegisterResources,
+          scoreCareResources, localID
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `;
+      values = [
+        formData.year1BoundaryAreaProtection, formData.area1BoundaryAreaProtection, formData.scoreBoundary,
+        formData.scoreSurveyResources, formData.scoreClassifyResources, formData.scoreTagResources,
+        formData.scoreMappingBoundary, formData.scoreStudyResources, formData.scorePhotoResources,
+        formData.scoreSampleResources, formData.scoreRegisterResources, formData.scorePhotoRegisterResources,
+        formData.scoreCareResources, localID
+      ];
+    }
+
+    // Execute the query based on the role
+    const [result] = await connection.query(sql, values);
+
+    // Send response indicating success
+    res.status(200).send('Form data saved successfully');
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('An error occurred while processing the request');
+  } finally {
+    connection.release(); // Release the connection in all cases
+  }
+});
+
 
 
 

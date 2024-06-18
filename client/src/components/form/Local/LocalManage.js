@@ -8,7 +8,8 @@ function LocalManage() {
     const [isAdmin, setIsAdmin] = useState(false);
     const location = useLocation();
     const navigate = useNavigate();
-    const emailUser = location.state?.emailUser;
+    // const emailUser = location.state?.emailUser;
+    const emailUser = 'test2@gmail.com'
     const [formData, setFormData] = useState({
         localMeetingAgenda: 0,
         refereeLocalMeetingAgenda: 0,
@@ -270,7 +271,6 @@ function LocalManage() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const emailUser = location.state?.emailUser;
         try {
             const response = await axios.post('http://localhost:8000/api/data/localsubmit', {
                 ...formData,

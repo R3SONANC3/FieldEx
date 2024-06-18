@@ -11,7 +11,7 @@ import LocalGovernmentForm from "./components/form/Local/LocalGovernmentForm ";
 import Conscript from "./components/form/Local/Conscript";
 import Summary from "./components/form/Local/Summary";
 import LocalManage from "./components/form/Local/LocalManage"
-import LocalOpera from './components/form/Local/LocalOperaFirst'
+import LocalOperaFirst from './components/form/Local/LocalOperaFirst'
 import LocalOperaSecond from "./components/form/Local/LocalOperaSecond";
 import LocalOperaThird from "./components/form/Local/LocalOperaThird";
 import LocalResult from "./components/form/Local/LocalResult";
@@ -31,7 +31,7 @@ function App() {
         <Route path="/localconscript" element={<Conscript />} />
         <Route path="/localsummary" element={<Summary />} />
         <Route path="/localmanage" element={<LocalManage />} />
-        <Route path="/localoperafirst" element={<LocalOpera />} />
+        <Route path="/localoperafirst" element={<LocalOperaFirst />} />
         <Route path="/localoperasec" element={<LocalOperaSecond />}/>
         <Route path="/localoperathird" element={<LocalOperaThird />}/>
         <Route path="/localresult" element={<LocalResult />}/>
