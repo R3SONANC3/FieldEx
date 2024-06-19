@@ -104,8 +104,8 @@ const InstitutionUsers = () => {
                 <td style={thTdStyle}>{user.userEmail}</td>
                 <td style={thTdStyle}>{user.id}</td>
                 <td style={thTdStyle}>{user.institutionName || "-"}</td>
-                <td style={thTdStyle}>
-                  <button onClick={() => handleEdit(user.userEmail)}>Edit</button>
+                <td className="btn-edit">
+                    <button onClick={() => handleEdit(user.userEmail)}>ประเมินสถานศึกษา</button>
                 </td>
               </tr>
             ))}

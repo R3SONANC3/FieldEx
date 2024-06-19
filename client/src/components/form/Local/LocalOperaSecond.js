@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Navbar from '../../Navbar';
 import { useNavigate } from 'react-router-dom';
 import './localform.css';
@@ -7,6 +7,8 @@ import axios from 'axios';
 const LocalOperaSecond = () => {
     const navigate = useNavigate();
     const [isAdmin, setIsAdmin] = useState(false); // assuming admin role management
+    const token = localStorage.getItem('token');
+    const emailUser = 'test2@gmail.com';
     const [formData, setFormData] = useState({
         localBasicInfo: 0,
         refereeBasicInfo: 0,
@@ -40,6 +42,10 @@ const LocalOperaSecond = () => {
         commentResourceSurveyReport: ''
     });
 
+    useEffect(() => {
+        fetchData();
+    }, [token]);
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData({
@@ -48,10 +54,67 @@ const LocalOperaSecond = () => {
         });
     };
 
+    useEffect(() => {
+        console.log(formData);
+    }, [formData]);
+
+    const fetchData = async () => {
+        try {
+            const response = await axios.get(`http://localhost:8000/api/data/getDataEmail/${emailUser}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            const data = response.data.localOperaSec[0] || {};
+            const updatedFormData = {
+                localBasicInfo: data.localBasicInfo || 0,
+                refereeBasicInfo: data.refereeBasicInfo || 0,
+                commentBasicInfo: data.commentBasicInfo || '',
+                localOccupationalInfo: data.localOccupationalInfo || 0,
+                refereeOccupationalInfo: data.refereeOccupationalInfo || 0,
+                commentOccupationalInfo: data.commentOccupationalInfo || '',
+                localPhysicalInfo: data.localPhysicalInfo || 0,
+                refereePhysicalInfo: data.refereePhysicalInfo || 0,
+                commentPhysicalInfo: data.commentPhysicalInfo || '',
+                localCommunityHistory: data.localCommunityHistory || 0,
+                refereeCommunityHistory: data.refereeCommunityHistory || 0,
+                commentCommunityHistory: data.commentCommunityHistory || '',
+                localPlantUsage: data.localPlantUsage || 0,
+                refereePlantUsage: data.refereePlantUsage || 0,
+                commentPlantUsage: data.commentPlantUsage || '',
+                localAnimalUsage: data.localAnimalUsage || 0,
+                refereeAnimalUsage: data.refereeAnimalUsage || 0,
+                commentAnimalUsage: data.commentAnimalUsage || '',
+                localOtherBiologicalUsage: data.localOtherBiologicalUsage || 0,
+                refereeOtherBiologicalUsage: data.refereeOtherBiologicalUsage || 0,
+                commentOtherBiologicalUsage: data.commentOtherBiologicalUsage || '',
+                localLocalWisdom: data.localLocalWisdom || 0,
+                refereeLocalWisdom: data.refereeLocalWisdom || 0,
+                commentLocalWisdom: data.commentLocalWisdom || '',
+                localArchaeologicalResources: data.localArchaeologicalResources || 0,
+                refereeArchaeologicalResources: data.refereeArchaeologicalResources || 0,
+                commentArchaeologicalResources: data.commentArchaeologicalResources || '',
+                localResourceSurveyReport: data.localResourceSurveyReport || 0,
+                refereeResourceSurveyReport: data.refereeResourceSurveyReport || 0,
+                commentResourceSurveyReport: data.commentResourceSurveyReport || ''
+            };
+            setFormData(updatedFormData);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:3001/api/data/localOperaSec', formData);
+            const response = await axios.post('http://localhost:8000/api/data/localOperaSec', {
+                ...formData,
+                emailUser
+            }, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
             if (response.status === 200) {
                 alert('Data saved successfully');
                 navigate('/localoperathird');
@@ -67,16 +130,16 @@ const LocalOperaSecond = () => {
     };
 
     const evaluationItems = [
-        { description: '2.1 การเก็บข้อมูลพื้นฐานในท้องถิ่น (5 คะแนน)', maxScore: 5, field: 'basicInfo' },
-        { description: '2.2 การเก็บข้อมูลการประกอบอาชีพในท้องถิ่น (5 คะแนน)', maxScore: 5, field: 'occupationalInfo' },
-        { description: '2.3 การเก็บข้อมูลกายภาพในท้องถิ่น (5 คะแนน)', maxScore: 5, field: 'physicalInfo' },
-        { description: '2.4 การเก็บข้อมูลประวัติหมู่บ้าน ชุมชน วิถีชุมชน ในท้องถิ่น (10 คะแนน)', maxScore: 10, field: 'communityHistory' },
-        { description: '2.5 การเก็บข้อมูลการใช้ประโยชน์ของพืชในท้องถิ่น และทะเบียนพรรณไม้ในชุมชน (10 คะแนน)', maxScore: 10, field: 'plantUsage' },
-        { description: '2.6 การเก็บข้อมูลการใช้ประโยชน์ของสัตว์ในท้องถิ่น ทะเบียนพันธุ์สัตว์ในชุมชน (10 คะแนน)', maxScore: 10, field: 'animalUsage' },
-        { description: '2.7 การเก็บข้อมูลการใช้ประโยชน์ของชีวภาพอื่นๆ ในท้องถิ่น และทะเบียนชีวภาพอื่นๆ ในชุมชน (10 คะแนน)', maxScore: 10, field: 'otherBiologicalUsage' },
-        { description: '2.8 การเก็บข้อมูลภูมิปัญญาในท้องถิ่น และทะเบียนภูมิปัญญาในชุมชน (10 คะแนน)', maxScore: 10, field: 'localWisdom' },
-        { description: '2.9 การเก็บข้อมูลแหล่งทรัพยากรและโบราณคดีในท้องถิ่น และทะเบียนแหล่งทรัพยากรชุมชนและทะเบียนโบราณคดีในชุมชน (10 คะแนน)', maxScore: 10, field: 'archaeologicalResources' },
-        { description: '2.10 การจัดทำรายงานผลการสำรวจและจัดทำฐานทรัพยากรท้องถิ่น (25 คะแนน)', maxScore: 25, field: 'resourceSurveyReport' }
+        { description: '2.1 การเก็บข้อมูลพื้นฐานในท้องถิ่น (5 คะแนน)', maxScore: 5, field: 'BasicInfo' },
+        { description: '2.2 การเก็บข้อมูลการประกอบอาชีพในท้องถิ่น (5 คะแนน)', maxScore: 5, field: 'OccupationalInfo' },
+        { description: '2.3 การเก็บข้อมูลกายภาพในท้องถิ่น (5 คะแนน)', maxScore: 5, field: 'PhysicalInfo' },
+        { description: '2.4 การเก็บข้อมูลประวัติหมู่บ้าน ชุมชน วิถีชุมชน ในท้องถิ่น (10 คะแนน)', maxScore: 10, field: 'CommunityHistory' },
+        { description: '2.5 การเก็บข้อมูลการใช้ประโยชน์ของพืชในท้องถิ่น และทะเบียนพรรณไม้ในชุมชน (10 คะแนน)', maxScore: 10, field: 'PlantUsage' },
+        { description: '2.6 การเก็บข้อมูลการใช้ประโยชน์ของสัตว์ในท้องถิ่น ทะเบียนพันธุ์สัตว์ในชุมชน (10 คะแนน)', maxScore: 10, field: 'AnimalUsage' },
+        { description: '2.7 การเก็บข้อมูลการใช้ประโยชน์ของชีวภาพอื่นๆ ในท้องถิ่น และทะเบียนชีวภาพอื่นๆ ในชุมชน (10 คะแนน)', maxScore: 10, field: 'OtherBiologicalUsage' },
+        { description: '2.8 การเก็บข้อมูลภูมิปัญญาในท้องถิ่น และทะเบียนภูมิปัญญาในชุมชน (10 คะแนน)', maxScore: 10, field: 'LocalWisdom' },
+        { description: '2.9 การเก็บข้อมูลแหล่งทรัพยากรและโบราณคดีในท้องถิ่น และทะเบียนแหล่งทรัพยากรชุมชนและทะเบียนโบราณคดีในชุมชน (10 คะแนน)', maxScore: 10, field: 'ArchaeologicalResources' },
+        { description: '2.10 การจัดทำรายงานผลการสำรวจและจัดทำฐานทรัพยากรท้องถิ่น (25 คะแนน)', maxScore: 25, field: 'ResourceSurveyReport' }
     ];
 
     return (
@@ -116,7 +179,7 @@ const LocalOperaSecond = () => {
                                             min="0"
                                             max={item.maxScore}
                                             onChange={handleInputChange}
-                                            disabled={!isAdmin}
+                                            disabled={isAdmin}
                                         />
                                     </td>
                                     <td>
@@ -128,8 +191,7 @@ const LocalOperaSecond = () => {
                                             min="0"
                                             max={item.maxScore}
                                             onChange={handleInputChange}
-                                            disabled={isAdmin}
-
+                                            disabled={!isAdmin}
                                         />
                                     </td>
                                     <td>
@@ -139,7 +201,7 @@ const LocalOperaSecond = () => {
                                             name={`comment${item.field}`}
                                             value={formData[`comment${item.field}`] || ''}
                                             onChange={handleInputChange}
-                                            disabled={isAdmin}
+                                            disabled={!isAdmin}
                                         />
                                     </td>
                                 </tr>

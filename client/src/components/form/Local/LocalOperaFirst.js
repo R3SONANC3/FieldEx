@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 
 function LocalOperaFirst() {
-    const [isAdmin, setIsAdmin] = useState(true);
+    const [isAdmin, setIsAdmin] = useState(false);
     const navigate = useNavigate();
     const emailUser = 'test2@gmail.com'
     const token = localStorage.getItem('token')

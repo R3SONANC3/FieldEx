@@ -124,7 +124,7 @@ router.post('/submitlc', verifyUser, async (req, res) => {
     };
     const userEmail = req.user.email;
     const role = req.user.role;
-    
+
     try {
       const [userResult] = await connection.query('SELECT * FROM users WHERE email = ?', [userEmail]);
       if (userResult.length === 0) {
@@ -132,7 +132,7 @@ router.post('/submitlc', verifyUser, async (req, res) => {
           message: "User not found"
         });
       }
-      
+
       if (role !== 'admin') {
         await connection.query('UPDATE users SET localID = ? WHERE email = ?', [localID, userEmail]);
       }
@@ -163,16 +163,15 @@ router.post('/submitlc', verifyUser, async (req, res) => {
   }
 });
 
-
-
 router.post('/localsubmit', verifyUser, async (req, res) => {
   const role = req.user.role;
+  const userEmail = req.user.email
   const { emailUser, ...requestBody } = req.body;
   const connection = await getConnector().getConnection();
 
   try {
     // Fetch user data including localId and institutionID
-    const [userData] = await connection.query('SELECT localId, institutionID FROM FieldEx.users WHERE email = ?', emailUser);
+    const [userData] = await connection.query('SELECT localId, institutionID FROM FieldEx.users WHERE email = ?', emailUser || userEmail);
 
     let institutionID = null;
     let localID = null;
@@ -189,22 +188,22 @@ router.post('/localsubmit', verifyUser, async (req, res) => {
 
     if (role === 'admin') {
       const adminFields = [
-        'refereeLocalMeetingAgenda', 'commentLocalMeetingAgenda', 
+        'refereeLocalMeetingAgenda', 'commentLocalMeetingAgenda',
         'refereeLocalMemberSignatures', 'commentLocalMemberSignatures',
-        'refereeMeetingMinutes', 'commentMeetingMinutes', 
-        'refereePhotos', 'commentPhotos', 
-        'refereeAppointmentOrder', 'commentAppointmentOrder', 
-        'refereeSubcommittee', 'commentSubcommittee', 
-        'refereeManagementPlan', 'commentManagementPlan', 
-        'refereeProtectionPlan', 'commentProtectionPlan', 
-        'refereeSurveyPlan', 'commentSurveyPlan', 
-        'refereeCoordination', 'commentCoordination', 
-        'refereeExpenseSummary', 'commentExpenseSummary', 
-        'refereeMeetingInvite', 'commentMeetingInvite', 
-        'refereeThankYouNote', 'commentThankYouNote', 
-        'refereeOperationResults', 'commentOperationResults', 
-        'refereeAnalysisResults', 'commentAnalysisResults', 
-        'refereeImprovementPlan', 'commentImprovementPlan', 
+        'refereeMeetingMinutes', 'commentMeetingMinutes',
+        'refereePhotos', 'commentPhotos',
+        'refereeAppointmentOrder', 'commentAppointmentOrder',
+        'refereeSubcommittee', 'commentSubcommittee',
+        'refereeManagementPlan', 'commentManagementPlan',
+        'refereeProtectionPlan', 'commentProtectionPlan',
+        'refereeSurveyPlan', 'commentSurveyPlan',
+        'refereeCoordination', 'commentCoordination',
+        'refereeExpenseSummary', 'commentExpenseSummary',
+        'refereeMeetingInvite', 'commentMeetingInvite',
+        'refereeThankYouNote', 'commentThankYouNote',
+        'refereeOperationResults', 'commentOperationResults',
+        'refereeAnalysisResults', 'commentAnalysisResults',
+        'refereeImprovementPlan', 'commentImprovementPlan',
         'refereeAnnualReport', 'commentAnnualReport'
       ];
 
@@ -264,7 +263,6 @@ router.post('/localsubmit', verifyUser, async (req, res) => {
   }
 });
 
-
 router.get('/getDataEmail/:email', verifyUser, async (req, res) => {
   const email = req.params.email;
   const connection = await getConnector().getConnection();
@@ -289,6 +287,8 @@ router.get('/getDataEmail/:email', verifyUser, async (req, res) => {
       [dataResults] = await connection.query('SELECT * FROM FieldEx.localGovernmentData WHERE localID = ?', [user.localID]);
       [localManageData] = await connection.query('SELECT * FROM FieldEx.localManageData WHERE localID = ?', [user.localID]);
       [localOperaFirst] = await connection.query('SELECT * FROM FieldEx.localOperaFirst WHERE localID = ?', [user.localID]);
+      [localOperaSec] = await connection.query(`SELECT * FROM FieldEx.localOperaSecond WHERE localID = ?`, [user.localID]);
+      [localOperaThird] = await connection.query(`SELECT * FROM FieldEx.localOperaThird WHERE localID = ?`,[user.localID]);
     }
 
     if (!dataResults || dataResults.length === 0) {
@@ -296,7 +296,7 @@ router.get('/getDataEmail/:email', verifyUser, async (req, res) => {
       return;
     }
 
-    res.json({ dataResults, localManageData, localOperaFirst });
+    res.json({ dataResults, localManageData, localOperaFirst, localOperaSec, localOperaThird });
   } catch (error) {
     console.error('เกิดข้อผิดพลาด: ' + error.message);
     res.status(500).send('เกิดข้อผิดพลาดบางอย่าง');
@@ -308,7 +308,7 @@ router.get('/getDataEmail/:email', verifyUser, async (req, res) => {
 router.post('/localopera', verifyUser, async (req, res) => {
   const role = req.user.role;
   const { emailUser } = req.body; // Ensure formData is received in req.body
-  
+
   const connection = await getConnector().getConnection();
   try {
     // Fetch user data including localId and institutionID
@@ -370,7 +370,7 @@ router.post('/localopera', verifyUser, async (req, res) => {
       `;
       values = [
         year1BoundaryAreaProtection, area1BoundaryAreaProtection, scoreBoundary,
-        refereeScoreBoundary,commentBoundaryAreaProtection, scoreSurveyResources,
+        refereeScoreBoundary, commentBoundaryAreaProtection, scoreSurveyResources,
         refereeScoreSurveyResources, commentSurveyResources, scoreClassifyResources,
         refereeScoreClassifyResources, commentClassifyResources, scoreTagResources,
         refereeScoreTagResources, commentTagResources, scoreMappingBoundary,
@@ -380,7 +380,7 @@ router.post('/localopera', verifyUser, async (req, res) => {
         refereeScoreSampleResources, commentSampleResources, scoreRegisterResources,
         refereeScoreRegisterResources, commentRegisterResources, scorePhotoRegisterResources,
         refereeScorePhotoRegisterResources, commentPhotoRegisterResources, scoreCareResources,
-        refereeScoreCareResources,commentCareResources,
+        refereeScoreCareResources, commentCareResources,
         localID
       ];
     } else {
@@ -390,7 +390,7 @@ router.post('/localopera', verifyUser, async (req, res) => {
         scorePhotoResources, scoreSampleResources, scoreRegisterResources, scorePhotoRegisterResources,
         scoreCareResources
       } = req.body;
-      
+
       sql = `
         INSERT INTO FieldEx.localOperaFirst (
           localID, year1BoundaryAreaProtection, area1BoundaryAreaProtection, scoreBoundary,
@@ -413,17 +413,17 @@ router.post('/localopera', verifyUser, async (req, res) => {
           scorePhotoRegisterResources = VALUES(scorePhotoRegisterResources),
           scoreCareResources = VALUES(scoreCareResources)
       `;
-      
+
       const values = [
         localID, year1BoundaryAreaProtection, area1BoundaryAreaProtection, scoreBoundary, scoreSurveyResources,
         scoreClassifyResources, scoreTagResources, scoreMappingBoundary, scoreStudyResources,
         scorePhotoResources, scoreSampleResources, scoreRegisterResources, scorePhotoRegisterResources,
         scoreCareResources
       ];
-      
+
       // Execute the query
       const [result] = await connection.query(sql, values);
-      
+
     }
     // Send response indicating success
     res.status(200).send('Form data saved successfully');
@@ -437,12 +437,13 @@ router.post('/localopera', verifyUser, async (req, res) => {
 
 router.post('/localOperaSec', verifyUser, async (req, res) => {
   const role = req.user.role;
+  const email = req.user.email;
   const { emailUser } = req.body; // Ensure formData is received in req.body
-  
   const connection = await getConnector().getConnection();
+
   try {
     // Fetch user data including localId and institutionID
-    const [userData] = await connection.query('SELECT localId, institutionID FROM FieldEx.users WHERE email = ?', emailUser);
+    const [userData] = await connection.query('SELECT localId, institutionID FROM FieldEx.users WHERE email = ?', [emailUser || email]);
 
     let institutionID = null;
     let localID = null;
@@ -487,11 +488,10 @@ router.post('/localOperaSec', verifyUser, async (req, res) => {
         commentArchaeologicalResources,
         refereeResourceSurveyReport,
         commentResourceSurveyReport,
-        localID
       } = req.body;
 
       sql = `
-        UPDATE FieldEx.localOperaFirst SET
+        UPDATE FieldEx.localOperaSecond SET
         refereeBasicInfo = ?,
         commentBasicInfo = ?,
         refereeOccupationalInfo = ?,
@@ -549,11 +549,10 @@ router.post('/localOperaSec', verifyUser, async (req, res) => {
         localLocalWisdom,
         localArchaeologicalResources,
         localResourceSurveyReport,
-        localID
       } = req.body;
-      
+
       sql = `
-        INSERT INTO FieldEx.localOperaFirst (
+        INSERT INTO FieldEx.localOperaSecond (
           localBasicInfo,
           localOccupationalInfo,
           localPhysicalInfo,
@@ -596,7 +595,7 @@ router.post('/localOperaSec', verifyUser, async (req, res) => {
 
     // Execute the query
     const [result] = await connection.query(sql, values);
-    
+
     // Send response indicating success
     res.status(200).send('Form data saved successfully');
   } catch (error) {
@@ -607,7 +606,349 @@ router.post('/localOperaSec', verifyUser, async (req, res) => {
   }
 });
 
+router.post('/localOperaThird', verifyUser, async (req, res) => {
+  const role = req.user.role;
+  const email = req.user.email;
+  const { emailUser } = req.body; // Ensure formData is received in req.body
+  const connection = await getConnector().getConnection();
 
+  try {
+    // Fetch user data including localId and institutionID
+    const [userData] = await connection.query('SELECT localId, institutionID FROM FieldEx.users WHERE email = ?', [emailUser || email]);
+
+    let institutionID = null;
+    let localID = null;
+
+    // Extract localId and institutionID from userData
+    userData.forEach(user => {
+      if (user.institutionID !== null && institutionID === null) {
+        institutionID = user.institutionID;
+      }
+      if (user.localId !== null && localID === null) {
+        localID = user.localId;
+      }
+
+      // Break out of loop if both values are found
+      if (institutionID !== null && localID !== null) {
+        return;
+      }
+    });
+
+    let sql;
+    let values;
+
+    if (role === 'admin') {
+      const {
+        refereeScoreInput31, comment31,
+        refereeScoreInput32, comment32,
+        refereeScoreInput33, comment33,
+        refereeScoreInput41, comment41,
+        refereeScoreInput42, comment42,
+        refereeScoreInput51, comment51,
+        refereeScoreInput52, comment52,
+        refereeScoreInput61, comment61,
+        refereeScoreInput62, comment62
+      } = req.body;
+
+      sql = `
+        UPDATE FieldEx.localOperaThird SET
+        refereeScoreInput31 = ?,
+        comment31 = ?,
+        refereeScoreInput32 = ?,
+        comment32 = ?,
+        refereeScoreInput33 = ?,
+        comment33 = ?,
+        refereeScoreInput41 = ?,
+        comment41 = ?,
+        refereeScoreInput42 = ?,
+        comment42 = ?,
+        refereeScoreInput51 = ?,
+        comment51 = ?,
+        refereeScoreInput52 = ?,
+        comment52 = ?,
+        refereeScoreInput61 = ?,
+        comment61 = ?,
+        refereeScoreInput62 = ?,
+        comment62 = ?
+        WHERE localID = ?
+      `;
+      values = [
+        refereeScoreInput31, comment31,
+        refereeScoreInput32, comment32,
+        refereeScoreInput33, comment33,
+        refereeScoreInput41, comment41,
+        refereeScoreInput42, comment42,
+        refereeScoreInput51, comment51,
+        refereeScoreInput52, comment52,
+        refereeScoreInput61, comment61,
+        refereeScoreInput62, comment62,
+        localID
+      ];
+    } else {
+      const {
+        scoreInput31, 
+        scoreInput32, 
+        scoreInput33, 
+        scoreInput41, 
+        scoreInput42, 
+        scoreInput51, 
+        scoreInput52, 
+        scoreInput61, 
+        scoreInput62, 
+      } = req.body;
+
+      sql = `
+        INSERT INTO FieldEx.localOperaThird (
+          scoreInput31, 
+          scoreInput32, 
+          scoreInput33, 
+          scoreInput41, 
+          scoreInput42, 
+          scoreInput51, 
+          scoreInput52, 
+          scoreInput61, 
+          scoreInput62, 
+          localID
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ON DUPLICATE KEY UPDATE
+          scoreInput31 = VALUES(scoreInput31),
+          scoreInput32 = VALUES(scoreInput32),
+          scoreInput33 = VALUES(scoreInput33),
+          scoreInput41 = VALUES(scoreInput41),
+          scoreInput42 = VALUES(scoreInput42),
+          scoreInput51 = VALUES(scoreInput51),
+          scoreInput52 = VALUES(scoreInput52),
+          scoreInput61 = VALUES(scoreInput61),
+          scoreInput62 = VALUES(scoreInput62),
+          localID = VALUES(localID)
+      `;
+      values = [
+        scoreInput31,
+        scoreInput32, 
+        scoreInput33, 
+        scoreInput41, 
+        scoreInput42, 
+        scoreInput51, 
+        scoreInput52, 
+        scoreInput61, 
+        scoreInput62, 
+        localID
+      ];
+    }
+
+    // Execute the query
+    const [result] = await connection.query(sql, values);
+
+    // Send response indicating success
+    res.status(200).send('Form data saved successfully');
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('An error occurred while processing the request');
+  } finally {
+    connection.release(); // Release the connection in all cases
+  }
+});
+
+router.post('/localResult', verifyUser, async (req, res) => {
+  const role = req.user.role;
+  const email = req.user.email;
+  const { emailUser } = req.body; // Ensure formData is received in req.body
+  const connection = await getConnector().getConnection();
+
+  try {
+    // Fetch user data including localId and institutionID
+    const [userData] = await connection.query('SELECT localId, institutionID FROM FieldEx.users WHERE email = ?', [emailUser || email]);
+
+    let institutionID = null;
+    let localID = null;
+
+    // Extract localId and institutionID from userData
+    userData.forEach(user => {
+      if (user.institutionID !== null && institutionID === null) {
+        institutionID = user.institutionID;
+      }
+      if (user.localId !== null && localID === null) {
+        localID = user.localId;
+      }
+
+      // Break out of loop if both values are found
+      if (institutionID !== null && localID !== null) {
+        return;
+      }
+    });
+
+    let sql;
+    let values;
+
+    if (role === 'admin') {
+      const {
+        cleanlinessCommittees,
+        orderlinessCommittees,
+        greeneryCommittees,
+        atmosphereCommittees,
+        responsibilityCommittees,
+        honestyCommittees,
+        perseveranceCommittees,
+        unityCommittees,
+        gratitudeCommittees,
+        diligenceCommittees,
+        localInvolvementCommittees,
+        externalVisitCommittees,
+        knowledgeSharingCommittees,
+        cleanlinessComments,
+        orderlinessComments,
+        greeneryComments,
+        atmosphereComments,
+        responsibilityComments,
+        honestyComments,
+        perseveranceComments,
+        unityComments,
+        gratitudeComments,
+        diligenceComments,
+        localInvolvementComments,
+        externalVisitComments,
+        knowledgeSharingComments,
+      } = req.body;
+
+      sql = `
+        UPDATE FieldEx.localResult SET
+          cleanlinessCommittees = ?,
+          orderlinessCommittees = ?,
+          greeneryCommittees = ?,
+          atmosphereCommittees = ?,
+          responsibilityCommittees = ?,
+          honestyCommittees = ?,
+          perseveranceCommittees = ?,
+          unityCommittees = ?,
+          gratitudeCommittees = ?,
+          diligenceCommittees = ?,
+          localInvolvementCommittees = ?,
+          externalVisitCommittees = ?,
+          knowledgeSharingCommittees = ?,
+          cleanlinessComments = ?,
+          orderlinessComments = ?,
+          greeneryComments = ?,
+          atmosphereComments = ?,
+          responsibilityComments = ?,
+          honestyComments = ?,
+          perseveranceComments = ?,
+          unityComments = ?,
+          gratitudeComments = ?,
+          diligenceComments = ?,
+          localInvolvementComments = ?,
+          externalVisitComments = ?,
+          knowledgeSharingComments = ?
+        WHERE localID = ?
+      `;
+      values = [
+        cleanlinessCommittees,
+        orderlinessCommittees,
+        greeneryCommittees,
+        atmosphereCommittees,
+        responsibilityCommittees,
+        honestyCommittees,
+        perseveranceCommittees,
+        unityCommittees,
+        gratitudeCommittees,
+        diligenceCommittees,
+        localInvolvementCommittees,
+        externalVisitCommittees,
+        knowledgeSharingCommittees,
+        cleanlinessComments,
+        orderlinessComments,
+        greeneryComments,
+        atmosphereComments,
+        responsibilityComments,
+        honestyComments,
+        perseveranceComments,
+        unityComments,
+        gratitudeComments,
+        diligenceComments,
+        localInvolvementComments,
+        externalVisitComments,
+        knowledgeSharingComments,
+        localID
+      ];
+    } else {
+      const {
+        cleanlinessLocal,
+        orderlinessLocal,
+        greeneryLocal,
+        atmosphereLocal,
+        responsibilityLocal,
+        honestyLocal,
+        perseveranceLocal,
+        unityLocal,
+        gratitudeLocal,
+        diligenceLocal,
+        localInvolvementLocal,
+        externalVisitLocal,
+        knowledgeSharingLocal,
+      } = req.body;
+
+      sql = `
+        INSERT INTO FieldEx.localResult (
+          cleanlinessLocal,
+          orderlinessLocal,
+          greeneryLocal,
+          atmosphereLocal,
+          responsibilityLocal,
+          honestyLocal,
+          perseveranceLocal,
+          unityLocal,
+          gratitudeLocal,
+          diligenceLocal,
+          localInvolvementLocal,
+          externalVisitLocal,
+          knowledgeSharingLocal,
+          localID
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ON DUPLICATE KEY UPDATE
+          cleanlinessLocal = VALUES(cleanlinessLocal),
+          orderlinessLocal = VALUES(orderlinessLocal),
+          greeneryLocal = VALUES(greeneryLocal),
+          atmosphereLocal = VALUES(atmosphereLocal),
+          responsibilityLocal = VALUES(responsibilityLocal),
+          honestyLocal = VALUES(honestyLocal),
+          perseveranceLocal = VALUES(perseveranceLocal),
+          unityLocal = VALUES(unityLocal),
+          gratitudeLocal = VALUES(gratitudeLocal),
+          diligenceLocal = VALUES(diligenceLocal),
+          localInvolvementLocal = VALUES(localInvolvementLocal),
+          externalVisitLocal = VALUES(externalVisitLocal),
+          knowledgeSharingLocal = VALUES(knowledgeSharingLocal),
+          localID = VALUES(localID)
+      `;
+      values = [
+        cleanlinessLocal,
+        orderlinessLocal,
+        greeneryLocal,
+        atmosphereLocal,
+        responsibilityLocal,
+        honestyLocal,
+        perseveranceLocal,
+        unityLocal,
+        gratitudeLocal,
+        diligenceLocal,
+        localInvolvementLocal,
+        externalVisitLocal,
+        knowledgeSharingLocal,
+        localID
+      ];
+    }
+
+    // Execute the query
+    const [result] = await connection.query(sql, values);
+
+    // Send response indicating success
+    res.status(200).send('Form data saved successfully');
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('An error occurred while processing the request');
+  } finally {
+    connection.release(); // Release the connection in all cases
+  }
+});
 
 
 // Export the router

@@ -105,7 +105,7 @@ const LocalUsers = () => {
                 <td style={thTdStyle}>{user.id}</td>
                 <td style={thTdStyle}>{user.organizationName || "-"}</td>
                 <td style={thTdStyle}>
-                  <button onClick={() => handleEdit(user.userEmail)}>Edit</button>
+                  <button onClick={() => handleEdit(user.userEmail)}>ประเมินองค์กร</button>
                 </td>
               </tr>
             ))}
