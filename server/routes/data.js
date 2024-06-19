@@ -336,7 +336,22 @@ router.post('/localopera', verifyUser, async (req, res) => {
     let values;
 
     if (role === 'admin') {
-      // Admin updates existing data if localID is found
+      const {
+        year1BoundaryAreaProtection, area1BoundaryAreaProtection, scoreBoundary,
+        refereeScoreBoundary, commentBoundaryAreaProtection, scoreSurveyResources,
+        refereeScoreSurveyResources, commentSurveyResources, scoreClassifyResources,
+        refereeScoreClassifyResources, commentClassifyResources, scoreTagResources,
+        refereeScoreTagResources, commentTagResources, scoreMappingBoundary,
+        refereeScoreMappingBoundary, commentMappingBoundary, scoreStudyResources,
+        refereeScoreStudyResources, commentStudyResources, scorePhotoResources,
+        refereeScorePhotoResources, commentPhotoResources, scoreSampleResources,
+        refereeScoreSampleResources, commentSampleResources, scoreRegisterResources,
+        refereeScoreRegisterResources, commentRegisterResources, scorePhotoRegisterResources,
+        refereeScorePhotoRegisterResources, commentPhotoRegisterResources, scoreCareResources,
+        refereeScoreCareResources, commentCareResources,
+        localID
+      } = req.body;
+
       sql = `
         UPDATE FieldEx.localOperaFirst SET
           year1BoundaryAreaProtection = ?, area1BoundaryAreaProtection = ?, scoreBoundary = ?,
@@ -354,18 +369,18 @@ router.post('/localopera', verifyUser, async (req, res) => {
         WHERE localID = ?
       `;
       values = [
-        formData.year1BoundaryAreaProtection, formData.area1BoundaryAreaProtection, formData.scoreBoundary,
-        formData.refereeScoreBoundary, formData.commentBoundaryAreaProtection, formData.scoreSurveyResources,
-        formData.refereeScoreSurveyResources, formData.commentSurveyResources, formData.scoreClassifyResources,
-        formData.refereeScoreClassifyResources, formData.commentClassifyResources, formData.scoreTagResources,
-        formData.refereeScoreTagResources, formData.commentTagResources, formData.scoreMappingBoundary,
-        formData.refereeScoreMappingBoundary, formData.commentMappingBoundary, formData.scoreStudyResources,
-        formData.refereeScoreStudyResources, formData.commentStudyResources, formData.scorePhotoResources,
-        formData.refereeScorePhotoResources, formData.commentPhotoResources, formData.scoreSampleResources,
-        formData.refereeScoreSampleResources, formData.commentSampleResources, formData.scoreRegisterResources,
-        formData.refereeScoreRegisterResources, formData.commentRegisterResources, formData.scorePhotoRegisterResources,
-        formData.refereeScorePhotoRegisterResources, formData.commentPhotoRegisterResources, formData.scoreCareResources,
-        formData.refereeScoreCareResources, formData.commentCareResources,
+        year1BoundaryAreaProtection, area1BoundaryAreaProtection, scoreBoundary,
+        refereeScoreBoundary,commentBoundaryAreaProtection, scoreSurveyResources,
+        refereeScoreSurveyResources, commentSurveyResources, scoreClassifyResources,
+        refereeScoreClassifyResources, commentClassifyResources, scoreTagResources,
+        refereeScoreTagResources, commentTagResources, scoreMappingBoundary,
+        refereeScoreMappingBoundary, commentMappingBoundary, scoreStudyResources,
+        refereeScoreStudyResources, commentStudyResources, scorePhotoResources,
+        refereeScorePhotoResources, commentPhotoResources, scoreSampleResources,
+        refereeScoreSampleResources, commentSampleResources, scoreRegisterResources,
+        refereeScoreRegisterResources, commentRegisterResources, scorePhotoRegisterResources,
+        refereeScorePhotoRegisterResources, commentPhotoRegisterResources, scoreCareResources,
+        refereeScoreCareResources,commentCareResources,
         localID
       ];
     } else {
@@ -410,6 +425,178 @@ router.post('/localopera', verifyUser, async (req, res) => {
       const [result] = await connection.query(sql, values);
       
     }
+    // Send response indicating success
+    res.status(200).send('Form data saved successfully');
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('An error occurred while processing the request');
+  } finally {
+    connection.release(); // Release the connection in all cases
+  }
+});
+
+router.post('/localOperaSec', verifyUser, async (req, res) => {
+  const role = req.user.role;
+  const { emailUser } = req.body; // Ensure formData is received in req.body
+  
+  const connection = await getConnector().getConnection();
+  try {
+    // Fetch user data including localId and institutionID
+    const [userData] = await connection.query('SELECT localId, institutionID FROM FieldEx.users WHERE email = ?', emailUser);
+
+    let institutionID = null;
+    let localID = null;
+
+    // Extract localId and institutionID from userData
+    userData.forEach(user => {
+      if (user.institutionID !== null && institutionID === null) {
+        institutionID = user.institutionID;
+      }
+      if (user.localId !== null && localID === null) {
+        localID = user.localId;
+      }
+
+      // Break out of loop if both values are found
+      if (institutionID !== null && localID !== null) {
+        return;
+      }
+    });
+
+    let sql;
+    let values;
+
+    if (role === 'admin') {
+      const {
+        refereeBasicInfo,
+        commentBasicInfo,
+        refereeOccupationalInfo,
+        commentOccupationalInfo,
+        refereePhysicalInfo,
+        commentPhysicalInfo,
+        refereeCommunityHistory,
+        commentCommunityHistory,
+        refereePlantUsage,
+        commentPlantUsage,
+        refereeAnimalUsage,
+        commentAnimalUsage,
+        refereeOtherBiologicalUsage,
+        commentOtherBiologicalUsage,
+        refereeLocalWisdom,
+        commentLocalWisdom,
+        refereeArchaeologicalResources,
+        commentArchaeologicalResources,
+        refereeResourceSurveyReport,
+        commentResourceSurveyReport,
+        localID
+      } = req.body;
+
+      sql = `
+        UPDATE FieldEx.localOperaFirst SET
+        refereeBasicInfo = ?,
+        commentBasicInfo = ?,
+        refereeOccupationalInfo = ?,
+        commentOccupationalInfo = ?,
+        refereePhysicalInfo = ?,
+        commentPhysicalInfo = ?,
+        refereeCommunityHistory = ?,
+        commentCommunityHistory = ?,
+        refereePlantUsage = ?,
+        commentPlantUsage = ?,
+        refereeAnimalUsage = ?,
+        commentAnimalUsage = ?,
+        refereeOtherBiologicalUsage = ?,
+        commentOtherBiologicalUsage = ?,
+        refereeLocalWisdom = ?,
+        commentLocalWisdom = ?,
+        refereeArchaeologicalResources = ?,
+        commentArchaeologicalResources = ?,
+        refereeResourceSurveyReport = ?,
+        commentResourceSurveyReport = ?
+        WHERE localID = ?
+      `;
+      values = [
+        refereeBasicInfo,
+        commentBasicInfo,
+        refereeOccupationalInfo,
+        commentOccupationalInfo,
+        refereePhysicalInfo,
+        commentPhysicalInfo,
+        refereeCommunityHistory,
+        commentCommunityHistory,
+        refereePlantUsage,
+        commentPlantUsage,
+        refereeAnimalUsage,
+        commentAnimalUsage,
+        refereeOtherBiologicalUsage,
+        commentOtherBiologicalUsage,
+        refereeLocalWisdom,
+        commentLocalWisdom,
+        refereeArchaeologicalResources,
+        commentArchaeologicalResources,
+        refereeResourceSurveyReport,
+        commentResourceSurveyReport,
+        localID
+      ];
+    } else {
+      const {
+        localBasicInfo,
+        localOccupationalInfo,
+        localPhysicalInfo,
+        localCommunityHistory,
+        localPlantUsage,
+        localAnimalUsage,
+        localOtherBiologicalUsage,
+        localLocalWisdom,
+        localArchaeologicalResources,
+        localResourceSurveyReport,
+        localID
+      } = req.body;
+      
+      sql = `
+        INSERT INTO FieldEx.localOperaFirst (
+          localBasicInfo,
+          localOccupationalInfo,
+          localPhysicalInfo,
+          localCommunityHistory,
+          localPlantUsage,
+          localAnimalUsage,
+          localOtherBiologicalUsage,
+          localLocalWisdom,
+          localArchaeologicalResources,
+          localResourceSurveyReport,
+          localID
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ON DUPLICATE KEY UPDATE
+          localBasicInfo = VALUES(localBasicInfo),
+          localOccupationalInfo = VALUES(localOccupationalInfo),
+          localPhysicalInfo = VALUES(localPhysicalInfo),
+          localCommunityHistory = VALUES(localCommunityHistory),
+          localPlantUsage = VALUES(localPlantUsage),
+          localAnimalUsage = VALUES(localAnimalUsage),
+          localOtherBiologicalUsage = VALUES(localOtherBiologicalUsage),
+          localLocalWisdom = VALUES(localLocalWisdom),
+          localArchaeologicalResources = VALUES(localArchaeologicalResources),
+          localResourceSurveyReport = VALUES(localResourceSurveyReport),
+          localID = VALUES(localID)
+      `;
+      values = [
+        localBasicInfo,
+        localOccupationalInfo,
+        localPhysicalInfo,
+        localCommunityHistory,
+        localPlantUsage,
+        localAnimalUsage,
+        localOtherBiologicalUsage,
+        localLocalWisdom,
+        localArchaeologicalResources,
+        localResourceSurveyReport,
+        localID
+      ];
+    }
+
+    // Execute the query
+    const [result] = await connection.query(sql, values);
+    
     // Send response indicating success
     res.status(200).send('Form data saved successfully');
   } catch (error) {

@@ -134,14 +134,26 @@ button:active {
 }
 .co-content1,.co-content2,.co-content3,.co-content4 {
   text-align: left;
+  padding-left: 10px;
 }
 .box {
   text-align:center;
 }
 .co-footer {
   display: flex;
+  flex-direction: column; /* Stack children vertically */
+  align-items: center; /* Align children to the start of the container */
+  gap: 10px;
   justify-content: center;
   padding-bottom: 30px;
+}
+.checkbox {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.checkbox input[type="checkbox"] {
+  margin-right: 8px;
 }
 .conscript-table {
   background-color: rgba(255, 255, 255, 0.9);
@@ -156,11 +168,13 @@ button:active {
 }
 td {
   border: 1px solid #ddd;
-  padding: 15px;
+  padding: 20px;
   text-align:center;
   overflow-wrap: break-word; /* ทำให้ข้อความยาวๆ ถูกตัดและย้ายลงบรรทัดใหม่ */
   word-break: break-word; /* เพิ่มการตัดข้อความให้อยู่ในกรอบ */
   line-height: 1.5;
+  padding-left: 30px;
+  padding-bottom: 30px;
 }
 th {
   border: 1px solid #ddd;
