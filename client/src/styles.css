@@ -704,7 +704,7 @@ button:active {
 
 .side-navbar-links a:hover {
   background-color: #34495e; /* สีพื้นหลังเมื่อโฮเวอร์ */
-  color: #cd5ff8; /* สีข้อความเมื่อโฮเวอร์ */
+  color: orangered; /* สีข้อความเมื่อโฮเวอร์ */
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* เงาเมื่อโฮเวอร์ */
 }
 
@@ -716,7 +716,7 @@ button:active {
   transform: translateX(-50%);
   width: 0;
   height: 3px; /* ความสูงของเส้นใต้ของลิงก์ */
-  background: #cd5ff8; /* สีเส้นใต้ของลิงก์ */
+  background: orangered; /* สีเส้นใต้ของลิงก์ */
   transition: all 0.3s ease-in-out;
 }
 
@@ -838,7 +838,6 @@ button:active {
   padding-right: 50px;
 }
 
-
 .search-bar {
   width: 100%;
   margin-bottom: 20px;
@@ -850,4 +849,33 @@ button:active {
   border: 1px solid #ddd;
   border-radius: 5px;
   font-size: 16px;
+}
+.table-container {
+  max-height: 400px; /* Adjust as needed */
+  overflow-y: auto;
+  margin-top: 20px;
+  width: 100%; /* Make table-container take full width */
+}
+
+.user-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.user-table th, .user-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.user-table th {
+  background-color: #f2f2f2;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+.footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
 }

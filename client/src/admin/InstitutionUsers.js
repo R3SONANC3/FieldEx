@@ -1,0 +1,119 @@
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import Navbar from '../components/Navbar';
+import SideNavbar from "../components/SideNavbar";
+import Loading from '../components/Loading';
+import '../styles.css';
+
+const InstitutionUsers = () => {
+  const token = localStorage.getItem("token");
+  const [institutionIDs, setInstitutionIDs] = useState([]);
+  const [searchInstitutionTerm, setSearchInstitutionTerm] = useState(""); // State for institution search term
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!token) {
+      navigate('/');
+      return;
+    }
+    const fetchInstitutionUsers = async () => {
+      try {
+        const response = await axios.get("http://localhost:8000/api/user/usersData", {
+          headers: {
+            Authorization: `Bearer ${token}`
+          },
+        });
+        if (response.data && response.data.institutionIDs) {
+          setInstitutionIDs(response.data.institutionIDs);
+        } else {
+          setError("Invalid data format");
+        }
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchInstitutionUsers();
+  }, [navigate, token]);
+
+  // Filter function for filtering institution users based on search term
+  const filterInstitutionUsers = (users) => {
+    return users.filter(user =>
+      (user.userEmail && user.userEmail.toLowerCase().includes(searchInstitutionTerm.toLowerCase())) ||
+      (user.id && user.id.toString().toLowerCase().includes(searchInstitutionTerm.toLowerCase())) ||
+      (user.institutionName && user.institutionName.toLowerCase().includes(searchInstitutionTerm.toLowerCase()))
+    );
+  };
+
+  // Handle change in institution search input
+  const handleInstitutionSearch = (e) => {
+    setSearchInstitutionTerm(e.target.value);
+  };
+
+  // Function to handle edit button click
+  const handleEdit = (emailUser) => {
+    navigate(`/localform`, { state: { emailUser } });
+  };
+
+  if (loading) {
+    return <Loading />;
+  }
+
+  if (error) {
+    return <p>Error: {error}</p>;
+  }
+
+  const tableStyle = {
+    border: "1px solid black",
+    borderCollapse: "collapse",
+    width: "100%",
+    marginBottom: "20px"
+  };
+
+  const thTdStyle = {
+    border: "1px solid black",
+    padding: "8px",
+    textAlign: "left"
+  };
+
+  // Filtered institution IDs based on search term
+  const filteredInstitutionIDs = filterInstitutionUsers(institutionIDs);
+
+  return (
+    <div className="admin-container">
+      <Navbar />
+      <SideNavbar />
+      <div className="admin-body">
+        <h2>แบบประเมินสถานศึกษา</h2>
+        <div className="search-bar">
+          <input
+            type="text"
+            placeholder="Search Institution by email, ID, or name..."
+            value={searchInstitutionTerm}
+            onChange={handleInstitutionSearch}
+          />
+        </div>
+        <table style={tableStyle}>
+          <tbody>
+            {filteredInstitutionIDs.map((user, index) => (
+              <tr key={index}>
+                <td style={thTdStyle}>{user.userEmail}</td>
+                <td style={thTdStyle}>{user.id}</td>
+                <td style={thTdStyle}>{user.institutionName || "-"}</td>
+                <td style={thTdStyle}>
+                  <button onClick={() => handleEdit(user.userEmail)}>Edit</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+export default InstitutionUsers;

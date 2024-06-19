@@ -9,8 +9,6 @@ router.get("/", verifyUser, (req, res) => {
 });
 
 router.get('/usersData', verifyUser, async (req, res) => {
-  const connection = await getConnector().getConnection();
-  
   // Check if the user has admin role
   if (req.user.role !== 'admin') {
     return res.status(403).json({
@@ -18,7 +16,9 @@ router.get('/usersData', verifyUser, async (req, res) => {
     });
   }
   
+  let connection;
   try {
+    connection = await getConnector().getConnection();
     // Start transaction
     await connection.beginTransaction();
 
@@ -60,16 +60,27 @@ router.get('/usersData', verifyUser, async (req, res) => {
       localIDs: localIDs.map((data, index) => ({ ...data, organizationName: organizationNames[index] }))
     });
   } catch (error) {
-    // Rollback the transaction in case of error
-    await connection.rollback();
-    console.log('error', error);
+    if (connection) {
+      // Rollback the transaction in case of error
+      try {
+        await connection.rollback();
+      } catch (rollbackError) {
+        console.error('Error rolling back transaction:', rollbackError);
+      }
+    }
+    console.error('Error retrieving user data:', error);
     res.status(500).json({
       message: "Failed to retrieve users",
-      error
+      error: error.message // or simply `error`
     });
   } finally {
-    // Release the connection
-    connection.release();
+    if (connection) {
+      try {
+        connection.release();
+      } catch (releaseError) {
+        console.error('Error releasing connection:', releaseError);
+      }
+    }
   }
 });
 
@@ -130,19 +141,35 @@ router.get('/fetchforms', verifyUser, async (req, res) => {
   }
 });
 
-router.get('/fetchUser', verifyUser, async (req,res) => {
+router.get('/fetchUser', verifyUser, async (req, res) => {
   const role = req.user.role;
-  const connection = await getConnector().getConnection();
+  let connection;
+
   try {
-    if (role === 'admin'){
-      const [userData] = await connection.query(`SELECT * FROM FieldEx.users`)
-      res.json(userData)
-    }else {
-      
+    connection = await getConnector().getConnection();
+    if (role === 'admin') {
+      const [userData] = await connection.query(`SELECT * FROM FieldEx.users`);
+      res.json(userData);
+    } else {
+      res.status(403).json({
+        message: "Access denied. Insufficient permissions.",
+      });
     }
   } catch (error) {
-    
+    console.error('Error fetching users:', error);
+    res.status(500).json({
+      message: "Failed to retrieve users",
+      error: error.message, // or simply `error`
+    });
+  } finally {
+    if (connection) {
+      try {
+        connection.release();
+      } catch (releaseError) {
+        console.error('Error releasing connection:', releaseError);
+      }
+    }
   }
-})
+});
 
 module.exports = router;

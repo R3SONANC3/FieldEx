@@ -17,6 +17,8 @@ import LocalOperaThird from "./components/form/Local/LocalOperaThird";
 import LocalResult from "./components/form/Local/LocalResult";
 import ForgorPassword from "./admin/ForgorPassword";
 import Loding from './components/Loading'
+import LocalUser from './admin/LocalUsers'
+import InstitutionUsers from './admin/InstitutionUsers'
 
 
 function App() {
@@ -55,6 +57,8 @@ function App() {
           <Route path="/localoperathird" element={<LocalOperaThird />} />
           <Route path="/localresult" element={<LocalResult />} />
           <Route path="/forgotpass" element={<ForgorPassword />} />
+          <Route path="/adminlocal" element={<LocalUser />} />
+          <Route path="/admininstitution" element={<InstitutionUsers />}/>
         </Routes>
       )}
     </BrowserRouter>

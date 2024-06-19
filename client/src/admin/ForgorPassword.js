@@ -92,7 +92,6 @@ function ForgotPassword() {
         }
     };
 
-
     const handleModalClose = () => {
         setForgotPasswordModalOpen(false);
         setNewPassword(''); // Reset newPassword state
@@ -104,38 +103,42 @@ function ForgotPassword() {
             <SideNavbar />
             <div className="admin-body">
                 <h2>Forgot Password Page</h2>
-                <input
-                    type="text"
-                    placeholder="Search by email, institution ID, or local ID"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                />
+                <div className="search-bar">
+                    <input
+                        type="text"
+                        placeholder="Search by email, institution ID, or local ID"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                </div>
                 <div>
                     <h3>Users Information:</h3>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Email</th>
-                                <th>Role</th>
-                                <th>Institution ID</th>
-                                <th>Local ID</th>
-                                <th>Reset Password</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {filteredUsers.map(user => (
-                                <tr key={user.id}>
-                                    <td>{user.email}</td>
-                                    <td>{user.role}</td>
-                                    <td>{user.institutionID || '-'}</td>
-                                    <td>{user.localID || '-'}</td>
-                                    <td>
-                                        <button onClick={() => handleForgotPassword(user.email)}>Forgot Password</button>
-                                    </td>
+                    <div className="table-container">
+                        <table className="user-table">
+                            <thead>
+                                <tr>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Institution ID</th>
+                                    <th>Local ID</th>
+                                    <th>Reset Password</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {filteredUsers.map(user => (
+                                    <tr key={user.id}>
+                                        <td>{user.email}</td>
+                                        <td>{user.role}</td>
+                                        <td>{user.institutionID || '-'}</td>
+                                        <td>{user.localID || '-'}</td>
+                                        <td>
+                                            <button onClick={() => handleForgotPassword(user.email)}>Forgot Password</button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
