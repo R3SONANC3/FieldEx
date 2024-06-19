@@ -61,6 +61,7 @@ const LocalOperaThird = () => {
                 },
             });
             if (response.status === 200) {
+                navigate('/localresult')
                 alert('Data submitted successfully!');
             }
         } catch (error) {
