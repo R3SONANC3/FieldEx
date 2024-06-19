@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Navbar from '../../Navbar';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
 
 const LocalResult = () => {
     const [isAdmin, setIsAdmin] = useState(false);
     const navigate = useNavigate();
-    const emailUser = 'test2@gmail.com'; // Example email
+    const location = useLocation();
+    const emailUser = location.state?.emailUser;
     const token = localStorage.getItem('token');
 
     const initialFormData = {
@@ -49,13 +52,25 @@ const LocalResult = () => {
         knowledgeSharingLocal: 0,
         knowledgeSharingCommittees: 0,
         knowledgeSharingComments: '',
-        perseverance2Local: 0,  // Change name
-        perseverance2Committees: 0,  // Change name
-        perseverance2Comments: '',  // Change name
-        knowledgeProvidingLocal: 0,  // New key
-        knowledgeProvidingCommittees: 0,  // New key
-        knowledgeProvidingComments: '',  // New key
+        perseverance2Local: 0,
+        perseverance2Committees: 0,
+        perseverance2Comments: '',
+        knowledgeProvidingLocal: 0,
+        knowledgeProvidingCommittees: 0,
+        knowledgeProvidingComments: '',
+        externalVisit2Local: 0,
+        externalVisit2Committees: 0,
+        externalVisit2Comments: '',
     };
+
+    useEffect(() => {
+        setIsAdmin(localStorage.getItem('userRole') === 'admin');
+        if (!token) {
+            navigate('/');
+        } else {
+            fetchUserData();
+        }
+    }, [navigate, token]);
 
     const [formData, setFormData] = useState(initialFormData);
 
@@ -79,19 +94,153 @@ const LocalResult = () => {
                 },
             });
             if (response.status === 200) {
-                alert('Data submitted successfully!');
+                await Swal.fire({
+                    icon: "success",
+                    title: "ส่งข้อมูลสำเร็จ",
+                    text: "ไปที่หน้าต่อไป"
+                });
+                navigate('/localsummary', { state: { emailUser } })
             }
         } catch (error) {
-            console.error('Error submitting form:', error);
+            await Swal.fire({
+                icon: "error",
+                title: "เกิดข้อผิดพลาดในการส่งข้อมูล!",
+                text: "กรุณาตรวจสอบข้อมูลของท่านให้ครบ",
+            });
         }
     };
 
     const goBack = () => {
-        navigate('/side4.html');
+        navigate('/localoperathird', { state: { emailUser } });
     };
 
-    const goNextPage = () => {
-        navigate('/summary.html');
+    const fetchUserData = async () => {
+        try {
+            if (emailUser) {
+                const response = await axios.get(`http://localhost:8000/api/data/getDataEmail/${emailUser}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                const data = response.data.localResult[0] || {};
+                const updatedFormData = {
+                    cleanlinessLocal: data.cleanlinessLocal || 0,
+                    cleanlinessCommittees: data.cleanlinessCommittees || 0,
+                    cleanlinessComments: data.cleanlinessComments || '',
+                    orderlinessLocal: data.orderlinessLocal || 0,
+                    orderlinessCommittees: data.orderlinessCommittees || 0,
+                    orderlinessComments: data.orderlinessComments || '',
+                    greeneryLocal: data.greeneryLocal || 0,
+                    greeneryCommittees: data.greeneryCommittees || 0,
+                    greeneryComments: data.greeneryComments || '',
+                    atmosphereLocal: data.atmosphereLocal || 0,
+                    atmosphereCommittees: data.atmosphereCommittees || 0,
+                    atmosphereComments: data.atmosphereComments || '',
+                    responsibilityLocal: data.responsibilityLocal || 0,
+                    responsibilityCommittees: data.responsibilityCommittees || 0,
+                    responsibilityComments: data.responsibilityComments || '',
+                    honestyLocal: data.honestyLocal || 0,
+                    honestyCommittees: data.honestyCommittees || 0,
+                    honestyComments: data.honestyComments || '',
+                    perseveranceLocal: data.perseveranceLocal || 0,
+                    perseveranceCommittees: data.perseveranceCommittees || 0,
+                    perseveranceComments: data.perseveranceComments || '',
+                    unityLocal: data.unityLocal || 0,
+                    unityCommittees: data.unityCommittees || 0,
+                    unityComments: data.unityComments || '',
+                    gratitudeLocal: data.gratitudeLocal || 0,
+                    gratitudeCommittees: data.gratitudeCommittees || 0,
+                    gratitudeComments: data.gratitudeComments || '',
+                    diligenceLocal: data.diligenceLocal || 0,
+                    diligenceCommittees: data.diligenceCommittees || 0,
+                    diligenceComments: data.diligenceComments || '',
+                    localInvolvementLocal: data.localInvolvementLocal || 0,
+                    localInvolvementCommittees: data.localInvolvementCommittees || 0,
+                    localInvolvementComments: data.localInvolvementComments || '',
+                    externalVisitLocal: data.externalVisitLocal || 0,
+                    externalVisitCommittees: data.externalVisitCommittees || 0,
+                    externalVisitComments: data.externalVisitComments || '',
+                    knowledgeSharingLocal: data.knowledgeSharingLocal || 0,
+                    knowledgeSharingCommittees: data.knowledgeSharingCommittees || 0,
+                    knowledgeSharingComments: data.knowledgeSharingComments || '',
+                    perseverance2Local: data.perseverance2Local || 0,
+                    perseverance2Committees: data.perseverance2Committees || 0,
+                    perseverance2Comments: data.perseverance2Comments || '',
+                    knowledgeProvidingLocal: data.knowledgeProvidingLocal || 0,
+                    knowledgeProvidingCommittees: data.knowledgeProvidingCommittees || 0,
+                    knowledgeProvidingComments: data.knowledgeProvidingComments || '',
+                    externalVisit2Local: data.externalVisit2Local || 0,
+                    externalVisit2Committees: data.externalVisit2Committees || 0,
+                    externalVisit2Comments: data.externalVisit2Comments || '',
+                };
+                setFormData(updatedFormData);
+            } else {
+                const response = await axios.get(`http://localhost:8000/api/data/fetchData`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                const data = response.data.localResult[0] || {};
+                const updatedFormData = {
+                    cleanlinessLocal: data.cleanlinessLocal || 0,
+                    cleanlinessCommittees: data.cleanlinessCommittees || 0,
+                    cleanlinessComments: data.cleanlinessComments || '',
+                    orderlinessLocal: data.orderlinessLocal || 0,
+                    orderlinessCommittees: data.orderlinessCommittees || 0,
+                    orderlinessComments: data.orderlinessComments || '',
+                    greeneryLocal: data.greeneryLocal || 0,
+                    greeneryCommittees: data.greeneryCommittees || 0,
+                    greeneryComments: data.greeneryComments || '',
+                    atmosphereLocal: data.atmosphereLocal || 0,
+                    atmosphereCommittees: data.atmosphereCommittees || 0,
+                    atmosphereComments: data.atmosphereComments || '',
+                    responsibilityLocal: data.responsibilityLocal || 0,
+                    responsibilityCommittees: data.responsibilityCommittees || 0,
+                    responsibilityComments: data.responsibilityComments || '',
+                    honestyLocal: data.honestyLocal || 0,
+                    honestyCommittees: data.honestyCommittees || 0,
+                    honestyComments: data.honestyComments || '',
+                    perseveranceLocal: data.perseveranceLocal || 0,
+                    perseveranceCommittees: data.perseveranceCommittees || 0,
+                    perseveranceComments: data.perseveranceComments || '',
+                    unityLocal: data.unityLocal || 0,
+                    unityCommittees: data.unityCommittees || 0,
+                    unityComments: data.unityComments || '',
+                    gratitudeLocal: data.gratitudeLocal || 0,
+                    gratitudeCommittees: data.gratitudeCommittees || 0,
+                    gratitudeComments: data.gratitudeComments || '',
+                    diligenceLocal: data.diligenceLocal || 0,
+                    diligenceCommittees: data.diligenceCommittees || 0,
+                    diligenceComments: data.diligenceComments || '',
+                    localInvolvementLocal: data.localInvolvementLocal || 0,
+                    localInvolvementCommittees: data.localInvolvementCommittees || 0,
+                    localInvolvementComments: data.localInvolvementComments || '',
+                    externalVisitLocal: data.externalVisitLocal || 0,
+                    externalVisitCommittees: data.externalVisitCommittees || 0,
+                    externalVisitComments: data.externalVisitComments || '',
+                    knowledgeSharingLocal: data.knowledgeSharingLocal || 0,
+                    knowledgeSharingCommittees: data.knowledgeSharingCommittees || 0,
+                    knowledgeSharingComments: data.knowledgeSharingComments || '',
+                    perseverance2Local: data.perseverance2Local || 0,
+                    perseverance2Committees: data.perseverance2Committees || 0,
+                    perseverance2Comments: data.perseverance2Comments || '',
+                    knowledgeProvidingLocal: data.knowledgeProvidingLocal || 0,
+                    knowledgeProvidingCommittees: data.knowledgeProvidingCommittees || 0,
+                    knowledgeProvidingComments: data.knowledgeProvidingComments || '',
+                    externalVisit2Local: data.externalVisit2Local || 0,
+                    externalVisit2Committees: data.externalVisit2Committees || 0,
+                    externalVisit2Comments: data.externalVisit2Comments || '',
+                };
+                setFormData(updatedFormData);
+            }
+
+        } catch (error) {
+            Swal.fire({
+                icon: "error",
+                title: "เกิดข้อผิดพลาดในการดึงข้อมูล!",
+                text: "ไม่สามารถดึงข้อมูลจากฐานข้อมูลได้",
+            });
+        }
     };
 
     const renderRow = (label, max, localName, committeesName, commentsName) => (
@@ -180,7 +329,7 @@ const LocalResult = () => {
                                 <td colSpan="4"><b>3.4 ผลการดำเนินงานขององค์กรปกครองส่วนท้องถิ่น บุคลากรดีเป็นที่ยอมรับ (30 คะแนน)</b></td>
                             </tr>
                             {renderRow('1) สมาชิกองค์กรปกครองส่วนท้องถิ่นมีส่วนร่วมในการใช้ฐานทรัพยากรท้องถิ่นเป็นแหล่งเรียนรู้ (10 คะแนน)', 10, 'knowledgeSharingLocal', 'knowledgeSharingCommittees', 'knowledgeSharingComments')}
-                            {renderRow('2) การเยี่ยมชมงานฐานทรัพยากรท้องถิ่นจากหน่วยงานอื่นๆ (5 คะแนน)', 5, 'externalVisitLocal', 'externalVisitCommittees', 'externalVisitComments')}
+                            {renderRow('2) การเยี่ยมชมงานฐานทรัพยากรท้องถิ่นจากหน่วยงานอื่นๆ (5 คะแนน)', 5, 'externalVisit2Local', 'externalVisit2Committees', 'externalVisit2Comments')}
                             {renderRow('3) การไปให้ความรู้เกี่ยวกับงานฐานทรัพยากรท้องถิ่น (15 คะแนน)', 15, 'knowledgeProvidingLocal', 'knowledgeProvidingCommittees', 'knowledgeProvidingComments')}
 
                             <tr>
@@ -194,7 +343,7 @@ const LocalResult = () => {
                                 <button type="button" onClick={goBack}>ย้อนกลับ</button>
                             </div>
                             <div className="button-next">
-                                <button type="submit">ถัดไป</button>
+                                <button type="submit" onClick={handleSubmit}>ถัดไป</button>
                             </div>
                         </div>
                     </div>

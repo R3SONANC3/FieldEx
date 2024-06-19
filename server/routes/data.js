@@ -80,19 +80,18 @@ router.get('/fetchData', verifyUser, async (req, res) => {
       // Fetch data from FieldEx.localGovernmentData if localID is present
       const [localGovernmentData] = await connection.query('SELECT * FROM FieldEx.localGovernmentData WHERE localID = ?', [localID]);
       const [localManageData] = await connection.query('SELECT * FROM FieldEx.localManageData WHERE localID = ?', [localID]);
+      const [localOperaFirst] = await connection.query('SELECT * FROM FieldEx.localOperaFirst WHERE localID = ?', [localID]);
+      const [localOperaSec] = await connection.query(`SELECT * FROM FieldEx.localOperaSecond WHERE localID = ?`, [localID]);
+      const [localOperaThird] = await connection.query(`SELECT * FROM FieldEx.localOperaThird WHERE localID = ?`,[localID]);
+      const [localResult] = await connection.query(`SELECT * FROM FieldEx.localResult WHERE localID = ?`,[localID]);
 
       await connection.commit();
       return res.status(200).json({
-        localGovernmentData, localManageData
+        localGovernmentData, localManageData, localOperaFirst, localOperaSec, localOperaThird, localResult
       });
     } else {
-      // Fetch data based on institutionID
       const [institutionData] = await connection.query('SELECT * FROM FieldEx.institution WHERE institutionID = ?', [institutionID]);
-
-      // Fetch education levels data
       const [educationLevelsData] = await connection.query('SELECT * FROM FieldEx.educationLevels WHERE institutionID = ?', [institutionID]);
-
-      // Fetch other education levels data
       const [otherEducationLevelsData] = await connection.query('SELECT * FROM FieldEx.otherEducationLevels WHERE institutionID = ?', [institutionID]);
 
       await connection.commit();
@@ -289,6 +288,7 @@ router.get('/getDataEmail/:email', verifyUser, async (req, res) => {
       [localOperaFirst] = await connection.query('SELECT * FROM FieldEx.localOperaFirst WHERE localID = ?', [user.localID]);
       [localOperaSec] = await connection.query(`SELECT * FROM FieldEx.localOperaSecond WHERE localID = ?`, [user.localID]);
       [localOperaThird] = await connection.query(`SELECT * FROM FieldEx.localOperaThird WHERE localID = ?`,[user.localID]);
+      [localResult] = await connection.query(`SELECT * FROM FieldEx.localResult WHERE localID = ?`,[user.localID]);
     }
 
     if (!dataResults || dataResults.length === 0) {
@@ -296,7 +296,7 @@ router.get('/getDataEmail/:email', verifyUser, async (req, res) => {
       return;
     }
 
-    res.json({ dataResults, localManageData, localOperaFirst, localOperaSec, localOperaThird });
+    res.json({ dataResults, localManageData, localOperaFirst, localOperaSec, localOperaThird, localResult });
   } catch (error) {
     console.error('เกิดข้อผิดพลาด: ' + error.message);
     res.status(500).send('เกิดข้อผิดพลาดบางอย่าง');
@@ -308,11 +308,12 @@ router.get('/getDataEmail/:email', verifyUser, async (req, res) => {
 router.post('/localopera', verifyUser, async (req, res) => {
   const role = req.user.role;
   const { emailUser } = req.body; // Ensure formData is received in req.body
+  const email = req.user.email
 
   const connection = await getConnector().getConnection();
   try {
     // Fetch user data including localId and institutionID
-    const [userData] = await connection.query('SELECT localId, institutionID FROM FieldEx.users WHERE email = ?', emailUser);
+    const [userData] = await connection.query('SELECT localId, institutionID FROM FieldEx.users WHERE email = ?', emailUser || email);
 
     let institutionID = null;
     let localID = null;
@@ -752,17 +753,15 @@ router.post('/localOperaThird', verifyUser, async (req, res) => {
 router.post('/localResult', verifyUser, async (req, res) => {
   const role = req.user.role;
   const email = req.user.email;
-  const { emailUser } = req.body; // Ensure formData is received in req.body
+  const { emailUser } = req.body;
   const connection = await getConnector().getConnection();
 
   try {
-    // Fetch user data including localId and institutionID
     const [userData] = await connection.query('SELECT localId, institutionID FROM FieldEx.users WHERE email = ?', [emailUser || email]);
 
     let institutionID = null;
     let localID = null;
 
-    // Extract localId and institutionID from userData
     userData.forEach(user => {
       if (user.institutionID !== null && institutionID === null) {
         institutionID = user.institutionID;
@@ -771,7 +770,6 @@ router.post('/localResult', verifyUser, async (req, res) => {
         localID = user.localId;
       }
 
-      // Break out of loop if both values are found
       if (institutionID !== null && localID !== null) {
         return;
       }
@@ -808,6 +806,12 @@ router.post('/localResult', verifyUser, async (req, res) => {
         localInvolvementComments,
         externalVisitComments,
         knowledgeSharingComments,
+        perseverance2Committees,
+        perseverance2Comments,
+        knowledgeProvidingCommittees,
+        knowledgeProvidingComments,
+        externalVisit2Committees,
+        externalVisit2Comments
       } = req.body;
 
       sql = `
@@ -837,7 +841,13 @@ router.post('/localResult', verifyUser, async (req, res) => {
           diligenceComments = ?,
           localInvolvementComments = ?,
           externalVisitComments = ?,
-          knowledgeSharingComments = ?
+          knowledgeSharingComments = ?,
+          perseverance2Committees = ?,
+          perseverance2Comments = ?,
+          knowledgeProvidingCommittees = ?,
+          knowledgeProvidingComments = ?,
+          externalVisit2Committees = ?,
+          externalVisit2Comments = ?
         WHERE localID = ?
       `;
       values = [
@@ -867,6 +877,12 @@ router.post('/localResult', verifyUser, async (req, res) => {
         localInvolvementComments,
         externalVisitComments,
         knowledgeSharingComments,
+        perseverance2Committees,
+        perseverance2Comments,
+        knowledgeProvidingCommittees,
+        knowledgeProvidingComments,
+        externalVisit2Committees,
+        externalVisit2Comments,
         localID
       ];
     } else {
@@ -884,6 +900,9 @@ router.post('/localResult', verifyUser, async (req, res) => {
         localInvolvementLocal,
         externalVisitLocal,
         knowledgeSharingLocal,
+        perseverance2Local,
+        knowledgeProvidingLocal,
+        externalVisit2Local
       } = req.body;
 
       sql = `
@@ -901,8 +920,11 @@ router.post('/localResult', verifyUser, async (req, res) => {
           localInvolvementLocal,
           externalVisitLocal,
           knowledgeSharingLocal,
+          perseverance2Local,
+          knowledgeProvidingLocal,
+          externalVisit2Local,
           localID
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ON DUPLICATE KEY UPDATE
           cleanlinessLocal = VALUES(cleanlinessLocal),
           orderlinessLocal = VALUES(orderlinessLocal),
@@ -917,6 +939,9 @@ router.post('/localResult', verifyUser, async (req, res) => {
           localInvolvementLocal = VALUES(localInvolvementLocal),
           externalVisitLocal = VALUES(externalVisitLocal),
           knowledgeSharingLocal = VALUES(knowledgeSharingLocal),
+          perseverance2Local = VALUES(perseverance2Local),
+          knowledgeProvidingLocal = VALUES(knowledgeProvidingLocal),
+          externalVisit2Local = VALUES(externalVisit2Local),
           localID = VALUES(localID)
       `;
       values = [
@@ -933,23 +958,23 @@ router.post('/localResult', verifyUser, async (req, res) => {
         localInvolvementLocal,
         externalVisitLocal,
         knowledgeSharingLocal,
+        perseverance2Local,
+        knowledgeProvidingLocal,
+        externalVisit2Local,
         localID
       ];
     }
 
-    // Execute the query
     const [result] = await connection.query(sql, values);
 
-    // Send response indicating success
     res.status(200).send('Form data saved successfully');
   } catch (error) {
     console.error(error);
     res.status(500).send('An error occurred while processing the request');
   } finally {
-    connection.release(); // Release the connection in all cases
+    connection.release();
   }
 });
-
 
 // Export the router
 module.exports = router;

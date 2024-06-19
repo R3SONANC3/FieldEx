@@ -3,6 +3,8 @@ import Navbar from '../../Navbar';
 import './localform.css';
 import axios from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
 
 function LocalManage() {
     const [isAdmin, setIsAdmin] = useState(false);
@@ -75,11 +77,7 @@ function LocalManage() {
         if (!token) {
             navigate('/');
         } else {
-            if (emailUser) {
-                fetchUserData();
-            } else {
-                fetchOldData();
-            }
+            fetchUserData();
         }
     }, [navigate, token]);
 
@@ -105,168 +103,166 @@ function LocalManage() {
 
     const fetchUserData = async () => {
         try {
-            const response = await axios.get(`http://localhost:8000/api/data/getDataEmail/${emailUser}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-            const data = response.data.localManageData[0] || {};
-
-            const updatedFormData = {
-                localMeetingAgenda: data.localMeetingAgenda || 0,
-                refereeLocalMeetingAgenda: data.refereeLocalMeetingAgenda || 0,
-                commentLocalMeetingAgenda: data.commentLocalMeetingAgenda || '',
-                localMemberSignatures: data.localMemberSignatures || 0,
-                refereeLocalMemberSignatures: data.refereeLocalMemberSignatures || 0,
-                commentLocalMemberSignatures: data.commentLocalMemberSignatures || '',
-                meetingMinutes: data.meetingMinutes || 0,
-                refereeMeetingMinutes: data.refereeMeetingMinutes || 0,
-                commentMeetingMinutes: data.commentMeetingMinutes || '',
-                photos: data.photos || 0,
-                refereePhotos: data.refereePhotos || 0,
-                commentPhotos: data.commentPhotos || '',
-                appointmentOrder: data.appointmentOrder || 0,
-                refereeAppointmentOrder: data.refereeAppointmentOrder || 0,
-                commentAppointmentOrder: data.commentAppointmentOrder || '',
-                subcommittee: data.subcommittee || 0,
-                refereeSubcommittee: data.refereeSubcommittee || 0,
-                commentSubcommittee: data.commentSubcommittee || '',
-                managementPlan: data.managementPlan || 0,
-                refereeManagementPlan: data.refereeManagementPlan || 0,
-                commentManagementPlan: data.commentManagementPlan || '',
-                protectionPlan: data.protectionPlan || 0,
-                refereeProtectionPlan: data.refereeProtectionPlan || 0,
-                commentProtectionPlan: data.commentProtectionPlan || '',
-                surveyPlan: data.surveyPlan || 0,
-                refereeSurveyPlan: data.refereeSurveyPlan || 0,
-                commentSurveyPlan: data.commentSurveyPlan || '',
-                coordination: data.coordination || 0,
-                refereeCoordination: data.refereeCoordination || 0,
-                commentCoordination: data.commentCoordination || '',
-                expenseSummary: data.expenseSummary || 0,
-                refereeExpenseSummary: data.refereeExpenseSummary || 0,
-                commentExpenseSummary: data.commentExpenseSummary || '',
-                meetingInvite: data.meetingInvite || 0,
-                refereeMeetingInvite: data.refereeMeetingInvite || 0,
-                commentMeetingInvite: data.commentMeetingInvite || '',
-                thankYouNote: data.thankYouNote || 0,
-                refereeThankYouNote: data.refereeThankYouNote || 0,
-                commentThankYouNote: data.commentThankYouNote || '',
-                operationResults: data.operationResults || 0,
-                refereeOperationResults: data.refereeOperationResults || 0,
-                commentOperationResults: data.commentOperationResults || '',
-                analysisResults: data.analysisResults || 0,
-                refereeAnalysisResults: data.refereeAnalysisResults || 0,
-                commentAnalysisResults: data.commentAnalysisResults || '',
-                improvementPlan: data.improvementPlan || 0,
-                refereeImprovementPlan: data.refereeImprovementPlan || 0,
-                commentImprovementPlan: data.commentImprovementPlan || '',
-                annualReport: data.annualReport || 0,
-                refereeAnnualReport: data.refereeAnnualReport || 0,
-                commentAnnualReport: data.commentAnnualReport || '',
-                budgetDetails: [
-                    {
-                        year: data.budget1_year || 0,
-                        budget: parseFloat(data.budget1_budget) || 0,
-                        expense: parseFloat(data.budget1_expense) || 0,
-                        remaining: parseFloat(data.budget1_remaining) || 0,
+            if (emailUser) {
+                const response = await axios.get(`http://localhost:8000/api/data/getDataEmail/${emailUser}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
                     },
-                    {
-                        year: data.budget2_year || 0,
-                        budget: parseFloat(data.budget2_budget) || 0,
-                        expense: parseFloat(data.budget2_expense) || 0,
-                        remaining: parseFloat(data.budget2_remaining) || 0,
+                });
+                const data = response.data.localManageData[0] || {};
+                const updatedFormData = {
+                    localMeetingAgenda: data.localMeetingAgenda || 0,
+                    refereeLocalMeetingAgenda: data.refereeLocalMeetingAgenda || 0,
+                    commentLocalMeetingAgenda: data.commentLocalMeetingAgenda || '',
+                    localMemberSignatures: data.localMemberSignatures || 0,
+                    refereeLocalMemberSignatures: data.refereeLocalMemberSignatures || 0,
+                    commentLocalMemberSignatures: data.commentLocalMemberSignatures || '',
+                    meetingMinutes: data.meetingMinutes || 0,
+                    refereeMeetingMinutes: data.refereeMeetingMinutes || 0,
+                    commentMeetingMinutes: data.commentMeetingMinutes || '',
+                    photos: data.photos || 0,
+                    refereePhotos: data.refereePhotos || 0,
+                    commentPhotos: data.commentPhotos || '',
+                    appointmentOrder: data.appointmentOrder || 0,
+                    refereeAppointmentOrder: data.refereeAppointmentOrder || 0,
+                    commentAppointmentOrder: data.commentAppointmentOrder || '',
+                    subcommittee: data.subcommittee || 0,
+                    refereeSubcommittee: data.refereeSubcommittee || 0,
+                    commentSubcommittee: data.commentSubcommittee || '',
+                    managementPlan: data.managementPlan || 0,
+                    refereeManagementPlan: data.refereeManagementPlan || 0,
+                    commentManagementPlan: data.commentManagementPlan || '',
+                    protectionPlan: data.protectionPlan || 0,
+                    refereeProtectionPlan: data.refereeProtectionPlan || 0,
+                    commentProtectionPlan: data.commentProtectionPlan || '',
+                    surveyPlan: data.surveyPlan || 0,
+                    refereeSurveyPlan: data.refereeSurveyPlan || 0,
+                    commentSurveyPlan: data.commentSurveyPlan || '',
+                    coordination: data.coordination || 0,
+                    refereeCoordination: data.refereeCoordination || 0,
+                    commentCoordination: data.commentCoordination || '',
+                    expenseSummary: data.expenseSummary || 0,
+                    refereeExpenseSummary: data.refereeExpenseSummary || 0,
+                    commentExpenseSummary: data.commentExpenseSummary || '',
+                    meetingInvite: data.meetingInvite || 0,
+                    refereeMeetingInvite: data.refereeMeetingInvite || 0,
+                    commentMeetingInvite: data.commentMeetingInvite || '',
+                    thankYouNote: data.thankYouNote || 0,
+                    refereeThankYouNote: data.refereeThankYouNote || 0,
+                    commentThankYouNote: data.commentThankYouNote || '',
+                    operationResults: data.operationResults || 0,
+                    refereeOperationResults: data.refereeOperationResults || 0,
+                    commentOperationResults: data.commentOperationResults || '',
+                    analysisResults: data.analysisResults || 0,
+                    refereeAnalysisResults: data.refereeAnalysisResults || 0,
+                    commentAnalysisResults: data.commentAnalysisResults || '',
+                    improvementPlan: data.improvementPlan || 0,
+                    refereeImprovementPlan: data.refereeImprovementPlan || 0,
+                    commentImprovementPlan: data.commentImprovementPlan || '',
+                    annualReport: data.annualReport || 0,
+                    refereeAnnualReport: data.refereeAnnualReport || 0,
+                    commentAnnualReport: data.commentAnnualReport || '',
+                    budgetDetails: [
+                        {
+                            year: data.budget1_year || 0,
+                            budget: parseFloat(data.budget1_budget) || 0,
+                            expense: parseFloat(data.budget1_expense) || 0,
+                            remaining: parseFloat(data.budget1_remaining) || 0,
+                        },
+                        {
+                            year: data.budget2_year || 0,
+                            budget: parseFloat(data.budget2_budget) || 0,
+                            expense: parseFloat(data.budget2_expense) || 0,
+                            remaining: parseFloat(data.budget2_remaining) || 0,
+                        },
+                    ],
+                };
+                setFormData(updatedFormData);
+            } else {
+                const response = await axios.get(`http://localhost:8000/api/data/fetchData`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
                     },
-                ],
-            };
-            setFormData(updatedFormData);
+                });
+                const data = response.data.localManageData[0] || {};
+                const updatedFormData = {
+                    localMeetingAgenda: data.localMeetingAgenda || 0,
+                    refereeLocalMeetingAgenda: data.refereeLocalMeetingAgenda || 0,
+                    commentLocalMeetingAgenda: data.commentLocalMeetingAgenda || '',
+                    localMemberSignatures: data.localMemberSignatures || 0,
+                    refereeLocalMemberSignatures: data.refereeLocalMemberSignatures || 0,
+                    commentLocalMemberSignatures: data.commentLocalMemberSignatures || '',
+                    meetingMinutes: data.meetingMinutes || 0,
+                    refereeMeetingMinutes: data.refereeMeetingMinutes || 0,
+                    commentMeetingMinutes: data.commentMeetingMinutes || '',
+                    photos: data.photos || 0,
+                    refereePhotos: data.refereePhotos || 0,
+                    commentPhotos: data.commentPhotos || '',
+                    appointmentOrder: data.appointmentOrder || 0,
+                    refereeAppointmentOrder: data.refereeAppointmentOrder || 0,
+                    commentAppointmentOrder: data.commentAppointmentOrder || '',
+                    subcommittee: data.subcommittee || 0,
+                    refereeSubcommittee: data.refereeSubcommittee || 0,
+                    commentSubcommittee: data.commentSubcommittee || '',
+                    managementPlan: data.managementPlan || 0,
+                    refereeManagementPlan: data.refereeManagementPlan || 0,
+                    commentManagementPlan: data.commentManagementPlan || '',
+                    protectionPlan: data.protectionPlan || 0,
+                    refereeProtectionPlan: data.refereeProtectionPlan || 0,
+                    commentProtectionPlan: data.commentProtectionPlan || '',
+                    surveyPlan: data.surveyPlan || 0,
+                    refereeSurveyPlan: data.refereeSurveyPlan || 0,
+                    commentSurveyPlan: data.commentSurveyPlan || '',
+                    coordination: data.coordination || 0,
+                    refereeCoordination: data.refereeCoordination || 0,
+                    commentCoordination: data.commentCoordination || '',
+                    expenseSummary: data.expenseSummary || 0,
+                    refereeExpenseSummary: data.refereeExpenseSummary || 0,
+                    commentExpenseSummary: data.commentExpenseSummary || '',
+                    meetingInvite: data.meetingInvite || 0,
+                    refereeMeetingInvite: data.refereeMeetingInvite || 0,
+                    commentMeetingInvite: data.commentMeetingInvite || '',
+                    thankYouNote: data.thankYouNote || 0,
+                    refereeThankYouNote: data.refereeThankYouNote || 0,
+                    commentThankYouNote: data.commentThankYouNote || '',
+                    operationResults: data.operationResults || 0,
+                    refereeOperationResults: data.refereeOperationResults || 0,
+                    commentOperationResults: data.commentOperationResults || '',
+                    analysisResults: data.analysisResults || 0,
+                    refereeAnalysisResults: data.refereeAnalysisResults || 0,
+                    commentAnalysisResults: data.commentAnalysisResults || '',
+                    improvementPlan: data.improvementPlan || 0,
+                    refereeImprovementPlan: data.refereeImprovementPlan || 0,
+                    commentImprovementPlan: data.commentImprovementPlan || '',
+                    annualReport: data.annualReport || 0,
+                    refereeAnnualReport: data.refereeAnnualReport || 0,
+                    commentAnnualReport: data.commentAnnualReport || '',
+                    budgetDetails: [
+                        {
+                            year: data.budget1_year || 0,
+                            budget: parseFloat(data.budget1_budget) || 0,
+                            expense: parseFloat(data.budget1_expense) || 0,
+                            remaining: parseFloat(data.budget1_remaining) || 0,
+                        },
+                        {
+                            year: data.budget2_year || 0,
+                            budget: parseFloat(data.budget2_budget) || 0,
+                            expense: parseFloat(data.budget2_expense) || 0,
+                            remaining: parseFloat(data.budget2_remaining) || 0,
+                        },
+                    ],
+                };
+                setFormData(updatedFormData);
+            }
         } catch (error) {
-            console.error("Error fetching user data", error);
+            Swal.fire({
+                icon: "error",
+                title: "เกิดข้อผิดพลาดในการดึงข้อมูล!",
+                text: "ไม่สามารถดึงข้อมูลจากฐานข้อมูลได้",
+              });
         }
     };
 
-    const fetchOldData = async () => {
-        try {
-            const response = await axios.get('http://localhost:8000/api/data/fetchData', {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-
-            const data = response.data.localManageData[0] || {};
-
-            const updatedFormData = {
-                localMeetingAgenda: data.localMeetingAgenda || 0,
-                refereeLocalMeetingAgenda: data.refereeLocalMeetingAgenda || 0,
-                commentLocalMeetingAgenda: data.commentLocalMeetingAgenda || '',
-                localMemberSignatures: data.localMemberSignatures || 0,
-                refereeLocalMemberSignatures: data.refereeLocalMemberSignatures || 0,
-                commentLocalMemberSignatures: data.commentLocalMemberSignatures || '',
-                meetingMinutes: data.meetingMinutes || 0,
-                refereeMeetingMinutes: data.refereeMeetingMinutes || 0,
-                commentMeetingMinutes: data.commentMeetingMinutes || '',
-                photos: data.photos || 0,
-                refereePhotos: data.refereePhotos || 0,
-                commentPhotos: data.commentPhotos || '',
-                appointmentOrder: data.appointmentOrder || 0,
-                refereeAppointmentOrder: data.refereeAppointmentOrder || 0,
-                commentAppointmentOrder: data.commentAppointmentOrder || '',
-                subcommittee: data.subcommittee || 0,
-                refereeSubcommittee: data.refereeSubcommittee || 0,
-                commentSubcommittee: data.commentSubcommittee || '',
-                managementPlan: data.managementPlan || 0,
-                refereeManagementPlan: data.refereeManagementPlan || 0,
-                commentManagementPlan: data.commentManagementPlan || '',
-                protectionPlan: data.protectionPlan || 0,
-                refereeProtectionPlan: data.refereeProtectionPlan || 0,
-                commentProtectionPlan: data.commentProtectionPlan || '',
-                surveyPlan: data.surveyPlan || 0,
-                refereeSurveyPlan: data.refereeSurveyPlan || 0,
-                commentSurveyPlan: data.commentSurveyPlan || '',
-                coordination: data.coordination || 0,
-                refereeCoordination: data.refereeCoordination || 0,
-                commentCoordination: data.commentCoordination || '',
-                expenseSummary: data.expenseSummary || 0,
-                refereeExpenseSummary: data.refereeExpenseSummary || 0,
-                commentExpenseSummary: data.commentExpenseSummary || '',
-                meetingInvite: data.meetingInvite || 0,
-                refereeMeetingInvite: data.refereeMeetingInvite || 0,
-                commentMeetingInvite: data.commentMeetingInvite || '',
-                thankYouNote: data.thankYouNote || 0,
-                refereeThankYouNote: data.refereeThankYouNote || 0,
-                commentThankYouNote: data.commentThankYouNote || '',
-                operationResults: data.operationResults || 0,
-                refereeOperationResults: data.refereeOperationResults || 0,
-                commentOperationResults: data.commentOperationResults || '',
-                analysisResults: data.analysisResults || 0,
-                refereeAnalysisResults: data.refereeAnalysisResults || 0,
-                commentAnalysisResults: data.commentAnalysisResults || '',
-                improvementPlan: data.improvementPlan || 0,
-                refereeImprovementPlan: data.refereeImprovementPlan || 0,
-                commentImprovementPlan: data.commentImprovementPlan || '',
-                annualReport: data.annualReport || 0,
-                refereeAnnualReport: data.refereeAnnualReport || 0,
-                commentAnnualReport: data.commentAnnualReport || '',
-                budgetDetails: [
-                    {
-                        year: data.budget1_year || 0,
-                        budget: parseFloat(data.budget1_budget) || 0,
-                        expense: parseFloat(data.budget1_expense) || 0,
-                        remaining: parseFloat(data.budget1_remaining) || 0,
-                    },
-                    {
-                        year: data.budget2_year || 0,
-                        budget: parseFloat(data.budget2_budget) || 0,
-                        expense: parseFloat(data.budget2_expense) || 0,
-                        remaining: parseFloat(data.budget2_remaining) || 0,
-                    },
-                ],
-            };
-            setFormData(updatedFormData);
-        } catch (error) {
-            console.error("Error fetching user data", error);
-        }
-    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -279,18 +275,24 @@ function LocalManage() {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            console.log(formData);
-            console.log("Submit response:", response.data);
-            navigate('/localoperafirst')
+            await Swal.fire({
+                icon: "success",
+                title: "ส่งข้อมูลสำเร็จ",
+                text: "ไปที่หน้าต่อไป"
+              });
+            navigate('/localoperafirst', { state: { emailUser } })
             // Redirect or show success message
         } catch (error) {
-            console.error("Error submitting data:", error);
-            // Handle error, show error message
+            await Swal.fire({
+                icon: "error",
+                title: "เกิดข้อผิดพลาดในการส่งข้อมูล!",
+                text: "กรุณาตรวจสอบข้อมูลของท่านให้ครบ",
+              });
         }
     };
 
     const goBack = () => {
-        navigate('/localform')
+        navigate('/localform', { state: { emailUser } })
     };
 
 
@@ -308,12 +310,12 @@ function LocalManage() {
     };
     const rows = [
         { colSpan: 4, title: "1.1 องค์กรปกครองส่วนท้องถิ่น ชุมชน และสถานศึกษา มีส่วนร่วมในการจัดทำฐานทรัพยากรท้องถิ่น (30 คะแนน)" },
-        { colSpan: 4, title: (<span style={{fontWeight: "normal",paddingLeft:"20px"}}>1) รายงานการประชุม (20 คะแนน)</span>) },
-        { title:(<span style={{paddingLeft:"20px"}}>- วาระการประชุมเรื่องเกี่ยวกับการจัดทำฐานทรัพยากรท้องถิ่น (10 คะแนน)</span>), name: "localMeetingAgenda", max: 10 },
-        { title: (<span style={{paddingLeft:"20px"}}>- รายชื่อ ลายมือชื่อของสมาชิกองค์กรปกครองส่วนท้องถิ่น กำนัน ผู้ใหญ่บ้าน ชุมชน ผู้รู้ในท้องถิ่น ผู้บริหารสถานศึกษา และผู้ที่เกี่ยวข้องเกี่ยวกับการจัดทำฐานทรัพยากรท้องถิ่น (10 คะแนน)</span>), name: "localMemberSignatures", max: 10 },
-        { colSpan: 4, title:(<span style={{fontWeight: "normal",paddingLeft:"20px"}}>2) หลักฐานที่แสดงถึงการมีส่วนร่วม (10 คะแนน)</span>)   },
-        { title: (<span style={{paddingLeft:"20px"}}>- บันทึกการประชุม (5 คะแนน)</span>) , name: "meetingMinutes", max: 5 },
-        { title: (<span style={{paddingLeft:"20px"}}>- ภาพถ่าย (5 คะแนน)</span>), name: "photos", max: 5 },
+        { colSpan: 4, title: (<span style={{ fontWeight: "normal", paddingLeft: "20px" }}>1) รายงานการประชุม (20 คะแนน)</span>) },
+        { title: (<span style={{ paddingLeft: "20px" }}>- วาระการประชุมเรื่องเกี่ยวกับการจัดทำฐานทรัพยากรท้องถิ่น (10 คะแนน)</span>), name: "localMeetingAgenda", max: 10 },
+        { title: (<span style={{ paddingLeft: "20px" }}>- รายชื่อ ลายมือชื่อของสมาชิกองค์กรปกครองส่วนท้องถิ่น กำนัน ผู้ใหญ่บ้าน ชุมชน ผู้รู้ในท้องถิ่น ผู้บริหารสถานศึกษา และผู้ที่เกี่ยวข้องเกี่ยวกับการจัดทำฐานทรัพยากรท้องถิ่น (10 คะแนน)</span>), name: "localMemberSignatures", max: 10 },
+        { colSpan: 4, title: (<span style={{ fontWeight: "normal", paddingLeft: "20px" }}>2) หลักฐานที่แสดงถึงการมีส่วนร่วม (10 คะแนน)</span>) },
+        { title: (<span style={{ paddingLeft: "20px" }}>- บันทึกการประชุม (5 คะแนน)</span>), name: "meetingMinutes", max: 5 },
+        { title: (<span style={{ paddingLeft: "20px" }}>- ภาพถ่าย (5 คะแนน)</span>), name: "photos", max: 5 },
         { colSpan: 4, title: "1.2 แต่งตั้งคณะกรรมการดำเนินงานการจัดทำฐานทรัพยากรท้องถิ่น (30 คะแนน)" },
         { title: "1) คำสั่งแต่งตั้งคณะกรรมการดำเนินงานฐานทรัพยากรท้องถิ่นคำสั่ง 3 ด้าน (15 คะแนน)", name: "appointmentOrder", max: 15 },
         {
@@ -329,10 +331,10 @@ function LocalManage() {
             ]
         },
         { colSpan: 4, title: "1.3 วางแผนการบริหารและแผนการดำเนินงานการจัดทำฐานทรัพยากรท้องถิ่น (40 คะแนน)" },
-        { title: "1) แผนการดำเนินงานด้านการบริหาร โดยเขียนแผนการจัดทำฐานทรัพยากรท้องถิ่น รวมกับแผนพัฒนา แผนงานประจำปีขององค์กรปกครองส่วนท้องถิ่นแสดงผังโครงสร้างการบริหาร รายละเอียดงาน ผู้รับผิดชอบ ปริมาณงาน งบประมาณ ระยะเวลา (25 คะแนน)", name: "managementPlan", max: 25},
+        { title: "1) แผนการดำเนินงานด้านการบริหาร โดยเขียนแผนการจัดทำฐานทรัพยากรท้องถิ่น รวมกับแผนพัฒนา แผนงานประจำปีขององค์กรปกครองส่วนท้องถิ่นแสดงผังโครงสร้างการบริหาร รายละเอียดงาน ผู้รับผิดชอบ ปริมาณงาน งบประมาณ ระยะเวลา (25 คะแนน)", name: "managementPlan", max: 25 },
         { title: "2) การจัดทำปฏิทินการปฏิบัติงาน (5 คะแนน)", name: "protectionPlan", max: 5 },
         { title: "3) แผนการดำเนินงานการจัดทำฐานทรัพยากรท้องถิ่น โดยเขียนแผนบูรณาการงานฐานทรัพยากรท้องถิ่น แสดงให้เห็นวิธีการดำเนินงาน (10 คะแนน)", name: "surveyPlan", max: 10 },
-        { colSpan: 4, title: (<span>1.4 ดำเนินงานตามแผน (20 คะแนน){" "}<span style={{fontWeight: "normal",display:"block",paddingLeft:"30px" }}>การประสานงานของคณะกรรมการดำเนินงาน คณะอนุกรรมการ ศูนย์อนุรักษ์พัฒนาทรัพยากรท้องถิ่นตำบลกับหน่วยงานต่างๆ</span></span>)  },
+        { colSpan: 4, title: (<span>1.4 ดำเนินงานตามแผน (20 คะแนน){" "}<span style={{ fontWeight: "normal", display: "block", paddingLeft: "30px" }}>การประสานงานของคณะกรรมการดำเนินงาน คณะอนุกรรมการ ศูนย์อนุรักษ์พัฒนาทรัพยากรท้องถิ่นตำบลกับหน่วยงานต่างๆ</span></span>) },
         {
             title: "1) เอกสารสรุปค่าใช้จ่ายในการดำเนินการจัดทำฐานทรัพยากรท้องถิ่น ลงนามชื่อผู้บริหาร หัวหน้างาน (10 คะแนน)",
             name: "coordination", max: 10,
@@ -345,7 +347,7 @@ function LocalManage() {
         { colSpan: 4, title: "1.6 วิเคราะห์ผลและปรับปรุงพัฒนางาน (20 คะแนน)" },
         { title: "1) วิเคราะห์ผล และหาข้อสรุป (10 คะแนน)", name: "analysisResults", max: 10 },
         { title: "2) วางแผน ปรับปรุง และพัฒนาการดำเนินงานในปีต่อไป (10 คะแนน)", name: "improvementPlan", max: 10 },
-        { title: (<span><b>1.7 รายงานผลการดำเนินงานฐานทรัพยากรท้องถิ่น ประจำปีงบประมาณให้ อพ.สธ. อย่างน้อยปีละ 1 ครั้ง (40 คะแนน)</b>{" "}<span style={{fontWeight: "normal",display:"block",paddingLeft:"30px" }}>รายงานผลการดำเนินงานฐานทรัพยากรท้องถิ่นโดยแสดงหลักฐานตั้งแต่ข้อ 1.1 – 1.6</span></span>),name: "annualReport", max: 40  },
+        { title: (<span><b>1.7 รายงานผลการดำเนินงานฐานทรัพยากรท้องถิ่น ประจำปีงบประมาณให้ อพ.สธ. อย่างน้อยปีละ 1 ครั้ง (40 คะแนน)</b>{" "}<span style={{ fontWeight: "normal", display: "block", paddingLeft: "30px" }}>รายงานผลการดำเนินงานฐานทรัพยากรท้องถิ่นโดยแสดงหลักฐานตั้งแต่ข้อ 1.1 – 1.6</span></span>), name: "annualReport", max: 40 },
         { colSpan: 4, title: "รวมคะแนนที่ได้ ด้านที่ 1 การบริหารและการจัดการ", center: true, fontSize: "18px" }
     ];
 

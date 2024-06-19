@@ -1,10 +1,24 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../../Navbar';
-import Swal from 'sweetalert2';
 import './localform.css';
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const Summary = () => {
+    const [isAdmin, setIsAdmin] = useState(false);
+    const location = useLocation();
+    const navigate = useNavigate();
+    const emailUser = location.state?.emailUser;
+    const token = localStorage.getItem('token');
+
+    useEffect(() => {
+        setIsAdmin(localStorage.getItem('userRole') === 'admin');
+        if (!token) {
+            navigate('/');
+        }
+    }, [navigate, token]);
+
     return (
         <div className='sum-container'>
             <div className='sum-header'>
@@ -17,43 +31,43 @@ const Summary = () => {
                         <div className='sumUser'>
                             <h3 className='sum-h3'>สรุปผลการประเมิน 3 ด้าน คะแนนเต็ม 1,000 คะแนน</h3>
                             <div className="flex-line">
-                                <div style={{marginBottom:'8px'}}><b>ด้านที่ 1 การบริหารและการจัดการ</b></div>
-                                <span style={{marginLeft:'61px'}}>คะแนนเต็ม 200 คะแนน</span>
-                                <span style={{marginLeft: '100px'}}>คะแนนที่ได้ ............... คะแนน</span>
+                                <div style={{ marginBottom: '8px' }}><b>ด้านที่ 1 การบริหารและการจัดการ</b></div>
+                                <span style={{ marginLeft: '61px' }}>คะแนนเต็ม 200 คะแนน</span>
+                                <span style={{ marginLeft: '100px' }}>คะแนนที่ได้ ............... คะแนน</span>
                             </div>
                             <div className="flex-line">
-                                <div style={{marginBottom:'8px'}}><b>ด้านที่ 2 การดำเนินงาน</b></div>
-                                <span style={{marginLeft:'61px'}}>คะแนนเต็ม 600 คะแนน</span>
-                                <span style={{marginLeft: '100px'}}>คะแนนที่ได้ ............... คะแนน</span>
+                                <div style={{ marginBottom: '8px' }}><b>ด้านที่ 2 การดำเนินงาน</b></div>
+                                <span style={{ marginLeft: '61px' }}>คะแนนเต็ม 600 คะแนน</span>
+                                <span style={{ marginLeft: '100px' }}>คะแนนที่ได้ ............... คะแนน</span>
                             </div>
                             <div className="flex-line">
-                                <div style={{marginBottom:'8px'}}><b>ด้านที่ 3 ผลการดำเนินงาน</b></div>
-                                <span style={{marginLeft:'61px'}}>คะแนนเต็ม 200 คะแนน</span>
-                                <span style={{marginLeft: '100px'}}>คะแนนที่ได้ ............... คะแนน</span>
-                                <span><p style={{marginTop:'10px'}}><b style={{marginLeft: '230px'}}>รวมคะแนนที่ได้ 3 ด้าน ............... คะแนน</b></p></span>
+                                <div style={{ marginBottom: '8px' }}><b>ด้านที่ 3 ผลการดำเนินงาน</b></div>
+                                <span style={{ marginLeft: '61px' }}>คะแนนเต็ม 200 คะแนน</span>
+                                <span style={{ marginLeft: '100px' }}>คะแนนที่ได้ ............... คะแนน</span>
+                                <span><p style={{ marginTop: '10px' }}><b style={{ marginLeft: '230px' }}>รวมคะแนนที่ได้ 3 ด้าน ............... คะแนน</b></p></span>
                             </div>
                         </div>
                     </div>
 
                     <div className='sumReferee-box'>
-                        <h2 className='sum-h2'>สรุปผลการเยี่ยมเยียนพิจารณาให้คะแนนองค์กรปกครองส่วนท้องถิ่น <p style={{marginTop: '8px'}}>โดย คณะกรรมการเยี่ยมเยียนพิจารณาให้คะแนนฯ (อพ.สธ.)</p></h2>
+                        <h2 className='sum-h2'>สรุปผลการเยี่ยมเยียนพิจารณาให้คะแนนองค์กรปกครองส่วนท้องถิ่น <p style={{ marginTop: '8px' }}>โดย คณะกรรมการเยี่ยมเยียนพิจารณาให้คะแนนฯ (อพ.สธ.)</p></h2>
                         <div className='sumReferee'>
                             <h3 className='sum-h3'>สรุปผลการประเมิน 3 ด้าน คะแนนเต็ม 1,000 คะแนน</h3>
                             <div className="flex-line">
-                                <div style={{marginBottom:'8px'}}><b>ด้านที่ 1 การบริหารและการจัดการ</b></div>
-                                <span style={{marginLeft:'61px'}}>คะแนนเต็ม 200 คะแนน</span>
-                                <span style={{marginLeft: '100px'}}>คะแนนที่ได้ ............... คะแนน</span>
+                                <div style={{ marginBottom: '8px' }}><b>ด้านที่ 1 การบริหารและการจัดการ</b></div>
+                                <span style={{ marginLeft: '61px' }}>คะแนนเต็ม 200 คะแนน</span>
+                                <span style={{ marginLeft: '100px' }}>คะแนนที่ได้ ............... คะแนน</span>
                             </div>
                             <div className="flex-line">
-                                <div style={{marginBottom:'8px'}}><b>ด้านที่ 2 การดำเนินงาน</b></div>
-                                <span style={{marginLeft:'61px'}}>คะแนนเต็ม 600 คะแนน</span>
-                                <span style={{marginLeft: '100px'}}>คะแนนที่ได้ ............... คะแนน</span>
+                                <div style={{ marginBottom: '8px' }}><b>ด้านที่ 2 การดำเนินงาน</b></div>
+                                <span style={{ marginLeft: '61px' }}>คะแนนเต็ม 600 คะแนน</span>
+                                <span style={{ marginLeft: '100px' }}>คะแนนที่ได้ ............... คะแนน</span>
                             </div>
                             <div className="flex-line">
-                                <div style={{marginBottom:'8px'}}><b>ด้านที่ 3 ผลการดำเนินงาน</b></div>
-                                <span style={{marginLeft:'61px'}}>คะแนนเต็ม 200 คะแนน</span>
-                                <span style={{marginLeft: '100px'}}>คะแนนที่ได้ ............... คะแนน</span>
-                                <span><p style={{marginTop:'10px'}}><b style={{marginLeft: '230px'}}>รวมคะแนนที่ได้ 3 ด้าน ............... คะแนน</b></p></span>
+                                <div style={{ marginBottom: '8px' }}><b>ด้านที่ 3 ผลการดำเนินงาน</b></div>
+                                <span style={{ marginLeft: '61px' }}>คะแนนเต็ม 200 คะแนน</span>
+                                <span style={{ marginLeft: '100px' }}>คะแนนที่ได้ ............... คะแนน</span>
+                                <span><p style={{ marginTop: '10px' }}><b style={{ marginLeft: '230px' }}>รวมคะแนนที่ได้ 3 ด้าน ............... คะแนน</b></p></span>
                             </div>
                         </div>
                     </div>
@@ -63,7 +77,7 @@ const Summary = () => {
                 <table className='showSum-table' id='showSum-table'>
                     <thead>
                         <tr>
-                          <th>ผลการประเมิน</th>
+                            <th>ผลการประเมิน</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -72,7 +86,7 @@ const Summary = () => {
                         </tr>
                     </tbody>
                 </table>
-            </div>    
+            </div>
         </div>
     );
 };

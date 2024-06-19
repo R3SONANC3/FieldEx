@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react';
 import Navbar from '../../Navbar';
 import axios from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
 
 const LocalOperaThird = () => {
     const [isAdmin, setIsAdmin] = useState(false);
     const navigate = useNavigate();
-    // const emailUser = location.state?.emailUser;
-    const emailUser = 'test2@gmail.com'
+    const location = useLocation();
+    const emailUser = location.state?.emailUser;
     const token = localStorage.getItem('token');
     const initialFormData = {
         scoreInput31: 0,
@@ -40,8 +42,13 @@ const LocalOperaThird = () => {
     };
 
     useEffect(() => {
-        fetchData();
-    }, [token]);
+        setIsAdmin(localStorage.getItem('userRole') === 'admin');
+        if (!token) {
+            navigate('/');
+        } else {
+            fetchUserData();
+        }
+    }, [navigate, token]);
 
     const [formData, setFormData] = useState(initialFormData);
 
@@ -61,13 +68,25 @@ const LocalOperaThird = () => {
                 },
             });
             if (response.status === 200) {
-                navigate('/localresult')
-                alert('Data submitted successfully!');
+                await Swal.fire({
+                    icon: "success",
+                    title: "ส่งข้อมูลสำเร็จ",
+                    text: "ไปที่หน้าต่อไป"
+                  });
+                navigate('/localresult', { state: { emailUser } })
             }
         } catch (error) {
-            console.error('Error submitting form:', error);
+            await Swal.fire({
+                icon: "error",
+                title: "เกิดข้อผิดพลาดในการส่งข้อมูล!",
+                text: "กรุณาตรวจสอบข้อมูลของท่านให้ครบ",
+              });
         }
     };
+
+    const goBack = () => {
+        navigate('/localoperasec', { state: { emailUser } })
+    }
 
     const renderRow = (idPrefix, label, maxScore) => (
         <tr key={idPrefix}>
@@ -80,46 +99,90 @@ const LocalOperaThird = () => {
 
 
 
-    const fetchData = async () => {
+    const fetchUserData = async () => {
         try {
-            const response = await axios.get(`http://localhost:8000/api/data/getDataEmail/${emailUser}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-            const data = response.data.localOperaThird[0] || {};
-            const updatedFormData = {
-                scoreInput31: data.scoreInput31 || 0,
-                refereeScoreInput31: data.refereeScoreInput31 || 0,
-                comment31: data.comment31 || '',
-                scoreInput32: data.scoreInput32 || 0,
-                refereeScoreInput32: data.refereeScoreInput32 || 0,
-                comment32: data.comment32 || '',
-                scoreInput33: data.scoreInput33 || 0,
-                refereeScoreInput33: data.refereeScoreInput33 || 0,
-                comment33: data.comment33 || '',
-                scoreInput41: data.scoreInput41 || 0,
-                refereeScoreInput41: data.refereeScoreInput41 || 0,
-                comment41: data.comment41 || '',
-                scoreInput42: data.scoreInput42 || 0,
-                refereeScoreInput42: data.refereeScoreInput42 || 0,
-                comment42: data.comment42 || '',
-                scoreInput51: data.scoreInput51 || 0,
-                refereeScoreInput51: data.refereeScoreInput51 || 0,
-                comment51: data.comment51 || '',
-                scoreInput52: data.scoreInput52 || 0,
-                refereeScoreInput52: data.refereeScoreInput52 || 0,
-                comment52: data.comment52 || '',
-                scoreInput61: data.scoreInput61 || 0,
-                refereeScoreInput61: data.refereeScoreInput61 || 0,
-                comment61: data.comment61 || '',
-                scoreInput62: data.scoreInput62 || 0,
-                refereeScoreInput62: data.refereeScoreInput62 || 0,
-                comment62: data.comment62 || ''
-            };
-            setFormData(updatedFormData);
+            if (emailUser) {
+                const response = await axios.get(`http://localhost:8000/api/data/getDataEmail/${emailUser}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                const data = response.data.localOperaThird[0] || {};
+                const updatedFormData = {
+                    scoreInput31: data.scoreInput31 || 0,
+                    refereeScoreInput31: data.refereeScoreInput31 || 0,
+                    comment31: data.comment31 || '',
+                    scoreInput32: data.scoreInput32 || 0,
+                    refereeScoreInput32: data.refereeScoreInput32 || 0,
+                    comment32: data.comment32 || '',
+                    scoreInput33: data.scoreInput33 || 0,
+                    refereeScoreInput33: data.refereeScoreInput33 || 0,
+                    comment33: data.comment33 || '',
+                    scoreInput41: data.scoreInput41 || 0,
+                    refereeScoreInput41: data.refereeScoreInput41 || 0,
+                    comment41: data.comment41 || '',
+                    scoreInput42: data.scoreInput42 || 0,
+                    refereeScoreInput42: data.refereeScoreInput42 || 0,
+                    comment42: data.comment42 || '',
+                    scoreInput51: data.scoreInput51 || 0,
+                    refereeScoreInput51: data.refereeScoreInput51 || 0,
+                    comment51: data.comment51 || '',
+                    scoreInput52: data.scoreInput52 || 0,
+                    refereeScoreInput52: data.refereeScoreInput52 || 0,
+                    comment52: data.comment52 || '',
+                    scoreInput61: data.scoreInput61 || 0,
+                    refereeScoreInput61: data.refereeScoreInput61 || 0,
+                    comment61: data.comment61 || '',
+                    scoreInput62: data.scoreInput62 || 0,
+                    refereeScoreInput62: data.refereeScoreInput62 || 0,
+                    comment62: data.comment62 || ''
+                };
+                setFormData(updatedFormData);
+            }else{
+                const response = await axios.get(`http://localhost:8000/api/data/fetchData`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                const data = response.data.localOperaThird[0] || {};
+                const updatedFormData = {
+                    scoreInput31: data.scoreInput31 || 0,
+                    refereeScoreInput31: data.refereeScoreInput31 || 0,
+                    comment31: data.comment31 || '',
+                    scoreInput32: data.scoreInput32 || 0,
+                    refereeScoreInput32: data.refereeScoreInput32 || 0,
+                    comment32: data.comment32 || '',
+                    scoreInput33: data.scoreInput33 || 0,
+                    refereeScoreInput33: data.refereeScoreInput33 || 0,
+                    comment33: data.comment33 || '',
+                    scoreInput41: data.scoreInput41 || 0,
+                    refereeScoreInput41: data.refereeScoreInput41 || 0,
+                    comment41: data.comment41 || '',
+                    scoreInput42: data.scoreInput42 || 0,
+                    refereeScoreInput42: data.refereeScoreInput42 || 0,
+                    comment42: data.comment42 || '',
+                    scoreInput51: data.scoreInput51 || 0,
+                    refereeScoreInput51: data.refereeScoreInput51 || 0,
+                    comment51: data.comment51 || '',
+                    scoreInput52: data.scoreInput52 || 0,
+                    refereeScoreInput52: data.refereeScoreInput52 || 0,
+                    comment52: data.comment52 || '',
+                    scoreInput61: data.scoreInput61 || 0,
+                    refereeScoreInput61: data.refereeScoreInput61 || 0,
+                    comment61: data.comment61 || '',
+                    scoreInput62: data.scoreInput62 || 0,
+                    refereeScoreInput62: data.refereeScoreInput62 || 0,
+                    comment62: data.comment62 || ''
+                };
+                setFormData(updatedFormData);
+            }
+
         } catch (error) {
-            console.error('Error fetching data:', error);
+            Swal.fire({
+                icon: "error",
+                title: "เกิดข้อผิดพลาดในการดึงข้อมูล!",
+                text: "ไม่สามารถดึงข้อมูลจากฐานข้อมูลได้",
+              });
         }
     };
 
@@ -217,7 +280,7 @@ const LocalOperaThird = () => {
                 <div className='lmf-footer'>
                     <div className="button">
                         <div className="button-back">
-                            <button type="button">ย้อนกลับ</button>
+                            <button type="button" onClick={goBack}>ย้อนกลับ</button>
                         </div>
                         <div className="button-next">
                             <button type="submit" onClick={handleSubmit}>ถัดไป</button>

@@ -77,7 +77,6 @@ function LocalGovernmentForm() {
         });
       }
     } catch (error) {
-      console.error("Error fetching data:", error);
       Swal.fire({
         icon: "error",
         title: "เกิดข้อผิดพลาดในการดึงข้อมูล!",

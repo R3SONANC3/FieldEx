@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '../../Navbar';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './localform.css';
 import axios from 'axios';
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
 
 const LocalOperaSecond = () => {
     const navigate = useNavigate();
     const [isAdmin, setIsAdmin] = useState(false); // assuming admin role management
     const token = localStorage.getItem('token');
-    const emailUser = 'test2@gmail.com';
+    const location = useLocation();
+    const emailUser = location.state?.emailUser;
     const [formData, setFormData] = useState({
         localBasicInfo: 0,
         refereeBasicInfo: 0,
@@ -43,8 +46,13 @@ const LocalOperaSecond = () => {
     });
 
     useEffect(() => {
-        fetchData();
-    }, [token]);
+        setIsAdmin(localStorage.getItem('userRole') === 'admin');
+        if (!token) {
+            navigate('/');
+        } else {
+            fetchUserData();
+        }
+    }, [navigate, token]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -58,49 +66,96 @@ const LocalOperaSecond = () => {
         console.log(formData);
     }, [formData]);
 
-    const fetchData = async () => {
+    const fetchUserData = async () => {
         try {
-            const response = await axios.get(`http://localhost:8000/api/data/getDataEmail/${emailUser}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-            const data = response.data.localOperaSec[0] || {};
-            const updatedFormData = {
-                localBasicInfo: data.localBasicInfo || 0,
-                refereeBasicInfo: data.refereeBasicInfo || 0,
-                commentBasicInfo: data.commentBasicInfo || '',
-                localOccupationalInfo: data.localOccupationalInfo || 0,
-                refereeOccupationalInfo: data.refereeOccupationalInfo || 0,
-                commentOccupationalInfo: data.commentOccupationalInfo || '',
-                localPhysicalInfo: data.localPhysicalInfo || 0,
-                refereePhysicalInfo: data.refereePhysicalInfo || 0,
-                commentPhysicalInfo: data.commentPhysicalInfo || '',
-                localCommunityHistory: data.localCommunityHistory || 0,
-                refereeCommunityHistory: data.refereeCommunityHistory || 0,
-                commentCommunityHistory: data.commentCommunityHistory || '',
-                localPlantUsage: data.localPlantUsage || 0,
-                refereePlantUsage: data.refereePlantUsage || 0,
-                commentPlantUsage: data.commentPlantUsage || '',
-                localAnimalUsage: data.localAnimalUsage || 0,
-                refereeAnimalUsage: data.refereeAnimalUsage || 0,
-                commentAnimalUsage: data.commentAnimalUsage || '',
-                localOtherBiologicalUsage: data.localOtherBiologicalUsage || 0,
-                refereeOtherBiologicalUsage: data.refereeOtherBiologicalUsage || 0,
-                commentOtherBiologicalUsage: data.commentOtherBiologicalUsage || '',
-                localLocalWisdom: data.localLocalWisdom || 0,
-                refereeLocalWisdom: data.refereeLocalWisdom || 0,
-                commentLocalWisdom: data.commentLocalWisdom || '',
-                localArchaeologicalResources: data.localArchaeologicalResources || 0,
-                refereeArchaeologicalResources: data.refereeArchaeologicalResources || 0,
-                commentArchaeologicalResources: data.commentArchaeologicalResources || '',
-                localResourceSurveyReport: data.localResourceSurveyReport || 0,
-                refereeResourceSurveyReport: data.refereeResourceSurveyReport || 0,
-                commentResourceSurveyReport: data.commentResourceSurveyReport || ''
-            };
-            setFormData(updatedFormData);
+            if (emailUser) {
+                const response = await axios.get(`http://localhost:8000/api/data/getDataEmail/${emailUser}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                const data = response.data.localOperaSec[0] || {};
+                const updatedFormData = {
+                    localBasicInfo: data.localBasicInfo || 0,
+                    refereeBasicInfo: data.refereeBasicInfo || 0,
+                    commentBasicInfo: data.commentBasicInfo || '',
+                    localOccupationalInfo: data.localOccupationalInfo || 0,
+                    refereeOccupationalInfo: data.refereeOccupationalInfo || 0,
+                    commentOccupationalInfo: data.commentOccupationalInfo || '',
+                    localPhysicalInfo: data.localPhysicalInfo || 0,
+                    refereePhysicalInfo: data.refereePhysicalInfo || 0,
+                    commentPhysicalInfo: data.commentPhysicalInfo || '',
+                    localCommunityHistory: data.localCommunityHistory || 0,
+                    refereeCommunityHistory: data.refereeCommunityHistory || 0,
+                    commentCommunityHistory: data.commentCommunityHistory || '',
+                    localPlantUsage: data.localPlantUsage || 0,
+                    refereePlantUsage: data.refereePlantUsage || 0,
+                    commentPlantUsage: data.commentPlantUsage || '',
+                    localAnimalUsage: data.localAnimalUsage || 0,
+                    refereeAnimalUsage: data.refereeAnimalUsage || 0,
+                    commentAnimalUsage: data.commentAnimalUsage || '',
+                    localOtherBiologicalUsage: data.localOtherBiologicalUsage || 0,
+                    refereeOtherBiologicalUsage: data.refereeOtherBiologicalUsage || 0,
+                    commentOtherBiologicalUsage: data.commentOtherBiologicalUsage || '',
+                    localLocalWisdom: data.localLocalWisdom || 0,
+                    refereeLocalWisdom: data.refereeLocalWisdom || 0,
+                    commentLocalWisdom: data.commentLocalWisdom || '',
+                    localArchaeologicalResources: data.localArchaeologicalResources || 0,
+                    refereeArchaeologicalResources: data.refereeArchaeologicalResources || 0,
+                    commentArchaeologicalResources: data.commentArchaeologicalResources || '',
+                    localResourceSurveyReport: data.localResourceSurveyReport || 0,
+                    refereeResourceSurveyReport: data.refereeResourceSurveyReport || 0,
+                    commentResourceSurveyReport: data.commentResourceSurveyReport || ''
+                };
+                setFormData(updatedFormData);
+            } else {
+                const response = await axios.get(`http://localhost:8000/api/data/fetchData`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                const data = response.data.localOperaSec[0] || {};
+                const updatedFormData = {
+                    localBasicInfo: data.localBasicInfo || 0,
+                    refereeBasicInfo: data.refereeBasicInfo || 0,
+                    commentBasicInfo: data.commentBasicInfo || '',
+                    localOccupationalInfo: data.localOccupationalInfo || 0,
+                    refereeOccupationalInfo: data.refereeOccupationalInfo || 0,
+                    commentOccupationalInfo: data.commentOccupationalInfo || '',
+                    localPhysicalInfo: data.localPhysicalInfo || 0,
+                    refereePhysicalInfo: data.refereePhysicalInfo || 0,
+                    commentPhysicalInfo: data.commentPhysicalInfo || '',
+                    localCommunityHistory: data.localCommunityHistory || 0,
+                    refereeCommunityHistory: data.refereeCommunityHistory || 0,
+                    commentCommunityHistory: data.commentCommunityHistory || '',
+                    localPlantUsage: data.localPlantUsage || 0,
+                    refereePlantUsage: data.refereePlantUsage || 0,
+                    commentPlantUsage: data.commentPlantUsage || '',
+                    localAnimalUsage: data.localAnimalUsage || 0,
+                    refereeAnimalUsage: data.refereeAnimalUsage || 0,
+                    commentAnimalUsage: data.commentAnimalUsage || '',
+                    localOtherBiologicalUsage: data.localOtherBiologicalUsage || 0,
+                    refereeOtherBiologicalUsage: data.refereeOtherBiologicalUsage || 0,
+                    commentOtherBiologicalUsage: data.commentOtherBiologicalUsage || '',
+                    localLocalWisdom: data.localLocalWisdom || 0,
+                    refereeLocalWisdom: data.refereeLocalWisdom || 0,
+                    commentLocalWisdom: data.commentLocalWisdom || '',
+                    localArchaeologicalResources: data.localArchaeologicalResources || 0,
+                    refereeArchaeologicalResources: data.refereeArchaeologicalResources || 0,
+                    commentArchaeologicalResources: data.commentArchaeologicalResources || '',
+                    localResourceSurveyReport: data.localResourceSurveyReport || 0,
+                    refereeResourceSurveyReport: data.refereeResourceSurveyReport || 0,
+                    commentResourceSurveyReport: data.commentResourceSurveyReport || ''
+                };
+                setFormData(updatedFormData);
+            }
+
         } catch (error) {
-            console.error('Error fetching data:', error);
+            Swal.fire({
+                icon: "error",
+                title: "เกิดข้อผิดพลาดในการดึงข้อมูล!",
+                text: "ไม่สามารถดึงข้อมูลจากฐานข้อมูลได้",
+            });
         }
     };
 
@@ -116,17 +171,25 @@ const LocalOperaSecond = () => {
                 },
             });
             if (response.status === 200) {
-                alert('Data saved successfully');
-                navigate('/localoperathird');
+                await Swal.fire({
+                    icon: "success",
+                    title: "ส่งข้อมูลสำเร็จ",
+                    text: "ไปที่หน้าต่อไป"
+                });
+                navigate('/localoperathird', { state: { emailUser } });
             }
         } catch (error) {
-            console.error('Error saving data:', error);
+            await Swal.fire({
+                icon: "error",
+                title: "เกิดข้อผิดพลาดในการส่งข้อมูล!",
+                text: "กรุณาตรวจสอบข้อมูลของท่านให้ครบ",
+            });
             alert('Failed to save data');
         }
     };
 
     const navigateToPreviousPage = () => {
-        navigate('/localoperafirst');
+        navigate('/localoperafirst', { state: { emailUser } });
     };
 
     const evaluationItems = [
