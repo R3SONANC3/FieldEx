@@ -1,65 +1,78 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import Navbar from '../../Navbar';
+import Swal from 'sweetalert2';
+import './localform.css';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const Summary = () => {
     return (
-        <div>
-            <h2>สรุปผลการประเมินองค์กรปกครองส่วนท้องถิ่น โดยสมาชิกฐานทรัพยากรท้องถิ่น</h2>
-            <h3>สรุปผลการประเมิน 3 ด้าน คะแนนเต็ม 1,000 คะแนน</h3>
-            <div className="text">
-                <div><b>ด้านที่ 1 การบริหารและการจัดการ</b></div>
-                <div className="flex-line">
-                    <span>คะแนนเต็ม 200 คะแนน</span>
-                    <span style={{marginLeft: '100px'}}>คะแนนที่ได้ ............... คะแนน</span>
-                </div>
-                <div><b style={{marginRight: '75px'}}>ด้านที่ 2 การดำเนินงาน</b></div>
-                <div className="flex-line">
-                    <span>คะแนนเต็ม 600 คะแนน</span>
-                    <span style={{marginLeft: '100px'}}>คะแนนที่ได้ ............... คะแนน</span>
-                </div>
-                <div><b style={{marginRight: '55px'}}>ด้านที่ 3 ผลการดำเนินงาน</b></div>
-                <div className="flex-line">
-                    <span>คะแนนเต็ม 200 คะแนน</span>
-                    <span style={{marginLeft: '100px'}}>คะแนนที่ได้ ............... คะแนน</span>
-                    <span><p><b style={{marginLeft: '180px'}}>รวมคะแนนที่ได้ 3 ด้าน ............... คะแนน</b></p></span>
-                </div>
+        <div className='sum-container'>
+            <div className='sum-header'>
+                <Navbar />
             </div>
-            <h2 style={{marginTop: '50px'}}>สรุปผลการเยี่ยมเยียนพิจารณาให้คะแนนองค์กรปกครองส่วนท้องถิ่น <p style={{marginTop: '15px'}}>โดย คณะกรรมการเยี่ยมเยียนพิจารณาให้คะแนนฯ (อพ.สธ.)</p></h2>
-            <h3 style={{marginTop: '-4px', marginLeft: '18px'}}>สรุปผลการประเมิน 3 ด้าน คะแนนเต็ม 1,000 คะแนน</h3>
-            <div className="text">
-                <div><b>ด้านที่ 1 การบริหารและการจัดการ</b></div>
-                <div className="flex-line">
-                    <span>คะแนนเต็ม 200 คะแนน</span>
-                    <span style={{marginLeft: '100px'}}>คะแนนที่ได้ ............... คะแนน</span>
-                </div>
-                <div><b style={{marginRight: '75px'}}>ด้านที่ 2 การดำเนินงาน</b></div>
-                <div className="flex-line">
-                    <span>คะแนนเต็ม 600 คะแนน</span>
-                    <span style={{marginLeft: '100px'}}>คะแนนที่ได้ ............... คะแนน</span>
-                </div>
-                <div><b style={{marginRight: '55px'}}>ด้านที่ 3 ผลการดำเนินงาน</b></div>
-                <div className="flex-line">
-                    <span>คะแนนเต็ม 200 คะแนน</span>
-                    <span style={{marginLeft: '100px'}}>คะแนนที่ได้ ............... คะแนน</span>
-                    <span><p><b style={{marginLeft: '180px'}}>รวมคะแนนที่ได้ 3 ด้าน ............... คะแนน</b></p></span>
-                </div>
+            <div className='sum-body'>
+                <table className='sum-table' id='sum-table'>
+                    <div className='sumUser-box'>
+                        <h2 className='sum-h2'>สรุปผลการประเมินองค์กรปกครองส่วนท้องถิ่น โดยสมาชิกฐานทรัพยากรท้องถิ่น</h2>
+                        <div className='sumUser'>
+                            <h3 className='sum-h3'>สรุปผลการประเมิน 3 ด้าน คะแนนเต็ม 1,000 คะแนน</h3>
+                            <div className="flex-line">
+                                <div style={{marginBottom:'8px'}}><b>ด้านที่ 1 การบริหารและการจัดการ</b></div>
+                                <span style={{marginLeft:'61px'}}>คะแนนเต็ม 200 คะแนน</span>
+                                <span style={{marginLeft: '100px'}}>คะแนนที่ได้ ............... คะแนน</span>
+                            </div>
+                            <div className="flex-line">
+                                <div style={{marginBottom:'8px'}}><b>ด้านที่ 2 การดำเนินงาน</b></div>
+                                <span style={{marginLeft:'61px'}}>คะแนนเต็ม 600 คะแนน</span>
+                                <span style={{marginLeft: '100px'}}>คะแนนที่ได้ ............... คะแนน</span>
+                            </div>
+                            <div className="flex-line">
+                                <div style={{marginBottom:'8px'}}><b>ด้านที่ 3 ผลการดำเนินงาน</b></div>
+                                <span style={{marginLeft:'61px'}}>คะแนนเต็ม 200 คะแนน</span>
+                                <span style={{marginLeft: '100px'}}>คะแนนที่ได้ ............... คะแนน</span>
+                                <span><p style={{marginTop:'10px'}}><b style={{marginLeft: '230px'}}>รวมคะแนนที่ได้ 3 ด้าน ............... คะแนน</b></p></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className='sumReferee-box'>
+                        <h2 className='sum-h2'>สรุปผลการเยี่ยมเยียนพิจารณาให้คะแนนองค์กรปกครองส่วนท้องถิ่น <p style={{marginTop: '8px'}}>โดย คณะกรรมการเยี่ยมเยียนพิจารณาให้คะแนนฯ (อพ.สธ.)</p></h2>
+                        <div className='sumReferee'>
+                            <h3 className='sum-h3'>สรุปผลการประเมิน 3 ด้าน คะแนนเต็ม 1,000 คะแนน</h3>
+                            <div className="flex-line">
+                                <div style={{marginBottom:'8px'}}><b>ด้านที่ 1 การบริหารและการจัดการ</b></div>
+                                <span style={{marginLeft:'61px'}}>คะแนนเต็ม 200 คะแนน</span>
+                                <span style={{marginLeft: '100px'}}>คะแนนที่ได้ ............... คะแนน</span>
+                            </div>
+                            <div className="flex-line">
+                                <div style={{marginBottom:'8px'}}><b>ด้านที่ 2 การดำเนินงาน</b></div>
+                                <span style={{marginLeft:'61px'}}>คะแนนเต็ม 600 คะแนน</span>
+                                <span style={{marginLeft: '100px'}}>คะแนนที่ได้ ............... คะแนน</span>
+                            </div>
+                            <div className="flex-line">
+                                <div style={{marginBottom:'8px'}}><b>ด้านที่ 3 ผลการดำเนินงาน</b></div>
+                                <span style={{marginLeft:'61px'}}>คะแนนเต็ม 200 คะแนน</span>
+                                <span style={{marginLeft: '100px'}}>คะแนนที่ได้ ............... คะแนน</span>
+                                <span><p style={{marginTop:'10px'}}><b style={{marginLeft: '230px'}}>รวมคะแนนที่ได้ 3 ด้าน ............... คะแนน</b></p></span>
+                            </div>
+                        </div>
+                    </div>
+                </table>
             </div>
-            <table id="sum-table">
-                <thead>
-                    <tr>
-                        <th>ผลการประเมิน</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><span className="pass">ผ่านเกณฑ์มาตรฐาน อพ.สธ. ระดับป้ายสนองพระราชดำริในงานฐานทรัพยากรท้องถิ่น</span></td>
-                    </tr>
-                </tbody>
-            </table>
-            <div className="button">
-                <div className="button-next">
-                    <button >หน้าแรก</button>
-                </div>
-            </div>
+            <div className='sum-fooer'>
+                <table className='showSum-table' id='showSum-table'>
+                    <thead>
+                        <tr>
+                          <th>ผลการประเมิน</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style={{ textAlign: 'center' }}><span className="pass">ผ่านเกณฑ์มาตรฐาน อพ.สธ. ระดับป้ายสนองพระราชดำริในงานฐานทรัพยากรท้องถิ่น</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>    
         </div>
     );
 };

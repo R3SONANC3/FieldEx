@@ -275,10 +275,6 @@ td:nth-child(n+2) {
   text-align: center;
 }
 
-/* td:last-child {
-  text-align: left;
-} */
-
 tbody tr:nth-child(even) {
   background-color: #f9f9f9;
 }
@@ -440,4 +436,64 @@ tbody tr:hover {
   padding: 10px 20px;
   font-size: 16px;
   cursor: pointer;
+}
+
+/* Summary.css */
+.sum-table {
+  background-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-collapse: separate;
+  margin: 30px auto 20px;
+  table-layout: fixed;
+  border-radius: 10px;
+  border-spacing:0 ;
+  overflow: hidden;
+  width: 60%;
+}
+.sum-h2{
+  margin-top: 40px;
+  text-align: center;
+}
+.sum-h3{
+  margin-top: 30px;
+  text-align: left;
+  margin-left: 20px;
+  margin-bottom: 10px;  
+}
+.flex-line {
+  text-align:left;
+  margin-left: 82px;
+  margin-bottom: 10px;  
+}
+.sumUser {
+  margin-left: 120px;
+  margin-bottom: 60px;
+}
+.sumReferee {
+  margin-left: 120px;
+  margin-bottom: 30px;
+}
+.showSum-table {
+  background-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-collapse: separate;
+  margin: 30px auto 20px;
+  table-layout: fixed;
+  border-radius: 10px;
+  border-spacing:0 ;
+  overflow: hidden;
+  width: 42%;
+}
+
+.pass::before {
+  content: " ✓";
+  color: green;
+  font-weight: bold;
+  font-family: Arial, sans-serif; 
+}
+.not-pass::before {
+  content: " ✗";
+  color: red;
+  font-weight: bold;
+  font-family: Arial, sans-serif;
 }
