@@ -8,12 +8,16 @@ const userRoutes = require('./routes/user');
 const dataRoutes = require('./routes/data');
 
 const app = express();
+
 app.use(express.json()); // Parse JSON bodies
-app.options("*", cors(corsOptions)); // Handle preflight requests
-app.use(cors(corsOptions)); // Handle CORS
+
+// Handle preflight requests for all routes
+app.options("*", cors(corsOptions));
+
+// Apply CORS middleware to all routes
+app.use(cors(corsOptions));
 
 const API_PORT = process.env.PORT || 8000;
-
 
 // Use Routes
 app.use('/api/auth', authRoutes); // Authentication routes

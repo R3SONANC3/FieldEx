@@ -9,11 +9,15 @@ const corsOptions = {
     if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
       callback(null, true);
     } else {
+      console.error('Blocked by CORS:', origin);
       callback(new Error("Not allowed by CORS"));
     }
   },
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 };
+
 
 const verifyUser = (req, res, next) => {
   const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
