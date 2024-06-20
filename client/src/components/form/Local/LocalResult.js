@@ -113,7 +113,9 @@ const LocalResult = () => {
         try {
             const response = await axios.post(`${API_URL}/api/data/localResult`, {
                 ...formData,
-                emailUser
+                emailUser,
+                totalRefereeScore,
+                totalScore
             }, {
                 headers: {
                     Authorization: `Bearer ${token}`,

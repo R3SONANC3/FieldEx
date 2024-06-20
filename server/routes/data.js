@@ -234,7 +234,6 @@ router.post('/localsubmit', verifyUser, async (req, res) => {
   }
 });
 
-
 router.get('/getDataEmail/:email', verifyUser, async (req, res) => {
   const email = req.params.email;
   const connection = await getConnector().getConnection();
