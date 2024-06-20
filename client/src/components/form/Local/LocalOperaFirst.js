@@ -12,6 +12,8 @@ function LocalOperaFirst() {
     const location = useLocation();
     const emailUser = location.state?.emailUser;
     const token = localStorage.getItem('token')
+    const [totalScore, setTotalScore] = useState(0);
+    const [totalRefereeScore, setTotalRefereeScore] = useState(0);
     const [formData, setFormData] = useState({
         year1BoundaryAreaProtection: 0,
         area1BoundaryAreaProtection: 0,
@@ -122,6 +124,30 @@ function LocalOperaFirst() {
             });
         }
     }
+
+    useEffect(() => {
+        const calculateTotals = () => {
+            const scoreFields = [
+                "scoreBoundary", "scoreSurveyResources", "scoreClassifyResources", "scoreTagResources",
+                "scoreMappingBoundary", "scoreStudyResources", "scorePhotoResources", "scoreSampleResources",
+                "scoreRegisterResources", "scorePhotoRegisterResources", "scoreCareResources"
+            ];
+
+            const refereeScoreFields = [
+                "refereeScoreBoundary", "refereeScoreSurveyResources", "refereeScoreClassifyResources", "refereeScoreTagResources",
+                "refereeScoreMappingBoundary", "refereeScoreStudyResources", "refereeScorePhotoResources", "refereeScoreSampleResources",
+                "refereeScoreRegisterResources", "refereeScorePhotoRegisterResources", "refereeScoreCareResources"
+            ];
+
+            const totalScore = scoreFields.reduce((total, field) => total + Number(formData[field]), 0);
+            const totalRefereeScore = refereeScoreFields.reduce((total, field) => total + Number(formData[field]), 0);
+
+            setTotalScore(totalScore);
+            setTotalRefereeScore(totalRefereeScore);
+        };
+
+        calculateTotals();
+    }, [formData]);
     
 
     const handleSubmit = async () => {
@@ -349,6 +375,12 @@ function LocalOperaFirst() {
                         </tr>
                         <tr>
                             <td style={{ textAlign: 'center' }}><b>รวมคะแนนที่ได้  งานที่ 1 งานปกปักทรัพยากรท้องถิ่น</b></td>
+                            <td className="text-center" style={{ fontSize: '16px', alignItems: 'center' }}>
+                                {totalScore}
+                            </td>
+                            <td className="text-center" style={{ fontSize: '16px', alignItems: 'center' }}>
+                                {totalRefereeScore}
+                            </td>
                         </tr>
                     </tbody>
                 </table>
