@@ -412,8 +412,6 @@ router.post('/localOperaSec', verifyUser, async (req, res) => {
     const { role, email } = req.user;
     const { totalScore, totalRefereeScore, emailUser, ...formData } = req.body;
     const connection = await getConnector().getConnection();
-    console.log(totalScore);
-    console.log(totalRefereeScore);
 
     try {
       const [userData] = await connection.query('SELECT localId, institutionID FROM FieldEx.users WHERE email = ?', [emailUser || email]);
@@ -426,7 +424,7 @@ router.post('/localOperaSec', verifyUser, async (req, res) => {
           refereeScoreInput31, comment31, refereeScoreInput32, comment32, refereeScoreInput33, comment33,
           refereeScoreInput41, comment41, refereeScoreInput42, comment42, refereeScoreInput51, comment51,
           refereeScoreInput52, comment52, refereeScoreInput61, comment61, refereeScoreInput62, comment62,
-          totalScore
+          totalRefereeScore
         } = formData;
 
         sql = `
@@ -435,35 +433,35 @@ router.post('/localOperaSec', verifyUser, async (req, res) => {
             refereeScoreInput33 = ?, comment33 = ?, refereeScoreInput41 = ?, comment41 = ?,
             refereeScoreInput42 = ?, comment42 = ?, refereeScoreInput51 = ?, comment51 = ?,
             refereeScoreInput52 = ?, comment52 = ?, refereeScoreInput61 = ?, comment61 = ?,
-            refereeScoreInput62 = ?, comment62 = ?, totalScore = ?
+            refereeScoreInput62 = ?, comment62 = ?, totalRefereeScore = ?
           WHERE localID = ?
         `;
         values = [
           refereeScoreInput31, comment31, refereeScoreInput32, comment32, refereeScoreInput33, comment33,
           refereeScoreInput41, comment41, refereeScoreInput42, comment42, refereeScoreInput51, comment51,
           refereeScoreInput52, comment52, refereeScoreInput61, comment61, refereeScoreInput62, comment62,
-          totalScore, localID,
+          totalRefereeScore, localID,
         ];
       } else {
         const {
           scoreInput31, scoreInput32, scoreInput33, scoreInput41, scoreInput42,
-          scoreInput51, scoreInput52, scoreInput61, scoreInput62, totalRefereeScore
+          scoreInput51, scoreInput52, scoreInput61, scoreInput62, totalScore
         } = formData;
         sql = `
           INSERT INTO FieldEx.localOperaThird (
             scoreInput31, scoreInput32, scoreInput33, scoreInput41, scoreInput42,
-            scoreInput51, scoreInput52, scoreInput61, scoreInput62, localID, totalRefereeScore
+            scoreInput51, scoreInput52, scoreInput61, scoreInput62, localID, totalScore
           ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
           ON DUPLICATE KEY UPDATE
             scoreInput31 = VALUES(scoreInput31), scoreInput32 = VALUES(scoreInput32),
             scoreInput33 = VALUES(scoreInput33), scoreInput41 = VALUES(scoreInput41),
             scoreInput42 = VALUES(scoreInput42), scoreInput51 = VALUES(scoreInput51),
             scoreInput52 = VALUES(scoreInput52), scoreInput61 = VALUES(scoreInput61),
-            scoreInput62 = VALUES(scoreInput62), totalRefereeScore = VALUES(totalRefereeScore)
+            scoreInput62 = VALUES(scoreInput62), totalScore = VALUES(totalScore)
         `;
         values = [
           scoreInput31, scoreInput32, scoreInput33, scoreInput41, scoreInput42,
-          scoreInput51, scoreInput52, scoreInput61, scoreInput62, localID, totalRefereeScore
+          scoreInput51, scoreInput52, scoreInput61, scoreInput62, localID, totalScore
         ];
       }
 
