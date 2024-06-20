@@ -408,73 +408,72 @@ router.post('/localOperaSec', verifyUser, async (req, res) => {
   }
 });
 
-router.post('/localOperaThird', verifyUser, async (req, res) => {
-  const { role, email } = req.user;
-  const { totalScore, totalRefereeScore, emailUser, ...formData } = req.body;
-  const connection = await getConnector().getConnection();
+  router.post('/localOperaThird', verifyUser, async (req, res) => {
+    const { role, email } = req.user;
+    const { totalScore, totalRefereeScore, emailUser, ...formData } = req.body;
+    const connection = await getConnector().getConnection();
 
-  try {
-    const [userData] = await connection.query('SELECT localId, institutionID FROM FieldEx.users WHERE email = ?', [emailUser || email]);
-    const { localId: localID } = userData[0] || {};
+    try {
+      const [userData] = await connection.query('SELECT localId, institutionID FROM FieldEx.users WHERE email = ?', [emailUser || email]);
+      const { localId: localID } = userData[0] || {};
 
-    let sql, values;
+      let sql, values;
 
-    if (role === 'admin') {
-      const {
-        refereeScoreInput31, comment31, refereeScoreInput32, comment32, refereeScoreInput33, comment33,
-        refereeScoreInput41, comment41, refereeScoreInput42, comment42, refereeScoreInput51, comment51,
-        refereeScoreInput52, comment52, refereeScoreInput61, comment61, refereeScoreInput62, comment62,
-        totalScore
-      } = formData;
+      if (role === 'admin') {
+        const {
+          refereeScoreInput31, comment31, refereeScoreInput32, comment32, refereeScoreInput33, comment33,
+          refereeScoreInput41, comment41, refereeScoreInput42, comment42, refereeScoreInput51, comment51,
+          refereeScoreInput52, comment52, refereeScoreInput61, comment61, refereeScoreInput62, comment62,
+          totalScore
+        } = formData;
 
-      sql = `
-        UPDATE FieldEx.localOperaThird SET
-          refereeScoreInput31 = ?, comment31 = ?, refereeScoreInput32 = ?, comment32 = ?,
-          refereeScoreInput33 = ?, comment33 = ?, refereeScoreInput41 = ?, comment41 = ?,
-          refereeScoreInput42 = ?, comment42 = ?, refereeScoreInput51 = ?, comment51 = ?,
-          refereeScoreInput52 = ?, comment52 = ?, refereeScoreInput61 = ?, comment61 = ?,
-          refereeScoreInput62 = ?, comment62 = ?, totalScore = ?
-        WHERE localID = ?
-      `;
-      values = [
-        refereeScoreInput31, comment31, refereeScoreInput32, comment32, refereeScoreInput33, comment33,
-        refereeScoreInput41, comment41, refereeScoreInput42, comment42, refereeScoreInput51, comment51,
-        refereeScoreInput52, comment52, refereeScoreInput61, comment61, refereeScoreInput62, comment62,
-        totalScore, localID,
-      ];
-    } else {
-      const {
-        scoreInput31, scoreInput32, scoreInput33, scoreInput41, scoreInput42,
-        scoreInput51, scoreInput52, scoreInput61, scoreInput62, totalRefereeScore
-      } = formData;
-
-      sql = `
-        INSERT INTO FieldEx.localOperaThird (
+        sql = `
+          UPDATE FieldEx.localOperaThird SET
+            refereeScoreInput31 = ?, comment31 = ?, refereeScoreInput32 = ?, comment32 = ?,
+            refereeScoreInput33 = ?, comment33 = ?, refereeScoreInput41 = ?, comment41 = ?,
+            refereeScoreInput42 = ?, comment42 = ?, refereeScoreInput51 = ?, comment51 = ?,
+            refereeScoreInput52 = ?, comment52 = ?, refereeScoreInput61 = ?, comment61 = ?,
+            refereeScoreInput62 = ?, comment62 = ?, totalScore = ?
+          WHERE localID = ?
+        `;
+        values = [
+          refereeScoreInput31, comment31, refereeScoreInput32, comment32, refereeScoreInput33, comment33,
+          refereeScoreInput41, comment41, refereeScoreInput42, comment42, refereeScoreInput51, comment51,
+          refereeScoreInput52, comment52, refereeScoreInput61, comment61, refereeScoreInput62, comment62,
+          totalScore, localID,
+        ];
+      } else {
+        const {
+          scoreInput31, scoreInput32, scoreInput33, scoreInput41, scoreInput42,
+          scoreInput51, scoreInput52, scoreInput61, scoreInput62, totalRefereeScore
+        } = formData;
+        sql = `
+          INSERT INTO FieldEx.localOperaThird (
+            scoreInput31, scoreInput32, scoreInput33, scoreInput41, scoreInput42,
+            scoreInput51, scoreInput52, scoreInput61, scoreInput62, localID, totalRefereeScore
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          ON DUPLICATE KEY UPDATE
+            scoreInput31 = VALUES(scoreInput31), scoreInput32 = VALUES(scoreInput32),
+            scoreInput33 = VALUES(scoreInput33), scoreInput41 = VALUES(scoreInput41),
+            scoreInput42 = VALUES(scoreInput42), scoreInput51 = VALUES(scoreInput51),
+            scoreInput52 = VALUES(scoreInput52), scoreInput61 = VALUES(scoreInput61),
+            scoreInput62 = VALUES(scoreInput62), totalRefereeScore = VALUES(totalRefereeScore)
+        `;
+        values = [
           scoreInput31, scoreInput32, scoreInput33, scoreInput41, scoreInput42,
           scoreInput51, scoreInput52, scoreInput61, scoreInput62, localID, totalRefereeScore
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ON DUPLICATE KEY UPDATE
-          scoreInput31 = VALUES(scoreInput31), scoreInput32 = VALUES(scoreInput32),
-          scoreInput33 = VALUES(scoreInput33), scoreInput41 = VALUES(scoreInput41),
-          scoreInput42 = VALUES(scoreInput42), scoreInput51 = VALUES(scoreInput51),
-          scoreInput52 = VALUES(scoreInput52), scoreInput61 = VALUES(scoreInput61),
-          scoreInput62 = VALUES(scoreInput62), totalRefereeScore = VALUES(totalRefereeScore)
-      `;
-      values = [
-        scoreInput31, scoreInput32, scoreInput33, scoreInput41, scoreInput42,
-        scoreInput51, scoreInput52, scoreInput61, scoreInput62, localID, totalRefereeScore
-      ];
-    }
+        ];
+      }
 
-    await connection.query(sql, values);
-    res.status(200).send('Form data saved successfully');
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('An error occurred while processing the request');
-  } finally {
-    connection.release();
-  }
-});
+      await connection.query(sql, values);
+      res.status(200).send('Form data saved successfully');
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('An error occurred while processing the request');
+    } finally {
+      connection.release();
+    }
+  });
 
 router.post('/localResult', verifyUser, async (req, res) => {
   const { role, email } = req.user;
