@@ -6,12 +6,13 @@ import '../styles.css';
 function SelectForm({ setOpenModal }) {
     const [previousForms, setPreviousForms] = useState([]);
     const navigate = useNavigate();
+    const API_URL = 'https://fieldex-production.up.railway.app'
 
     useEffect(() => {
         const fetchForms = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const response = await axios.get('http://localhost:8000/api/user/fetchforms', {
+                const response = await axios.get(`${API_URL}/api/user/fetchforms`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
