@@ -408,26 +408,25 @@ router.post('/localOperaSec', verifyUser, async (req, res) => {
   }
 });
 
-  router.post('/localOperaThird', verifyUser, async (req, res) => {
-    const { role, email } = req.user;
-    const { totalScore, totalRefereeScore, emailUser, ...formData } = req.body;
-    const connection = await getConnector().getConnection();
+router.post('/localOperaThird', verifyUser, async (req, res) => {
+  const { role, email } = req.user;
+  const { totalScore, totalRefereeScore, emailUser, ...formData } = req.body;
+  const connection = await getConnector().getConnection();
 
-    try {
-      const [userData] = await connection.query('SELECT localId, institutionID FROM FieldEx.users WHERE email = ?', [emailUser || email]);
-      const { localId: localID } = userData[0] || {};
+  try {
+    const [userData] = await connection.query('SELECT localId, institutionID FROM FieldEx.users WHERE email = ?', [emailUser || email]);
+    const { localId: localID } = userData[0] || {};
 
-      let sql, values;
+    let sql, values;
 
-      if (role === 'admin') {
-        const {
-          refereeScoreInput31, comment31, refereeScoreInput32, comment32, refereeScoreInput33, comment33,
-          refereeScoreInput41, comment41, refereeScoreInput42, comment42, refereeScoreInput51, comment51,
-          refereeScoreInput52, comment52, refereeScoreInput61, comment61, refereeScoreInput62, comment62,
-          totalRefereeScore
-        } = formData;
+    if (role === 'admin') {
+      const {
+        refereeScoreInput31, comment31, refereeScoreInput32, comment32, refereeScoreInput33, comment33,
+        refereeScoreInput41, comment41, refereeScoreInput42, comment42, refereeScoreInput51, comment51,
+        refereeScoreInput52, comment52, refereeScoreInput61, comment61, refereeScoreInput62, comment62
+      } = formData;
 
-        sql = `
+      sql = `
           UPDATE FieldEx.localOperaThird SET
             refereeScoreInput31 = ?, comment31 = ?, refereeScoreInput32 = ?, comment32 = ?,
             refereeScoreInput33 = ?, comment33 = ?, refereeScoreInput41 = ?, comment41 = ?,
@@ -436,18 +435,18 @@ router.post('/localOperaSec', verifyUser, async (req, res) => {
             refereeScoreInput62 = ?, comment62 = ?, totalRefereeScore = ?
           WHERE localID = ?
         `;
-        values = [
-          refereeScoreInput31, comment31, refereeScoreInput32, comment32, refereeScoreInput33, comment33,
-          refereeScoreInput41, comment41, refereeScoreInput42, comment42, refereeScoreInput51, comment51,
-          refereeScoreInput52, comment52, refereeScoreInput61, comment61, refereeScoreInput62, comment62,
-          totalRefereeScore, localID,
-        ];
-      } else {
-        const {
-          scoreInput31, scoreInput32, scoreInput33, scoreInput41, scoreInput42,
-          scoreInput51, scoreInput52, scoreInput61, scoreInput62, totalScore
-        } = formData;
-        sql = `
+      values = [
+        refereeScoreInput31, comment31, refereeScoreInput32, comment32, refereeScoreInput33, comment33,
+        refereeScoreInput41, comment41, refereeScoreInput42, comment42, refereeScoreInput51, comment51,
+        refereeScoreInput52, comment52, refereeScoreInput61, comment61, refereeScoreInput62, comment62,
+        totalRefereeScore, localID,
+      ];
+    } else {
+      const {
+        scoreInput31, scoreInput32, scoreInput33, scoreInput41, scoreInput42,
+        scoreInput51, scoreInput52, scoreInput61, scoreInput62
+      } = formData;
+      sql = `
           INSERT INTO FieldEx.localOperaThird (
             scoreInput31, scoreInput32, scoreInput33, scoreInput41, scoreInput42,
             scoreInput51, scoreInput52, scoreInput61, scoreInput62, localID, totalScore
@@ -459,21 +458,21 @@ router.post('/localOperaSec', verifyUser, async (req, res) => {
             scoreInput52 = VALUES(scoreInput52), scoreInput61 = VALUES(scoreInput61),
             scoreInput62 = VALUES(scoreInput62), totalScore = VALUES(totalScore)
         `;
-        values = [
-          scoreInput31, scoreInput32, scoreInput33, scoreInput41, scoreInput42,
-          scoreInput51, scoreInput52, scoreInput61, scoreInput62, localID, totalScore
-        ];
-      }
-
-      await connection.query(sql, values);
-      res.status(200).send('Form data saved successfully');
-    } catch (error) {
-      console.error(error);
-      res.status(500).send('An error occurred while processing the request');
-    } finally {
-      connection.release();
+      values = [
+        scoreInput31, scoreInput32, scoreInput33, scoreInput41, scoreInput42,
+        scoreInput51, scoreInput52, scoreInput61, scoreInput62, localID, totalScore
+      ];
     }
-  });
+
+    await connection.query(sql, values);
+    res.status(200).send('Form data saved successfully');
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('An error occurred while processing the request');
+  } finally {
+    connection.release();
+  }
+});
 
 router.post('/localResult', verifyUser, async (req, res) => {
   const { role, email } = req.user;
@@ -495,7 +494,7 @@ router.post('/localResult', verifyUser, async (req, res) => {
         atmosphereComments, responsibilityComments, honestyComments, perseveranceComments, unityComments,
         gratitudeComments, diligenceComments, localInvolvementComments, externalVisitComments,
         knowledgeSharingComments, perseverance2Committees, perseverance2Comments, knowledgeProvidingCommittees,
-        knowledgeProvidingComments, externalVisit2Committees, externalVisit2Comments, totalRefereeScore
+        knowledgeProvidingComments, externalVisit2Committees, externalVisit2Comments
       } = formData;
 
       sql = `
@@ -525,27 +524,25 @@ router.post('/localResult', verifyUser, async (req, res) => {
       const {
         cleanlinessLocal, orderlinessLocal, greeneryLocal, atmosphereLocal, responsibilityLocal,
         honestyLocal, perseveranceLocal, unityLocal, gratitudeLocal, diligenceLocal, localInvolvementLocal,
-        externalVisitLocal, knowledgeSharingLocal, perseverance2Local, knowledgeProvidingLocal, externalVisit2Local,
-        totalScore
+        externalVisitLocal, knowledgeSharingLocal, perseverance2Local, knowledgeProvidingLocal, externalVisit2Local
       } = formData;
 
       sql = `
-INSERT INTO FieldEx.localResult (
-  cleanlinessLocal, orderlinessLocal, greeneryLocal, atmosphereLocal, responsibilityLocal,
-  honestyLocal, perseveranceLocal, unityLocal, gratitudeLocal, diligenceLocal, localInvolvementLocal,
-  externalVisitLocal, knowledgeSharingLocal, perseverance2Local, knowledgeProvidingLocal, externalVisit2Local, localID, totalScore
-) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-ON DUPLICATE KEY UPDATE
-  cleanlinessLocal = VALUES(cleanlinessLocal), orderlinessLocal = VALUES(orderlinessLocal),
-  greeneryLocal = VALUES(greeneryLocal), atmosphereLocal = VALUES(atmosphereLocal),
-  responsibilityLocal = VALUES(responsibilityLocal), honestyLocal = VALUES(honestyLocal),
-  perseveranceLocal = VALUES(perseveranceLocal), unityLocal = VALUES(unityLocal),
-  gratitudeLocal = VALUES(gratitudeLocal), diligenceLocal = VALUES(diligenceLocal),
-  localInvolvementLocal = VALUES(localInvolvementLocal), externalVisitLocal = VALUES(externalVisitLocal),
-  knowledgeSharingLocal = VALUES(knowledgeSharingLocal), perseverance2Local = VALUES(perseverance2Local),
-  knowledgeProvidingLocal = VALUES(knowledgeProvidingLocal), externalVisit2Local = VALUES(externalVisit2Local),
-  localID = VALUES(localID), totalScore = VALUES(totalScore);
-
+        INSERT INTO FieldEx.localResult (
+          cleanlinessLocal, orderlinessLocal, greeneryLocal, atmosphereLocal, responsibilityLocal,
+          honestyLocal, perseveranceLocal, unityLocal, gratitudeLocal, diligenceLocal, localInvolvementLocal,
+          externalVisitLocal, knowledgeSharingLocal, perseverance2Local, knowledgeProvidingLocal, externalVisit2Local, localID, totalScore
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ON DUPLICATE KEY UPDATE
+          cleanlinessLocal = VALUES(cleanlinessLocal), orderlinessLocal = VALUES(orderlinessLocal),
+          greeneryLocal = VALUES(greeneryLocal), atmosphereLocal = VALUES(atmosphereLocal),
+          responsibilityLocal = VALUES(responsibilityLocal), honestyLocal = VALUES(honestyLocal),
+          perseveranceLocal = VALUES(perseveranceLocal), unityLocal = VALUES(unityLocal),
+          gratitudeLocal = VALUES(gratitudeLocal), diligenceLocal = VALUES(diligenceLocal),
+          localInvolvementLocal = VALUES(localInvolvementLocal), externalVisitLocal = VALUES(externalVisitLocal),
+          knowledgeSharingLocal = VALUES(knowledgeSharingLocal), perseverance2Local = VALUES(perseverance2Local),
+          knowledgeProvidingLocal = VALUES(knowledgeProvidingLocal), externalVisit2Local = VALUES(externalVisit2Local),
+          localID = VALUES(localID), totalScore = VALUES(totalScore);
       `;
       values = [
         cleanlinessLocal, orderlinessLocal, greeneryLocal, atmosphereLocal, responsibilityLocal,
