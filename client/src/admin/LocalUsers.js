@@ -69,13 +69,6 @@ const LocalUsers = () => {
     return <p>Error: {error}</p>;
   }
 
-
-  const thTdStyle = {
-    border: "1px solid black",
-    padding: "8px",
-    textAlign: "left"
-  };
-
   // Filtered local IDs based on search term
   const filteredLocalIDs = filterLocalUsers(localIDs);
 
@@ -95,13 +88,19 @@ const LocalUsers = () => {
           />
         </div>
         <table className="user-table" >
+          <tr>
+            <td>อีเมลผู้กรอกข้อมูล</td>
+            <td>รหัสองค์กรปกครองส่วนท้องถิ่น</td>
+            <td>ชื่อองค์กรปกครองส่วนท้องถิ่น</td>
+            <td>ประเมินองค์กรปกครองส่วนท้องถิ่น</td>
+          </tr>
           <tbody>
             {filteredLocalIDs.map((user, index) => (
               <tr key={index}>
-                <td style={thTdStyle}>{user.userEmail}</td>
-                <td style={thTdStyle}>{user.id}</td>
-                <td style={thTdStyle}>{user.organizationName || "-"}</td>
-                <td style={thTdStyle}>
+                <td >{user.userEmail}</td>
+                <td >{user.id}</td>
+                <td >{user.organizationName || "-"}</td>
+                <td >
                   <button onClick={() => handleEdit(user.userEmail)}>ประเมินองค์กร</button>
                 </td>
               </tr>

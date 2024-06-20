@@ -69,13 +69,6 @@ const InstitutionUsers = () => {
     return <p>Error: {error}</p>;
   }
 
-
-  const thTdStyle = {
-    border: "1px solid black",
-    padding: "8px",
-    textAlign: "left"
-  };
-
   // Filtered institution IDs based on search term
   const filteredInstitutionIDs = filterInstitutionUsers(institutionIDs);
 
@@ -95,12 +88,18 @@ const InstitutionUsers = () => {
           />
         </div>
         <table className="user-table">
+        <tr>
+            <td>อีเมลผู้กรอกข้อมูล</td>
+            <td>รหัสสถานศึกษา</td>
+            <td>ชื่อสถานศึกษา</td>
+            <td>ประเมินสถานศึกษา</td>
+          </tr>
           <tbody>
             {filteredInstitutionIDs.map((user, index) => (
               <tr key={index}>
-                <td style={thTdStyle}>{user.userEmail}</td>
-                <td style={thTdStyle}>{user.id}</td>
-                <td style={thTdStyle}>{user.institutionName || "-"}</td>
+                <td >{user.userEmail}</td>
+                <td >{user.id}</td>
+                <td >{user.institutionName || "-"}</td>
                 <td className="btn-edit">
                   <button onClick={() => handleEdit(user.userEmail)}>ประเมินสถานศึกษา</button>
                 </td>

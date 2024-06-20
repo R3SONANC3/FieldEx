@@ -103,7 +103,7 @@ function ForgotPassword() {
             <Navbar />
             <SideNavbar />
             <div className="admin-body">
-                <h2 className='admin-h2'>Forgot Password Page</h2>
+                <h2 className='admin-h2'>Search Users Information</h2>
                 <div className="search-bar">
                     <input
                         type="text"
