@@ -33,9 +33,11 @@ const Summary = () => {
                     Authorization: `Bearer ${token}`,
                 },
             });
-    
-            const data = response.data.localResult[0].totalRefereeScore || {};
-            console.log(data);    
+            const scoResult = response.data.localResult[0].totalScore;
+            const refResult = response.data.localResult[0].totalRefereeScore;
+            const scoManage = response.data.localManageData[0].organizationTotal;
+            const refManage = response.data.localManageData[0].refereeTotal;
+
         } catch (error) {
             Swal.fire({
                 icon: "error",
@@ -59,18 +61,18 @@ const Summary = () => {
                             <div className="flex-line">
                                 <div style={{ marginBottom: '8px' }}><b>ด้านที่ 1 การบริหารและการจัดการ</b></div>
                                 <span style={{ marginLeft: '61px' }}>คะแนนเต็ม 200 คะแนน</span>
-                                <span style={{ marginLeft: '100px' }}>คะแนนที่ได้ ............... คะแนน</span>
+                                <span style={{ marginLeft: '100px' }}>คะแนนที่ได้ <input type="number"  className="score-input"  min="0" disabled/> คะแนน</span>
                             </div>
                             <div className="flex-line">
                                 <div style={{ marginBottom: '8px' }}><b>ด้านที่ 2 การดำเนินงาน</b></div>
                                 <span style={{ marginLeft: '61px' }}>คะแนนเต็ม 600 คะแนน</span>
-                                <span style={{ marginLeft: '100px' }}>คะแนนที่ได้ ............... คะแนน</span>
+                                <span style={{ marginLeft: '100px' }}>คะแนนที่ได้<input type="number"  className="score-input"  min="0" disabled/> คะแนน</span>
                             </div>
                             <div className="flex-line">
                                 <div style={{ marginBottom: '8px' }}><b>ด้านที่ 3 ผลการดำเนินงาน</b></div>
                                 <span style={{ marginLeft: '61px' }}>คะแนนเต็ม 200 คะแนน</span>
-                                <span style={{ marginLeft: '100px' }}>คะแนนที่ได้ ............... คะแนน</span>
-                                <span><p style={{ marginTop: '10px' }}><b style={{ marginLeft: '230px' }}>รวมคะแนนที่ได้ 3 ด้าน ............... คะแนน</b></p></span>
+                                <span style={{ marginLeft: '100px' }}>คะแนนที่ได้ <input type="number"  className="score-input"  min="0" disabled/> คะแนน</span>
+                                <span><p style={{ marginTop: '10px' }}><b style={{ marginLeft: '230px' }}>รวมคะแนนที่ได้ 3 ด้าน <input type="number"  className="score-input"  min="0" disabled/> คะแนน</b></p></span>
                             </div>
                         </div>
                     </div>
@@ -82,18 +84,19 @@ const Summary = () => {
                             <div className="flex-line">
                                 <div style={{ marginBottom: '8px' }}><b>ด้านที่ 1 การบริหารและการจัดการ</b></div>
                                 <span style={{ marginLeft: '61px' }}>คะแนนเต็ม 200 คะแนน</span>
-                                <span style={{ marginLeft: '100px' }}>คะแนนที่ได้ ............... คะแนน</span>
+                                <span style={{ marginLeft: '100px' }}>คะแนนที่ได้<input type="number"  className="score-input"  min="0" disabled/> คะแนน</span>              
                             </div>
                             <div className="flex-line">
                                 <div style={{ marginBottom: '8px' }}><b>ด้านที่ 2 การดำเนินงาน</b></div>
                                 <span style={{ marginLeft: '61px' }}>คะแนนเต็ม 600 คะแนน</span>
-                                <span style={{ marginLeft: '100px' }}>คะแนนที่ได้ ............... คะแนน</span>
+                                <span style={{ marginLeft: '100px' }}>คะแนนที่ได้<input type="number"  className="score-input"  min="0" disabled/> คะแนน</span>
                             </div>
                             <div className="flex-line">
                                 <div style={{ marginBottom: '8px' }}><b>ด้านที่ 3 ผลการดำเนินงาน</b></div>
                                 <span style={{ marginLeft: '61px' }}>คะแนนเต็ม 200 คะแนน</span>
-                                <span style={{ marginLeft: '100px' }}>คะแนนที่ได้ ............... คะแนน</span>
-                                <span><p style={{ marginTop: '10px' }}><b style={{ marginLeft: '230px' }}>รวมคะแนนที่ได้ 3 ด้าน ............... คะแนน</b></p></span>
+                                <span style={{ marginLeft: '100px' }}>คะแนนที่ได้<input type="number"  className="score-input"  min="0" disabled/> คะแนน</span>
+                                <span><p style={{ marginTop: '10px' }}><b style={{ marginLeft: '230px' }}>รวมคะแนนที่ได้ 3 ด้าน<input type="number"  className="score-input"  min="0" disabled/> คะแนน</b></p></span>
+                    
                             </div>
                         </div>
                     </div>
