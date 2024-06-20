@@ -69,12 +69,6 @@ const LocalUsers = () => {
     return <p>Error: {error}</p>;
   }
 
-  const tableStyle = {
-    border: "1px solid black",
-    borderCollapse: "collapse",
-    width: "100%",
-    marginBottom: "20px"
-  };
 
   const thTdStyle = {
     border: "1px solid black",
@@ -100,7 +94,7 @@ const LocalUsers = () => {
             onChange={handleLocalSearch}
           />
         </div>
-        <table style={tableStyle} className="user-table">
+        <table className="user-table" >
           <tbody>
             {filteredLocalIDs.map((user, index) => (
               <tr key={index}>

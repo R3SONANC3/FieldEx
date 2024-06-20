@@ -69,12 +69,6 @@ const InstitutionUsers = () => {
     return <p>Error: {error}</p>;
   }
 
-  const tableStyle = {
-    border: "1px solid black",
-    borderCollapse: "collapse",
-    width: "100%",
-    marginBottom: "20px"
-  };
 
   const thTdStyle = {
     border: "1px solid black",
@@ -100,7 +94,7 @@ const InstitutionUsers = () => {
             onChange={handleInstitutionSearch}
           />
         </div>
-        <table style={tableStyle} className="user-table">
+        <table className="user-table">
           <tbody>
             {filteredInstitutionIDs.map((user, index) => (
               <tr key={index}>
@@ -108,7 +102,7 @@ const InstitutionUsers = () => {
                 <td style={thTdStyle}>{user.id}</td>
                 <td style={thTdStyle}>{user.institutionName || "-"}</td>
                 <td className="btn-edit">
-                    <button onClick={() => handleEdit(user.userEmail)}>ประเมินสถานศึกษา</button>
+                  <button onClick={() => handleEdit(user.userEmail)}>ประเมินสถานศึกษา</button>
                 </td>
               </tr>
             ))}
