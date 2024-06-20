@@ -411,7 +411,7 @@ router.post('/localOperaSec', verifyUser, async (req, res) => {
 
 router.post('/localOperaThird', verifyUser, async (req, res) => {
   const { role, email } = req.user;
-  const { emailUser, ...formData } = req.body;
+  const { totalScore,totalRefereeScore,emailUser, ...formData } = req.body;
   const connection = await getConnector().getConnection();
 
   try {
@@ -424,7 +424,8 @@ router.post('/localOperaThird', verifyUser, async (req, res) => {
       const {
         refereeScoreInput31, comment31, refereeScoreInput32, comment32, refereeScoreInput33, comment33,
         refereeScoreInput41, comment41, refereeScoreInput42, comment42, refereeScoreInput51, comment51,
-        refereeScoreInput52, comment52, refereeScoreInput61, comment61, refereeScoreInput62, comment62
+        refereeScoreInput52, comment52, refereeScoreInput61, comment61, refereeScoreInput62, comment62,
+        totalScore
       } = formData;
 
       sql = `
@@ -433,35 +434,36 @@ router.post('/localOperaThird', verifyUser, async (req, res) => {
           refereeScoreInput33 = ?, comment33 = ?, refereeScoreInput41 = ?, comment41 = ?,
           refereeScoreInput42 = ?, comment42 = ?, refereeScoreInput51 = ?, comment51 = ?,
           refereeScoreInput52 = ?, comment52 = ?, refereeScoreInput61 = ?, comment61 = ?,
-          refereeScoreInput62 = ?, comment62 = ?
+          refereeScoreInput62 = ?, comment62 = ?, totalScore = ?
         WHERE localID = ?
       `;
       values = [
         refereeScoreInput31, comment31, refereeScoreInput32, comment32, refereeScoreInput33, comment33,
         refereeScoreInput41, comment41, refereeScoreInput42, comment42, refereeScoreInput51, comment51,
-        refereeScoreInput52, comment52, refereeScoreInput61, comment61, refereeScoreInput62, comment62, localID
+        refereeScoreInput52, comment52, refereeScoreInput61, comment61, refereeScoreInput62, comment62,
+        totalScore, localID,
       ];
     } else {
       const {
         scoreInput31, scoreInput32, scoreInput33, scoreInput41, scoreInput42,
-        scoreInput51, scoreInput52, scoreInput61, scoreInput62
+        scoreInput51, scoreInput52, scoreInput61, scoreInput62, totalRefereeScore
       } = formData;
 
       sql = `
         INSERT INTO FieldEx.localOperaThird (
           scoreInput31, scoreInput32, scoreInput33, scoreInput41, scoreInput42,
-          scoreInput51, scoreInput52, scoreInput61, scoreInput62, localID
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          scoreInput51, scoreInput52, scoreInput61, scoreInput62, localID, totalRefereeScore
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ON DUPLICATE KEY UPDATE
           scoreInput31 = VALUES(scoreInput31), scoreInput32 = VALUES(scoreInput32),
           scoreInput33 = VALUES(scoreInput33), scoreInput41 = VALUES(scoreInput41),
           scoreInput42 = VALUES(scoreInput42), scoreInput51 = VALUES(scoreInput51),
           scoreInput52 = VALUES(scoreInput52), scoreInput61 = VALUES(scoreInput61),
-          scoreInput62 = VALUES(scoreInput62)
+          scoreInput62 = VALUES(scoreInput62), totalRefereeScore = VALUES(totalRefereeScore)
       `;
       values = [
         scoreInput31, scoreInput32, scoreInput33, scoreInput41, scoreInput42,
-        scoreInput51, scoreInput52, scoreInput61, scoreInput62, localID
+        scoreInput51, scoreInput52, scoreInput61, scoreInput62, localID, totalRefereeScore
       ];
     }
 
@@ -477,7 +479,7 @@ router.post('/localOperaThird', verifyUser, async (req, res) => {
 
 router.post('/localResult', verifyUser, async (req, res) => {
   const { role, email } = req.user;
-  const { emailUser, ...formData } = req.body;
+  const { totalScore,totalRefereeScore,emailUser, ...formData } = req.body;
   const connection = await getConnector().getConnection();
 
   try {
@@ -495,7 +497,7 @@ router.post('/localResult', verifyUser, async (req, res) => {
         atmosphereComments, responsibilityComments, honestyComments, perseveranceComments, unityComments,
         gratitudeComments, diligenceComments, localInvolvementComments, externalVisitComments,
         knowledgeSharingComments, perseverance2Committees, perseverance2Comments, knowledgeProvidingCommittees,
-        knowledgeProvidingComments, externalVisit2Committees, externalVisit2Comments
+        knowledgeProvidingComments, externalVisit2Committees, externalVisit2Comments, totalRefereeScore
       } = formData;
 
       sql = `
@@ -508,7 +510,7 @@ router.post('/localResult', verifyUser, async (req, res) => {
           unityComments = ?, gratitudeComments = ?, diligenceComments = ?, localInvolvementComments = ?,
           externalVisitComments = ?, knowledgeSharingComments = ?, perseverance2Committees = ?, perseverance2Comments = ?,
           knowledgeProvidingCommittees = ?, knowledgeProvidingComments = ?, externalVisit2Committees = ?,
-          externalVisit2Comments = ?
+          externalVisit2Comments = ?, totalRefereeScore = ?
         WHERE localID = ?
       `;
       values = [
@@ -519,21 +521,22 @@ router.post('/localResult', verifyUser, async (req, res) => {
         atmosphereComments, responsibilityComments, honestyComments, perseveranceComments, unityComments,
         gratitudeComments, diligenceComments, localInvolvementComments, externalVisitComments,
         knowledgeSharingComments, perseverance2Committees, perseverance2Comments, knowledgeProvidingCommittees,
-        knowledgeProvidingComments, externalVisit2Committees, externalVisit2Comments, localID
+        knowledgeProvidingComments, externalVisit2Committees, externalVisit2Comments, localID, totalRefereeScore
       ];
     } else {
       const {
         cleanlinessLocal, orderlinessLocal, greeneryLocal, atmosphereLocal, responsibilityLocal,
         honestyLocal, perseveranceLocal, unityLocal, gratitudeLocal, diligenceLocal, localInvolvementLocal,
-        externalVisitLocal, knowledgeSharingLocal, perseverance2Local, knowledgeProvidingLocal, externalVisit2Local
+        externalVisitLocal, knowledgeSharingLocal, perseverance2Local, knowledgeProvidingLocal, externalVisit2Local,
+        totalScore
       } = formData;
 
       sql = `
         INSERT INTO FieldEx.localResult (
           cleanlinessLocal, orderlinessLocal, greeneryLocal, atmosphereLocal, responsibilityLocal,
           honestyLocal, perseveranceLocal, unityLocal, gratitudeLocal, diligenceLocal, localInvolvementLocal,
-          externalVisitLocal, knowledgeSharingLocal, perseverance2Local, knowledgeProvidingLocal, externalVisit2Local, localID
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          externalVisitLocal, knowledgeSharingLocal, perseverance2Local, knowledgeProvidingLocal, externalVisit2Local, localID, totalScore
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ON DUPLICATE KEY UPDATE
           cleanlinessLocal = VALUES(cleanlinessLocal), orderlinessLocal = VALUES(orderlinessLocal),
           greeneryLocal = VALUES(greeneryLocal), atmosphereLocal = VALUES(atmosphereLocal),
@@ -543,12 +546,12 @@ router.post('/localResult', verifyUser, async (req, res) => {
           localInvolvementLocal = VALUES(localInvolvementLocal), externalVisitLocal = VALUES(externalVisitLocal),
           knowledgeSharingLocal = VALUES(knowledgeSharingLocal), perseverance2Local = VALUES(perseverance2Local),
           knowledgeProvidingLocal = VALUES(knowledgeProvidingLocal), externalVisit2Local = VALUES(externalVisit2Local),
-          localID = VALUES(localID)
+          localID = VALUES(localID), totalScore = VALUES(totalScore)
       `;
       values = [
         cleanlinessLocal, orderlinessLocal, greeneryLocal, atmosphereLocal, responsibilityLocal,
         honestyLocal, perseveranceLocal, unityLocal, gratitudeLocal, diligenceLocal, localInvolvementLocal,
-        externalVisitLocal, knowledgeSharingLocal, perseverance2Local, knowledgeProvidingLocal, externalVisit2Local, localID
+        externalVisitLocal, knowledgeSharingLocal, perseverance2Local, knowledgeProvidingLocal, externalVisit2Local, localID, totalScore
       ];
     }
 

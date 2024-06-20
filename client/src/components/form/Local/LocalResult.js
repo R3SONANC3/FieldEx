@@ -11,7 +11,10 @@ const LocalResult = () => {
     const location = useLocation();
     const emailUser = location.state?.emailUser;
     const token = localStorage.getItem('token');
-    const API_URL = 'https://fieldex-production.up.railway.app' 
+    const API_URL = 'https://fieldex-production.up.railway.app';
+    const [totalScore, setTotalScore] = useState(0);
+    const [totalRefereeScore, setTotalRefereeScore] = useState(0);
+    
     const initialFormData = {
         cleanlinessLocal: 0,
         cleanlinessCommittees: 0,
@@ -62,6 +65,8 @@ const LocalResult = () => {
         externalVisit2Committees: 0,
         externalVisit2Comments: '',
     };
+    const [formData, setFormData] = useState(initialFormData);
+
 
     useEffect(() => {
         setIsAdmin(localStorage.getItem('userRole') === 'admin');
@@ -72,7 +77,28 @@ const LocalResult = () => {
         }
     }, [navigate, token]);
 
-    const [formData, setFormData] = useState(initialFormData);
+    useEffect(() => {
+        const calculateSums = () => {
+            const localSum = Object.keys(formData).reduce((sum, key) => {
+                if (key.endsWith('Local')) {
+                    return sum + parseInt(formData[key] || 0, 10);
+                }
+                return sum;
+            }, 0);
+            
+            const committeesSum = Object.keys(formData).reduce((sum, key) => {
+                if (key.endsWith('Committees')) {
+                    return sum + parseInt(formData[key] || 0, 10);
+                }
+                return sum;
+            }, 0);
+
+            setTotalScore(localSum);
+            setTotalRefereeScore(committeesSum);
+        };
+
+        calculateSums();
+    }, [formData]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -152,7 +178,7 @@ const LocalResult = () => {
             });
         }
     };
-    
+
     const renderRow = (label, max, localName, committeesName, commentsName) => (
         <tr key={`${localName}_${label}`}>
             <td style={{ paddingLeft: "32px" }}>{label}</td>
@@ -243,7 +269,13 @@ const LocalResult = () => {
                             {renderRow('3) การไปให้ความรู้เกี่ยวกับงานฐานทรัพยากรท้องถิ่น (15 คะแนน)', 15, 'knowledgeProvidingLocal', 'knowledgeProvidingCommittees', 'knowledgeProvidingComments')}
 
                             <tr>
-                                <td colSpan="4" style={{ textAlign: 'center' }}><b>รวมคะแนนด้านที่ 3  ผลการดำเนินงาน</b></td>
+                                <td style={{ textAlign: 'center' }}><b>รวมคะแนนด้านที่ 3  ผลการดำเนินงาน</b></td>
+                                <td className="text-center" style={{ fontSize: '16px', alignItems: 'center' }}>
+                                {totalScore}
+                            </td>
+                            <td className="text-center" style={{ fontSize: '16px', alignItems: 'center' }}>
+                                {totalRefereeScore}
+                            </td>
                             </tr>
                         </tbody>
                     </table>
