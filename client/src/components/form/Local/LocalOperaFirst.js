@@ -76,7 +76,7 @@ function LocalOperaFirst() {
         try {
             const url = emailUser 
                 ? `${API_URL}/api/data/getDataEmail/${emailUser}`
-                : `${API_URL}http://localhost:8000/api/data/fetchData`;
+                : `${API_URL}/api/data/fetchData`;
     
             const response = await axios.get(url, {
                 headers: {
