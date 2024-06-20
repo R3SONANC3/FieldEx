@@ -274,7 +274,7 @@ router.get('/getDataEmail/:email', verifyUser, async (req, res) => {
 
 router.post('/localopera', verifyUser, async (req, res) => {
   const { role, email } = req.user;
-  const { totalRefereeScore, totalScore ,emailUser, ...formData } = req.body;
+  const { totalRefereeScore, totalScore, emailUser, ...formData } = req.body;
   const connection = await getConnector().getConnection();
 
   try {
@@ -305,7 +305,7 @@ router.post('/localopera', verifyUser, async (req, res) => {
         totalRefereeScore,
         localId
       ];
-    }else {
+    } else {
       sql = `
         INSERT INTO FieldEx.localOperaFirst (
           localID, year1BoundaryAreaProtection, area1BoundaryAreaProtection, scoreBoundary,
@@ -329,7 +329,7 @@ router.post('/localopera', verifyUser, async (req, res) => {
           scoreCareResources = VALUES(scoreCareResources),
           totalScore = VALUES(totalScore)
       `;
-      
+
       values = [
         localId, formData.year1BoundaryAreaProtection, formData.area1BoundaryAreaProtection, formData.scoreBoundary,
         formData.scoreSurveyResources, formData.scoreClassifyResources, formData.scoreTagResources, formData.scoreMappingBoundary,
@@ -337,8 +337,8 @@ router.post('/localopera', verifyUser, async (req, res) => {
         formData.scorePhotoRegisterResources, formData.scoreCareResources, totalScore
       ];
     }
-    
-    await connection.query(sql, values);    
+
+    await connection.query(sql, values);
     res.status(200).send('Form data saved successfully');
   } catch (error) {
     console.error(error);
@@ -350,7 +350,7 @@ router.post('/localopera', verifyUser, async (req, res) => {
 
 router.post('/localOperaSec', verifyUser, async (req, res) => {
   const { role, email } = req.user;
-  const { refereeTotal,organizationTotal,emailUser, ...formData } = req.body;
+  const { refereeTotal, organizationTotal, emailUser, ...formData } = req.body;
   const connection = await getConnector().getConnection();
 
   try {
@@ -374,7 +374,7 @@ router.post('/localOperaSec', verifyUser, async (req, res) => {
         formData.refereePhysicalInfo, formData.commentPhysicalInfo, formData.refereeCommunityHistory, formData.commentCommunityHistory,
         formData.refereePlantUsage, formData.commentPlantUsage, formData.refereeAnimalUsage, formData.commentAnimalUsage,
         formData.refereeOtherBiologicalUsage, formData.commentOtherBiologicalUsage, formData.refereeLocalWisdom, formData.commentLocalWisdom,
-        formData.refereeArchaeologicalResources, formData.commentArchaeologicalResources, formData.refereeResourceSurveyReport, formData.commentResourceSurveyReport,refereeTotal,
+        formData.refereeArchaeologicalResources, formData.commentArchaeologicalResources, formData.refereeResourceSurveyReport, formData.commentResourceSurveyReport, refereeTotal,
         localID
       ];
     } else {
@@ -410,7 +410,7 @@ router.post('/localOperaSec', verifyUser, async (req, res) => {
 
 router.post('/localOperaThird', verifyUser, async (req, res) => {
   const { role, email } = req.user;
-  const { totalScore,totalRefereeScore,emailUser, ...formData } = req.body;
+  const { totalScore, totalRefereeScore, emailUser, ...formData } = req.body;
   const connection = await getConnector().getConnection();
 
   try {
@@ -478,7 +478,7 @@ router.post('/localOperaThird', verifyUser, async (req, res) => {
 
 router.post('/localResult', verifyUser, async (req, res) => {
   const { role, email } = req.user;
-  const { totalScore,totalRefereeScore,emailUser, ...formData } = req.body;
+  const { totalScore, totalRefereeScore, emailUser, ...formData } = req.body;
   const connection = await getConnector().getConnection();
 
   try {
@@ -531,21 +531,22 @@ router.post('/localResult', verifyUser, async (req, res) => {
       } = formData;
 
       sql = `
-        INSERT INTO FieldEx.localResult (
-          cleanlinessLocal, orderlinessLocal, greeneryLocal, atmosphereLocal, responsibilityLocal,
-          honestyLocal, perseveranceLocal, unityLocal, gratitudeLocal, diligenceLocal, localInvolvementLocal,
-          externalVisitLocal, knowledgeSharingLocal, perseverance2Local, knowledgeProvidingLocal, externalVisit2Local, localID, totalScore
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ON DUPLICATE KEY UPDATE
-          cleanlinessLocal = VALUES(cleanlinessLocal), orderlinessLocal = VALUES(orderlinessLocal),
-          greeneryLocal = VALUES(greeneryLocal), atmosphereLocal = VALUES(atmosphereLocal),
-          responsibilityLocal = VALUES(responsibilityLocal), honestyLocal = VALUES(honestyLocal),
-          perseveranceLocal = VALUES(perseveranceLocal), unityLocal = VALUES(unityLocal),
-          gratitudeLocal = VALUES(gratitudeLocal), diligenceLocal = VALUES(diligenceLocal),
-          localInvolvementLocal = VALUES(localInvolvementLocal), externalVisitLocal = VALUES(externalVisitLocal),
-          knowledgeSharingLocal = VALUES(knowledgeSharingLocal), perseverance2Local = VALUES(perseverance2Local),
-          knowledgeProvidingLocal = VALUES(knowledgeProvidingLocal), externalVisit2Local = VALUES(externalVisit2Local),
-          localID = VALUES(localID), totalScore = VALUES(totalScore)
+INSERT INTO FieldEx.localResult (
+  cleanlinessLocal, orderlinessLocal, greeneryLocal, atmosphereLocal, responsibilityLocal,
+  honestyLocal, perseveranceLocal, unityLocal, gratitudeLocal, diligenceLocal, localInvolvementLocal,
+  externalVisitLocal, knowledgeSharingLocal, perseverance2Local, knowledgeProvidingLocal, externalVisit2Local, localID, totalScore
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+ON DUPLICATE KEY UPDATE
+  cleanlinessLocal = VALUES(cleanlinessLocal), orderlinessLocal = VALUES(orderlinessLocal),
+  greeneryLocal = VALUES(greeneryLocal), atmosphereLocal = VALUES(atmosphereLocal),
+  responsibilityLocal = VALUES(responsibilityLocal), honestyLocal = VALUES(honestyLocal),
+  perseveranceLocal = VALUES(perseveranceLocal), unityLocal = VALUES(unityLocal),
+  gratitudeLocal = VALUES(gratitudeLocal), diligenceLocal = VALUES(diligenceLocal),
+  localInvolvementLocal = VALUES(localInvolvementLocal), externalVisitLocal = VALUES(externalVisitLocal),
+  knowledgeSharingLocal = VALUES(knowledgeSharingLocal), perseverance2Local = VALUES(perseverance2Local),
+  knowledgeProvidingLocal = VALUES(knowledgeProvidingLocal), externalVisit2Local = VALUES(externalVisit2Local),
+  localID = VALUES(localID), totalScore = VALUES(totalScore);
+
       `;
       values = [
         cleanlinessLocal, orderlinessLocal, greeneryLocal, atmosphereLocal, responsibilityLocal,
