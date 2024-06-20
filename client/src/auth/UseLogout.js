@@ -4,11 +4,13 @@ import { useNavigate } from 'react-router-dom';
 
 const UseLogout = (clearAuthData, setIsAuthenticated, setUserRole) => {
     const navigate = useNavigate();
+    const API_URL = 'https://fieldex-production.up.railway.app'
+
 
     const handleSignOut = async (event) => {
         event.preventDefault();
         try {
-            const response = await axios.get('http://localhost:8000/api/auth/logout');
+            const response = await axios.get(`${API_URL}/api/auth/logout`);
             console.log(response.data);
             Swal.fire({
                 title: 'ออกจากระบบสำเร็จ',

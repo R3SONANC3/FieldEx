@@ -11,6 +11,7 @@ const LocalOperaThird = () => {
     const location = useLocation();
     const emailUser = location.state?.emailUser;
     const token = localStorage.getItem('token');
+    const API_URL = 'https://fieldex-production.up.railway.app'
     const initialFormData = {
         scoreInput31: 0,
         refereeScoreInput31: 0,
@@ -59,9 +60,11 @@ const LocalOperaThird = () => {
 
     const handleSubmit = async () => {
         try {
-            const response = await axios.post('http://localhost:8000/api/data/localOperaThird', {
+            const response = await axios.post(`${API_URL}/api/data/localOperaThird`, {
                 ...formData,
-                emailUser
+                emailUser,
+                totalScore,
+                totalRefereeScore
             }, {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -100,8 +103,8 @@ const LocalOperaThird = () => {
     const fetchUserData = async () => {
         try {
             const url = emailUser
-                ? `http://localhost:8000/api/data/getDataEmail/${emailUser}`
-                : `http://localhost:8000/api/data/fetchData`;
+                ? `${API_URL}/api/data/getDataEmail/${emailUser}`
+                : `${API_URL}/api/data/fetchData`;
 
             const response = await axios.get(url, {
                 headers: {
@@ -138,6 +141,20 @@ const LocalOperaThird = () => {
         }
     };
 
+    const calculateTotalScore = (prefix, section) => {
+        const sectionIds = {
+            3: ["31", "32", "33"],
+            4: ["41", "42"],
+            5: ["51", "52"],
+            6: ["61", "62"]
+        };
+        return sectionIds[section].reduce((total, id) => {
+            return total + parseFloat(formData[`${prefix}${id}`] || 0);
+        }, 0);
+    };
+
+    const totalScore = calculateTotalScore("scoreInput", 3) + calculateTotalScore("scoreInput", 4) + calculateTotalScore("scoreInput", 5) + calculateTotalScore("scoreInput", 6);
+    const totalRefereeScore = calculateTotalScore("refereeScoreInput", 3) + calculateTotalScore("refereeScoreInput", 4) + calculateTotalScore("refereeScoreInput", 5) + calculateTotalScore("refereeScoreInput", 6);
 
     return (
         <div className='lmf-container'>
@@ -164,6 +181,9 @@ const LocalOperaThird = () => {
                         {renderRow('33', '3.3 การติดตามการเจริญเติบโตและการเปลี่ยนแปลงของทรัพยากรท้องถิ่น เช่น การติดตามการเจริญเติบโต แบบบันทึกการเปลี่ยนแปลง ฯลฯ (40 คะแนน)', 40)}
                         <tr>
                             <td style={{ textAlign: 'center' }}><b>รวมคะแนนที่ได้ งานที่ 3 งานปลูกรักษาทรัพยากรท้องถิ่น</b></td>
+                            <td>{calculateTotalScore("scoreInput", 3)}</td>
+                            <td>{calculateTotalScore("refereeScoreInput", 3)}</td>
+                            <td></td>
                         </tr>
                     </tbody>
                 </table>
@@ -185,6 +205,9 @@ const LocalOperaThird = () => {
                         {renderRow('42', '4.2 การใช้ประโยชน์ทรัพยากรท้องถิ่นอย่างยั่งยืน เช่น การจัดการท่องเที่ยวเชิงนิเวศ การพัฒนาผลิตภัณฑ์จากทรัพยากรในท้องถิ่น แหล่งเรียนรู้ ฯลฯ  (40 คะแนน)', 40)}
                         <tr>
                             <td style={{ textAlign: 'center' }}><b>รวมคะแนนที่ได้ งานที่ 4 งานอนุรักษ์และใช้ประโยชน์ทรัพยากรท้องถิ่น</b></td>
+                            <td>{calculateTotalScore("scoreInput", 4)}</td>
+                            <td>{calculateTotalScore("refereeScoreInput", 4)}</td>
+                            <td></td>
                         </tr>
                     </tbody>
                 </table>
@@ -206,6 +229,9 @@ const LocalOperaThird = () => {
                         {renderRow('52', '5.2 ระบบการจัดเก็บและสืบค้นได้ (เอกสารและคอมพิวเตอร์) (40 คะแนน)', 40)}
                         <tr>
                             <td style={{ textAlign: 'center' }}><b>รวมคะแนนที่ได้ งานที่ 5 งานศูนย์ข้อมูลทรัพยากรท้องถิ่น</b></td>
+                            <td>{calculateTotalScore("scoreInput", 5)}</td>
+                            <td>{calculateTotalScore("refereeScoreInput", 5)}</td>
+                            <td></td>
                         </tr>
                     </tbody>
                 </table>
@@ -227,6 +253,15 @@ const LocalOperaThird = () => {
                         {renderRow('62', '6.2 การจัดทำแผนงาน โครงการเพื่อการอนุรักษ์ทรัพยากรในท้องถิ่นและการจัดทำฐานทรัพยากรท้องถิ่น (40 คะแนน)', 40)}
                         <tr>
                             <td style={{ textAlign: 'center' }}><b>รวมคะแนนที่ได้ งานที่ 6 งานสนับสนุนในการอนุรักษ์และจัดทำฐานทรัพยากรท้องถิ่น</b></td>
+                            <td>{calculateTotalScore("scoreInput", 6)}</td>
+                            <td>{calculateTotalScore("refereeScoreInput", 6)}</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td style={{ textAlign: 'center' }}><b>รวมคะแนนที่ได้ทั้งหมด</b></td>
+                            <td>{totalScore}</td>
+                            <td>{totalRefereeScore}</td>
+                            <td></td>
                         </tr>
                     </tbody>
                 </table>

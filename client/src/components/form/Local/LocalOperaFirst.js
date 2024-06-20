@@ -14,6 +14,7 @@ function LocalOperaFirst() {
     const token = localStorage.getItem('token')
     const [totalScore, setTotalScore] = useState(0);
     const [totalRefereeScore, setTotalRefereeScore] = useState(0);
+    const API_URL = 'https://fieldex-production.up.railway.app'
     const [formData, setFormData] = useState({
         year1BoundaryAreaProtection: 0,
         area1BoundaryAreaProtection: 0,
@@ -74,8 +75,8 @@ function LocalOperaFirst() {
     const fetchUserData = async () => {
         try {
             const url = emailUser 
-                ? `http://localhost:8000/api/data/getDataEmail/${emailUser}`
-                : `http://localhost:8000/api/data/fetchData`;
+                ? `${API_URL}/api/data/getDataEmail/${emailUser}`
+                : `${API_URL}http://localhost:8000/api/data/fetchData`;
     
             const response = await axios.get(url, {
                 headers: {
@@ -152,9 +153,11 @@ function LocalOperaFirst() {
 
     const handleSubmit = async () => {
         try {
-            const response = await axios.post('http://localhost:8000/api/data/localopera', {
+            const response = await axios.post(`${API_URL}/api/data/localopera`, {
                 ...formData,
-                emailUser: emailUser
+                emailUser: emailUser,
+                totalScore,
+                totalRefereeScore
             }, {
                 headers: {
                     Authorization: `Bearer ${token}`,

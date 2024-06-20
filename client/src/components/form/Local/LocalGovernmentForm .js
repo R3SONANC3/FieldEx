@@ -11,6 +11,8 @@ function LocalGovernmentForm() {
   const location = useLocation();
   const emailUser = location.state?.emailUser;
   const token = localStorage.getItem("token");
+  const API_URL = 'https://fieldex-production.up.railway.app'
+
   const [formData, setFormData] = useState({
     organizationName: "",
     localID: "",
@@ -36,7 +38,7 @@ function LocalGovernmentForm() {
   const fetchOldData = async () => {
     try {
       if (emailUser) {
-        const response = await axios.get(`http://localhost:8000/api/data/getDataEmail/${emailUser}`, {
+        const response = await axios.get(`${API_URL}/api/data/getDataEmail/${emailUser}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -56,7 +58,7 @@ function LocalGovernmentForm() {
           highlightedActivities: data.highlightedActivities
         });
       } else {
-        const response = await axios.get("http://localhost:8000/api/data/fetchData", {
+        const response = await axios.get(`${API_URL}/api/data/fetchData`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -117,7 +119,7 @@ function LocalGovernmentForm() {
       }
     }
     try {
-        await axios.post("http://localhost:8000/api/data/submitlc", formData, {
+        await axios.post(`${API_URL}/api/data/submitlc`, formData, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

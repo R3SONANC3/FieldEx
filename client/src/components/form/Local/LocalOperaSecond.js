@@ -8,10 +8,11 @@ import 'sweetalert2/dist/sweetalert2.min.css';
 
 const LocalOperaSecond = () => {
     const navigate = useNavigate();
-    const [isAdmin, setIsAdmin] = useState(false); // assuming admin role management
+    const [isAdmin, setIsAdmin] = useState(false);
     const token = localStorage.getItem('token');
     const location = useLocation();
     const emailUser = location.state?.emailUser;
+    const API_URL = 'https://fieldex-production.up.railway.app'
     const [formData, setFormData] = useState({
         localBasicInfo: 0,
         refereeBasicInfo: 0,
@@ -55,26 +56,55 @@ const LocalOperaSecond = () => {
     }, [navigate, token]);
 
     const handleInputChange = (e) => {
-        const { name, value } = e.target;
+        const { name, value, type } = e.target;
         setFormData({
             ...formData,
-            [name]: value
+            [name]: type === 'number' ? Number(value) : value
         });
     };
 
+    const calculateTotal = (fields) => {
+        return fields.reduce((sum, field) => sum + (formData[field] || 0), 0);
+    };
+
+    const refereeTotal = calculateTotal([
+        'refereeBasicInfo',
+        'refereeOccupationalInfo',
+        'refereePhysicalInfo',
+        'refereeCommunityHistory',
+        'refereePlantUsage',
+        'refereeAnimalUsage',
+        'refereeOtherBiologicalUsage',
+        'refereeLocalWisdom',
+        'refereeArchaeologicalResources',
+        'refereeResourceSurveyReport'
+    ]);
+
+    const organizationTotal = calculateTotal([
+        'localBasicInfo',
+        'localOccupationalInfo',
+        'localPhysicalInfo',
+        'localCommunityHistory',
+        'localPlantUsage',
+        'localAnimalUsage',
+        'localOtherBiologicalUsage',
+        'localLocalWisdom',
+        'localArchaeologicalResources',
+        'localResourceSurveyReport'
+    ]);
 
     const fetchUserData = async () => {
         try {
             const url = emailUser 
-                ? `http://localhost:8000/api/data/getDataEmail/${emailUser}`
-                : `http://localhost:8000/api/data/fetchData`;
-    
+                ? `${API_URL}/api/data/getDataEmail/${emailUser}`
+                : `${API_URL}/api/data/fetchData`;
+
             const response = await axios.get(url, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
-    
+
             const data = response.data.localOperaSec[0] || {};
             const keys = [
                 "localBasicInfo", "refereeBasicInfo", "commentBasicInfo",
@@ -88,14 +118,14 @@ const LocalOperaSecond = () => {
                 "localArchaeologicalResources", "refereeArchaeologicalResources", "commentArchaeologicalResources",
                 "localResourceSurveyReport", "refereeResourceSurveyReport", "commentResourceSurveyReport"
             ];
-    
+
             const updatedFormData = keys.reduce((acc, key) => {
-                acc[key] = data[key] || (typeof data[key] === 'number' ? 0 : "");
+                acc[key] = data[key] !== undefined ? data[key] : (key.startsWith('comment') ? '' : 0);
                 return acc;
             }, {});
-    
+
             setFormData(updatedFormData);
-    
+
         } catch (error) {
             Swal.fire({
                 icon: "error",
@@ -104,14 +134,15 @@ const LocalOperaSecond = () => {
             });
         }
     };
-    
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:8000/api/data/localOperaSec', {
+            const response = await axios.post(`${API_URL}/api/data/localOperaSec`, {
                 ...formData,
-                emailUser
+                emailUser,
+                refereeTotal,
+                organizationTotal
             }, {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -131,7 +162,6 @@ const LocalOperaSecond = () => {
                 title: "เกิดข้อผิดพลาดในการส่งข้อมูล!",
                 text: "กรุณาตรวจสอบข้อมูลของท่านให้ครบ",
             });
-            alert('Failed to save data');
         }
     };
 
@@ -164,7 +194,7 @@ const LocalOperaSecond = () => {
             </div>
             <form onSubmit={handleSubmit}>
                 <div className='lmf-table'>
-                    <table id="lmf-table" >
+                    <table id="lmf-table">
                         <thead>
                             <tr>
                                 <th>รายการประเมิน<p>(คะแนนเต็ม 100 คะแนน)</p></th>
@@ -185,7 +215,7 @@ const LocalOperaSecond = () => {
                                             type="number"
                                             className="localScoreInput"
                                             name={`local${item.field}`}
-                                            value={formData[`local${item.field}`] || ''}
+                                            value={formData[`local${item.field}`] || 0}
                                             min="0"
                                             max={item.maxScore}
                                             onChange={handleInputChange}
@@ -197,7 +227,7 @@ const LocalOperaSecond = () => {
                                             type="number"
                                             className="refereeScoreInput"
                                             name={`referee${item.field}`}
-                                            value={formData[`referee${item.field}`] || ''}
+                                            value={formData[`referee${item.field}`] || 0}
                                             min="0"
                                             max={item.maxScore}
                                             onChange={handleInputChange}
@@ -217,7 +247,13 @@ const LocalOperaSecond = () => {
                                 </tr>
                             ))}
                             <tr>
-                                <td colSpan="4" style={{ textAlign: 'center' }}><b>รวมคะแนนที่ได้ งานที่ 2 งานสำรวจเก็บรวบรวมทรัพยากรท้องถิ่น</b></td>
+                                <td style={{ textAlign: 'center' }}><b>รวมคะแนนที่ได้ งานที่ 2 งานสำรวจเก็บรวบรวมทรัพยากรท้องถิ่น</b></td>
+                                <td className="text-center" style={{ fontSize: '16px', alignItems: 'center' }}>
+                                    {organizationTotal}
+                                </td>
+                                <td className="text-center" style={{ fontSize: '16px', alignItems: 'center' }}>
+                                    {refereeTotal}
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -225,7 +261,7 @@ const LocalOperaSecond = () => {
                 <div className='lmf-footer'>
                     <div className="button">
                         <div className="button-back">
-                            <button onClick={navigateToPreviousPage}>ย้อนกลับ</button>
+                            <button type="button" onClick={navigateToPreviousPage}>ย้อนกลับ</button>
                         </div>
                         <div className="button-next">
                             <button type="submit">ถัดไป</button>

@@ -275,7 +275,7 @@ router.get('/getDataEmail/:email', verifyUser, async (req, res) => {
 
 router.post('/localopera', verifyUser, async (req, res) => {
   const { role, email } = req.user;
-  const { emailUser, ...formData } = req.body;
+  const { totalRefereeScore, totalScore ,emailUser, ...formData } = req.body;
   const connection = await getConnector().getConnection();
 
   try {
@@ -293,7 +293,7 @@ router.post('/localopera', verifyUser, async (req, res) => {
           scoreTagResources = ?, refereeScoreTagResources = ?, commentTagResources = ?, scoreMappingBoundary = ?, refereeScoreMappingBoundary = ?, commentMappingBoundary = ?,
           scoreStudyResources = ?, refereeScoreStudyResources = ?, commentStudyResources = ?, scorePhotoResources = ?, refereeScorePhotoResources = ?, commentPhotoResources = ?,
           scoreSampleResources = ?, refereeScoreSampleResources = ?, commentSampleResources = ?, scoreRegisterResources = ?, refereeScoreRegisterResources = ?, commentRegisterResources = ?,
-          scorePhotoRegisterResources = ?, refereeScorePhotoRegisterResources = ?, commentPhotoRegisterResources = ?, scoreCareResources = ?, refereeScoreCareResources = ?, commentCareResources = ?
+          scorePhotoRegisterResources = ?, refereeScorePhotoRegisterResources = ?, commentPhotoRegisterResources = ?, scoreCareResources = ?, refereeScoreCareResources = ?, commentCareResources = ?,totalRefereeScore=?
         WHERE localID = ?
       `;
       values = [
@@ -303,6 +303,7 @@ router.post('/localopera', verifyUser, async (req, res) => {
         formData.scoreStudyResources, formData.refereeScoreStudyResources, formData.commentStudyResources, formData.scorePhotoResources, formData.refereeScorePhotoResources, formData.commentPhotoResources,
         formData.scoreSampleResources, formData.refereeScoreSampleResources, formData.commentSampleResources, formData.scoreRegisterResources, formData.refereeScoreRegisterResources, formData.commentRegisterResources,
         formData.scorePhotoRegisterResources, formData.refereeScorePhotoRegisterResources, formData.commentPhotoRegisterResources, formData.scoreCareResources, formData.refereeScoreCareResources, formData.commentCareResources,
+        totalRefereeScore,
         localId
       ];
     } else {
@@ -311,8 +312,8 @@ router.post('/localopera', verifyUser, async (req, res) => {
           localID, year1BoundaryAreaProtection, area1BoundaryAreaProtection, scoreBoundary,
           scoreSurveyResources, scoreClassifyResources, scoreTagResources, scoreMappingBoundary,
           scoreStudyResources, scorePhotoResources, scoreSampleResources, scoreRegisterResources,
-          scorePhotoRegisterResources, scoreCareResources
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          scorePhotoRegisterResources, scoreCareResources, totalScore
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ON DUPLICATE KEY UPDATE
           year1BoundaryAreaProtection = VALUES(year1BoundaryAreaProtection),
           area1BoundaryAreaProtection = VALUES(area1BoundaryAreaProtection),
@@ -326,7 +327,8 @@ router.post('/localopera', verifyUser, async (req, res) => {
           scoreSampleResources = VALUES(scoreSampleResources),
           scoreRegisterResources = VALUES(scoreRegisterResources),
           scorePhotoRegisterResources = VALUES(scorePhotoRegisterResources),
-          scoreCareResources = VALUES(scoreCareResources)
+          scoreCareResources = VALUES(scoreCareResources),
+          totalScore = VALUES(totalScore)
       `;
       values = [
         localId, formData.year1BoundaryAreaProtection, formData.area1BoundaryAreaProtection, formData.scoreBoundary,
@@ -348,7 +350,7 @@ router.post('/localopera', verifyUser, async (req, res) => {
 
 router.post('/localOperaSec', verifyUser, async (req, res) => {
   const { role, email } = req.user;
-  const { emailUser, ...formData } = req.body;
+  const { refereeTotal,organizationTotal,emailUser, ...formData } = req.body;
   const connection = await getConnector().getConnection();
 
   try {
@@ -364,7 +366,7 @@ router.post('/localOperaSec', verifyUser, async (req, res) => {
           refereePhysicalInfo = ?, commentPhysicalInfo = ?, refereeCommunityHistory = ?, commentCommunityHistory = ?,
           refereePlantUsage = ?, commentPlantUsage = ?, refereeAnimalUsage = ?, commentAnimalUsage = ?,
           refereeOtherBiologicalUsage = ?, commentOtherBiologicalUsage = ?, refereeLocalWisdom = ?, commentLocalWisdom = ?,
-          refereeArchaeologicalResources = ?, commentArchaeologicalResources = ?, refereeResourceSurveyReport = ?, commentResourceSurveyReport = ?
+          refereeArchaeologicalResources = ?, commentArchaeologicalResources = ?, refereeResourceSurveyReport = ?, commentResourceSurveyReport = ?, refereeTotal = ?
         WHERE localID = ?
       `;
       values = [
@@ -372,7 +374,7 @@ router.post('/localOperaSec', verifyUser, async (req, res) => {
         formData.refereePhysicalInfo, formData.commentPhysicalInfo, formData.refereeCommunityHistory, formData.commentCommunityHistory,
         formData.refereePlantUsage, formData.commentPlantUsage, formData.refereeAnimalUsage, formData.commentAnimalUsage,
         formData.refereeOtherBiologicalUsage, formData.commentOtherBiologicalUsage, formData.refereeLocalWisdom, formData.commentLocalWisdom,
-        formData.refereeArchaeologicalResources, formData.commentArchaeologicalResources, formData.refereeResourceSurveyReport, formData.commentResourceSurveyReport,
+        formData.refereeArchaeologicalResources, formData.commentArchaeologicalResources, formData.refereeResourceSurveyReport, formData.commentResourceSurveyReport,refereeTotal,
         localID
       ];
     } else {
@@ -380,19 +382,19 @@ router.post('/localOperaSec', verifyUser, async (req, res) => {
         INSERT INTO FieldEx.localOperaSecond (
           localBasicInfo, localOccupationalInfo, localPhysicalInfo, localCommunityHistory,
           localPlantUsage, localAnimalUsage, localOtherBiologicalUsage, localLocalWisdom,
-          localArchaeologicalResources, localResourceSurveyReport, localID
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          localArchaeologicalResources, localResourceSurveyReport, localID, organizationTotal 
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ON DUPLICATE KEY UPDATE
           localBasicInfo = VALUES(localBasicInfo), localOccupationalInfo = VALUES(localOccupationalInfo),
           localPhysicalInfo = VALUES(localPhysicalInfo), localCommunityHistory = VALUES(localCommunityHistory),
           localPlantUsage = VALUES(localPlantUsage), localAnimalUsage = VALUES(localAnimalUsage),
           localOtherBiologicalUsage = VALUES(localOtherBiologicalUsage), localLocalWisdom = VALUES(localLocalWisdom),
-          localArchaeologicalResources = VALUES(localArchaeologicalResources), localResourceSurveyReport = VALUES(localResourceSurveyReport)
+          localArchaeologicalResources = VALUES(localArchaeologicalResources), localResourceSurveyReport = VALUES(localResourceSurveyReport), organizationTotal = VALUES(organizationTotal)
       `;
       values = [
         formData.localBasicInfo, formData.localOccupationalInfo, formData.localPhysicalInfo, formData.localCommunityHistory,
         formData.localPlantUsage, formData.localAnimalUsage, formData.localOtherBiologicalUsage, formData.localLocalWisdom,
-        formData.localArchaeologicalResources, formData.localResourceSurveyReport, localID
+        formData.localArchaeologicalResources, formData.localResourceSurveyReport, localID, organizationTotal
       ];
     }
 

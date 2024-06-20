@@ -11,7 +11,7 @@ const LocalResult = () => {
     const location = useLocation();
     const emailUser = location.state?.emailUser;
     const token = localStorage.getItem('token');
-
+    const API_URL = 'https://fieldex-production.up.railway.app' 
     const initialFormData = {
         cleanlinessLocal: 0,
         cleanlinessCommittees: 0,
@@ -85,7 +85,7 @@ const LocalResult = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:8000/api/data/localResult', {
+            const response = await axios.post(`${API_URL}/api/data/localResult`, {
                 ...formData,
                 emailUser
             }, {
@@ -117,8 +117,8 @@ const LocalResult = () => {
     const fetchUserData = async () => {
         try {
             const url = emailUser 
-                ? `http://localhost:8000/api/data/getDataEmail/${emailUser}`
-                : `http://localhost:8000/api/data/fetchData`;
+                ? `${API_URL}/api/data/getDataEmail/${emailUser}`
+                : `${API_URL}/api/data/fetchData`;
     
             const response = await axios.get(url, {
                 headers: {
@@ -153,7 +153,6 @@ const LocalResult = () => {
         }
     };
     
-
     const renderRow = (label, max, localName, committeesName, commentsName) => (
         <tr key={`${localName}_${label}`}>
             <td style={{ paddingLeft: "32px" }}>{label}</td>

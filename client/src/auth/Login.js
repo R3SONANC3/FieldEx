@@ -10,6 +10,7 @@ function Login({ setOpenModal, setIsAuthenticated, setUserRole }) {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false); // State to toggle between login and sign-up
+  const API_URL = 'https://fieldex-production.up.railway.app'
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
@@ -28,7 +29,7 @@ function Login({ setOpenModal, setIsAuthenticated, setUserRole }) {
     try {
       let response;
       if (isSignUp) {
-        response = await axios.post("http://localhost:8000/api/auth/register", {
+        response = await axios.post(`${API_URL}/api/auth/register`, {
           email,
           password,
         });
@@ -39,7 +40,7 @@ function Login({ setOpenModal, setIsAuthenticated, setUserRole }) {
           icon: 'success',
         });
       } else {
-        response = await axios.post("http://localhost:8000/api/auth/login", {
+        response = await axios.post(`${API_URL}/api/auth/login`, {
           email,
           password,
         });

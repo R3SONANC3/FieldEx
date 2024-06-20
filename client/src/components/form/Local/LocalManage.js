@@ -11,6 +11,7 @@ function LocalManage() {
     const location = useLocation();
     const navigate = useNavigate();
     const emailUser = location.state?.emailUser;
+    const API_URL = 'https://fieldex-production.up.railway.app'
     const [formData, setFormData] = useState({
         localMeetingAgenda: 0,
         refereeLocalMeetingAgenda: 0,
@@ -157,7 +158,7 @@ function LocalManage() {
     const fetchUserData = async () => {
         try {
             if (emailUser) {
-                const response = await axios.get(`http://localhost:8000/api/data/getDataEmail/${emailUser}`, {
+                const response = await axios.get(`${API_URL}/api/data/getDataEmail/${emailUser}`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -232,7 +233,7 @@ function LocalManage() {
                 };
                 setFormData(updatedFormData);
             } else {
-                const response = await axios.get(`http://localhost:8000/api/data/fetchData`, {
+                const response = await axios.get(`${API_URL}/api/data/fetchData`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -320,7 +321,7 @@ function LocalManage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:8000/api/data/localsubmit', {
+            const response = await axios.post(`${API_URL}/api/data/localsubmit`, {
                 ...formData,
                 emailUser: emailUser,
                 refereeTotal,

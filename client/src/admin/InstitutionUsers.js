@@ -13,6 +13,8 @@ const InstitutionUsers = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const API_URL = 'https://fieldex-production.up.railway.app'
+
 
   useEffect(() => {
     if (!token) {
@@ -21,7 +23,7 @@ const InstitutionUsers = () => {
     }
     const fetchInstitutionUsers = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/api/user/usersData", {
+        const response = await axios.get(`${API_URL}/api/user/usersData`, {
           headers: {
             Authorization: `Bearer ${token}`
           },

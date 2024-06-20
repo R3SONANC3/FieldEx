@@ -15,6 +15,7 @@ function ForgotPassword() {
     const [newPassword, setNewPassword] = useState('');
     const [resetEmail, setResetEmail] = useState('');
     const token = localStorage.getItem('token');
+    const API_URL = 'https://fieldex-production.up.railway.app'
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -48,7 +49,7 @@ function ForgotPassword() {
 
     const fetchUsers = async () => {
         try {
-            const response = await axios.get("http://localhost:8000/api/user/fetchUser", {
+            const response = await axios.get(`${API_URL}/api/user/fetchUser`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 },
@@ -68,7 +69,7 @@ function ForgotPassword() {
     const handleSubmitForgotPassword = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post("http://localhost:8000/api/auth/resetPassword", {
+            const response = await axios.post(`${API_URL}/api/auth/resetPassword`, {
                 email: resetEmail,
                 newPassword
             }, {
