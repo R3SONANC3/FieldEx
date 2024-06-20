@@ -4,6 +4,7 @@ import './localform.css';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 import { useNavigate, useLocation } from 'react-router-dom';
+import axios from 'axios';
 
 const Summary = () => {
     const [isAdmin, setIsAdmin] = useState(false);
@@ -34,9 +35,7 @@ const Summary = () => {
             });
     
             const data = response.data.localResult[0] || {};
-            console.log(data);
-            setFormData(updatedFormData);
-    
+            console.log(data);    
         } catch (error) {
             Swal.fire({
                 icon: "error",
