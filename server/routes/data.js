@@ -293,7 +293,7 @@ router.post('/localopera', verifyUser, async (req, res) => {
           scoreTagResources = ?, refereeScoreTagResources = ?, commentTagResources = ?, scoreMappingBoundary = ?, refereeScoreMappingBoundary = ?, commentMappingBoundary = ?,
           scoreStudyResources = ?, refereeScoreStudyResources = ?, commentStudyResources = ?, scorePhotoResources = ?, refereeScorePhotoResources = ?, commentPhotoResources = ?,
           scoreSampleResources = ?, refereeScoreSampleResources = ?, commentSampleResources = ?, scoreRegisterResources = ?, refereeScoreRegisterResources = ?, commentRegisterResources = ?,
-          scorePhotoRegisterResources = ?, refereeScorePhotoRegisterResources = ?, commentPhotoRegisterResources = ?, scoreCareResources = ?, refereeScoreCareResources = ?, commentCareResources = ?,totalRefereeScore=?
+          scorePhotoRegisterResources = ?, refereeScorePhotoRegisterResources = ?, commentPhotoRegisterResources = ?, scoreCareResources = ?, refereeScoreCareResources = ?, commentCareResources = ?,totalRefereeScore = ?
         WHERE localID = ?
       `;
       values = [
@@ -306,7 +306,7 @@ router.post('/localopera', verifyUser, async (req, res) => {
         totalRefereeScore,
         localId
       ];
-    } else {
+    }else {
       sql = `
         INSERT INTO FieldEx.localOperaFirst (
           localID, year1BoundaryAreaProtection, area1BoundaryAreaProtection, scoreBoundary,
@@ -330,15 +330,16 @@ router.post('/localopera', verifyUser, async (req, res) => {
           scoreCareResources = VALUES(scoreCareResources),
           totalScore = VALUES(totalScore)
       `;
+      
       values = [
         localId, formData.year1BoundaryAreaProtection, formData.area1BoundaryAreaProtection, formData.scoreBoundary,
         formData.scoreSurveyResources, formData.scoreClassifyResources, formData.scoreTagResources, formData.scoreMappingBoundary,
         formData.scoreStudyResources, formData.scorePhotoResources, formData.scoreSampleResources, formData.scoreRegisterResources,
-        formData.scorePhotoRegisterResources, formData.scoreCareResources
+        formData.scorePhotoRegisterResources, formData.scoreCareResources, totalScore
       ];
     }
-
-    await connection.query(sql, values);
+    
+    await connection.query(sql, values);    
     res.status(200).send('Form data saved successfully');
   } catch (error) {
     console.error(error);
