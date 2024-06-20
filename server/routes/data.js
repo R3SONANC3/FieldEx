@@ -518,8 +518,9 @@ router.post('/localResult', verifyUser, async (req, res) => {
         atmosphereComments, responsibilityComments, honestyComments, perseveranceComments, unityComments,
         gratitudeComments, diligenceComments, localInvolvementComments, externalVisitComments,
         knowledgeSharingComments, perseverance2Committees, perseverance2Comments, knowledgeProvidingCommittees,
-        knowledgeProvidingComments, externalVisit2Committees, externalVisit2Comments, localID, totalRefereeScore
+        knowledgeProvidingComments, externalVisit2Committees, externalVisit2Comments, totalRefereeScore, localID
       ];
+      console.log(totalRefereeScore);
     } else {
       const {
         cleanlinessLocal, orderlinessLocal, greeneryLocal, atmosphereLocal, responsibilityLocal,

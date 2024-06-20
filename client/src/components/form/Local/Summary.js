@@ -34,7 +34,7 @@ const Summary = () => {
                 },
             });
     
-            const data = response.data.localResult[0] || {};
+            const data = response.data.localResult[0].totalRefereeScore || {};
             console.log(data);    
         } catch (error) {
             Swal.fire({
