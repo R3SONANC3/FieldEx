@@ -11,13 +11,40 @@ const Summary = () => {
     const navigate = useNavigate();
     const emailUser = location.state?.emailUser;
     const token = localStorage.getItem('token');
+    const API_URL = 'https://fieldex-production.up.railway.app';
 
     useEffect(() => {
         setIsAdmin(localStorage.getItem('userRole') === 'admin');
         if (!token) {
             navigate('/');
         }
+        fetchUserData()
     }, [navigate, token]);
+
+    const fetchUserData = async () => {
+        try {
+            const url = emailUser 
+                ? `${API_URL}/api/data/getDataEmail/${emailUser}`
+                : `${API_URL}/api/data/fetchData`;
+    
+            const response = await axios.get(url, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+    
+            const data = response.data.localResult[0] || {};
+            console.log(data);
+            setFormData(updatedFormData);
+    
+        } catch (error) {
+            Swal.fire({
+                icon: "error",
+                title: "เกิดข้อผิดพลาดในการดึงข้อมูล!",
+                text: "ไม่สามารถดึงข้อมูลจากฐานข้อมูลได้",
+            });
+        }
+    };
 
     return (
         <div className='sum-container'>

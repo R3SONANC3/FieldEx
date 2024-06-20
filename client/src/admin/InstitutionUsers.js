@@ -90,7 +90,8 @@ const InstitutionUsers = () => {
       <Navbar />
       <SideNavbar />
       <div className="admin-body">
-        <h2>แบบประเมินสถานศึกษา</h2>
+        <h2 className="admin-h2">แบบประเมินสถานศึกษา</h2>
+        <h2 className="admin-h2">ที่ดำเนินงานสวนพฤกษศาสตร์โรงเรียน</h2>
         <div className="search-bar">
           <input
             type="text"
@@ -99,7 +100,7 @@ const InstitutionUsers = () => {
             onChange={handleInstitutionSearch}
           />
         </div>
-        <table style={tableStyle}>
+        <table style={tableStyle} className="user-table">
           <tbody>
             {filteredInstitutionIDs.map((user, index) => (
               <tr key={index}>

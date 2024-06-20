@@ -103,7 +103,7 @@ function ForgotPassword() {
             <Navbar />
             <SideNavbar />
             <div className="admin-body">
-                <h2>Forgot Password Page</h2>
+                <h2 className='admin-h2'>Forgot Password Page</h2>
                 <div className="search-bar">
                     <input
                         type="text"
@@ -113,7 +113,7 @@ function ForgotPassword() {
                     />
                 </div>
                 <div>
-                    <h3>Users Information:</h3>
+                    <h3 className='admin-h3'>Users Information:</h3>
                     <div className="table-container">
                         <table className="user-table">
                             <thead>

@@ -90,7 +90,8 @@ const LocalUsers = () => {
       <Navbar />
       <SideNavbar />
       <div className="admin-body">
-        <h2>แบบประเมินองค์กรปกครองส่วนท้องถิ่น</h2>
+        <h2 className='admin-h2'>แบบประเมินองค์กรปกครองส่วนท้องถิ่น</h2>
+        <h2 className="admin-h2">ที่ดำเนินงานฐานทรัพยากรส่วนท้องถิ่น</h2>
         <div className="search-bar">
           <input
             type="text"
@@ -99,7 +100,7 @@ const LocalUsers = () => {
             onChange={handleLocalSearch}
           />
         </div>
-        <table style={tableStyle}>
+        <table style={tableStyle} className="user-table">
           <tbody>
             {filteredLocalIDs.map((user, index) => (
               <tr key={index}>

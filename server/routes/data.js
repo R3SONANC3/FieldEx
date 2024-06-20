@@ -561,6 +561,5 @@ router.post('/localResult', verifyUser, async (req, res) => {
   }
 });
 
-
 // Export the router
 module.exports = router;
