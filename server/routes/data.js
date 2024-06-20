@@ -412,6 +412,8 @@ router.post('/localOperaSec', verifyUser, async (req, res) => {
     const { role, email } = req.user;
     const { totalScore, totalRefereeScore, emailUser, ...formData } = req.body;
     const connection = await getConnector().getConnection();
+    console.log(totalScore);
+    console.log(totalRefereeScore);
 
     try {
       const [userData] = await connection.query('SELECT localId, institutionID FROM FieldEx.users WHERE email = ?', [emailUser || email]);
