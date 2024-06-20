@@ -561,5 +561,36 @@ router.post('/localResult', verifyUser, async (req, res) => {
   }
 });
 
+app.get('/totalscores', (req, res) => {
+  const query = `
+    SELECT
+      (SELECT SUM(totalScore) FROM localResult) AS totalScoreLocalResult,
+      (SELECT SUM(totalRefereeScore) FROM localResult) AS totalRefereeScoreLocalResult,
+      (SELECT SUM(totalScore) FROM localOperaFirst) AS totalScoreLocalOperaFirst,
+      (SELECT SUM(totalRefereeScore) FROM localOperaFirst) AS totalRefereeScoreLocalOperaFirst,
+      (SELECT SUM(totalScore) FROM localOperaSecond) AS totalScoreLocalOperaSecond,
+      (SELECT SUM(totalRefereeScore) FROM localOperaSecond) AS totalRefereeScoreLocalOperaSecond,
+      (SELECT SUM(totalScore) FROM localOperaThird) AS totalScoreLocalOperaThird,
+      (SELECT SUM(totalRefereeScore) FROM localOperaThird) AS totalRefereeScoreLocalOperaThird
+  `;
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error executing query:', err);
+      res.status(500).send('Error executing query');
+      return;
+    }
+
+    const totals = results[0];
+    const totalScore = totals.totalScoreLocalResult + totals.totalScoreLocalOperaFirst + totals.totalScoreLocalOperaSecond + totals.totalScoreLocalOperaThird;
+    const totalRefereeScore = totals.totalRefereeScoreLocalResult + totals.totalRefereeScoreLocalOperaFirst + totals.totalRefereeScoreLocalOperaSecond + totals.totalRefereeScoreLocalOperaThird;
+
+    res.json({
+      totalScore,
+      totalRefereeScore
+    });
+  });
+});
+
 // Export the router
 module.exports = router;
