@@ -23,12 +23,14 @@ const verifyUser = (req, res, next) => {
 
   jwt.verify(token, JWT_SECRET, (err, decoded) => {
     if (err) {
+      console.log('Token verification error:', err);
       return res.status(403).json({ message: "Invalid token" });
     }
     req.user = decoded;
     next();
   });
 };
+
 
 module.exports = {
   corsOptions,

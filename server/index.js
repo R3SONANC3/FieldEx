@@ -6,13 +6,12 @@ const { corsOptions } = require('./middleware');
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
 const dataRoutes = require('./routes/data');
-
+app.options("*", cors(corsOptions)); // Handle preflight requests
+app.use(cors(corsOptions)); // Handle CORS
 const app = express();
 const API_PORT = process.env.PORT || 8000;
 
 app.use(express.json()); // Parse JSON bodies
-app.use(cors(corsOptions)); // Handle CORS
-app.options("*", cors(corsOptions)); // Handle preflight requests
 
 // Use Routes
 app.use('/api/auth', authRoutes); // Authentication routes
