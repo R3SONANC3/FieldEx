@@ -116,124 +116,34 @@ const LocalResult = () => {
 
     const fetchUserData = async () => {
         try {
-            if (emailUser) {
-                const response = await axios.get(`http://localhost:8000/api/data/getDataEmail/${emailUser}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-                const data = response.data.localResult[0] || {};
-                const updatedFormData = {
-                    cleanlinessLocal: data.cleanlinessLocal || 0,
-                    cleanlinessCommittees: data.cleanlinessCommittees || 0,
-                    cleanlinessComments: data.cleanlinessComments || '',
-                    orderlinessLocal: data.orderlinessLocal || 0,
-                    orderlinessCommittees: data.orderlinessCommittees || 0,
-                    orderlinessComments: data.orderlinessComments || '',
-                    greeneryLocal: data.greeneryLocal || 0,
-                    greeneryCommittees: data.greeneryCommittees || 0,
-                    greeneryComments: data.greeneryComments || '',
-                    atmosphereLocal: data.atmosphereLocal || 0,
-                    atmosphereCommittees: data.atmosphereCommittees || 0,
-                    atmosphereComments: data.atmosphereComments || '',
-                    responsibilityLocal: data.responsibilityLocal || 0,
-                    responsibilityCommittees: data.responsibilityCommittees || 0,
-                    responsibilityComments: data.responsibilityComments || '',
-                    honestyLocal: data.honestyLocal || 0,
-                    honestyCommittees: data.honestyCommittees || 0,
-                    honestyComments: data.honestyComments || '',
-                    perseveranceLocal: data.perseveranceLocal || 0,
-                    perseveranceCommittees: data.perseveranceCommittees || 0,
-                    perseveranceComments: data.perseveranceComments || '',
-                    unityLocal: data.unityLocal || 0,
-                    unityCommittees: data.unityCommittees || 0,
-                    unityComments: data.unityComments || '',
-                    gratitudeLocal: data.gratitudeLocal || 0,
-                    gratitudeCommittees: data.gratitudeCommittees || 0,
-                    gratitudeComments: data.gratitudeComments || '',
-                    diligenceLocal: data.diligenceLocal || 0,
-                    diligenceCommittees: data.diligenceCommittees || 0,
-                    diligenceComments: data.diligenceComments || '',
-                    localInvolvementLocal: data.localInvolvementLocal || 0,
-                    localInvolvementCommittees: data.localInvolvementCommittees || 0,
-                    localInvolvementComments: data.localInvolvementComments || '',
-                    externalVisitLocal: data.externalVisitLocal || 0,
-                    externalVisitCommittees: data.externalVisitCommittees || 0,
-                    externalVisitComments: data.externalVisitComments || '',
-                    knowledgeSharingLocal: data.knowledgeSharingLocal || 0,
-                    knowledgeSharingCommittees: data.knowledgeSharingCommittees || 0,
-                    knowledgeSharingComments: data.knowledgeSharingComments || '',
-                    perseverance2Local: data.perseverance2Local || 0,
-                    perseverance2Committees: data.perseverance2Committees || 0,
-                    perseverance2Comments: data.perseverance2Comments || '',
-                    knowledgeProvidingLocal: data.knowledgeProvidingLocal || 0,
-                    knowledgeProvidingCommittees: data.knowledgeProvidingCommittees || 0,
-                    knowledgeProvidingComments: data.knowledgeProvidingComments || '',
-                    externalVisit2Local: data.externalVisit2Local || 0,
-                    externalVisit2Committees: data.externalVisit2Committees || 0,
-                    externalVisit2Comments: data.externalVisit2Comments || '',
-                };
-                setFormData(updatedFormData);
-            } else {
-                const response = await axios.get(`http://localhost:8000/api/data/fetchData`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-                const data = response.data.localResult[0] || {};
-                const updatedFormData = {
-                    cleanlinessLocal: data.cleanlinessLocal || 0,
-                    cleanlinessCommittees: data.cleanlinessCommittees || 0,
-                    cleanlinessComments: data.cleanlinessComments || '',
-                    orderlinessLocal: data.orderlinessLocal || 0,
-                    orderlinessCommittees: data.orderlinessCommittees || 0,
-                    orderlinessComments: data.orderlinessComments || '',
-                    greeneryLocal: data.greeneryLocal || 0,
-                    greeneryCommittees: data.greeneryCommittees || 0,
-                    greeneryComments: data.greeneryComments || '',
-                    atmosphereLocal: data.atmosphereLocal || 0,
-                    atmosphereCommittees: data.atmosphereCommittees || 0,
-                    atmosphereComments: data.atmosphereComments || '',
-                    responsibilityLocal: data.responsibilityLocal || 0,
-                    responsibilityCommittees: data.responsibilityCommittees || 0,
-                    responsibilityComments: data.responsibilityComments || '',
-                    honestyLocal: data.honestyLocal || 0,
-                    honestyCommittees: data.honestyCommittees || 0,
-                    honestyComments: data.honestyComments || '',
-                    perseveranceLocal: data.perseveranceLocal || 0,
-                    perseveranceCommittees: data.perseveranceCommittees || 0,
-                    perseveranceComments: data.perseveranceComments || '',
-                    unityLocal: data.unityLocal || 0,
-                    unityCommittees: data.unityCommittees || 0,
-                    unityComments: data.unityComments || '',
-                    gratitudeLocal: data.gratitudeLocal || 0,
-                    gratitudeCommittees: data.gratitudeCommittees || 0,
-                    gratitudeComments: data.gratitudeComments || '',
-                    diligenceLocal: data.diligenceLocal || 0,
-                    diligenceCommittees: data.diligenceCommittees || 0,
-                    diligenceComments: data.diligenceComments || '',
-                    localInvolvementLocal: data.localInvolvementLocal || 0,
-                    localInvolvementCommittees: data.localInvolvementCommittees || 0,
-                    localInvolvementComments: data.localInvolvementComments || '',
-                    externalVisitLocal: data.externalVisitLocal || 0,
-                    externalVisitCommittees: data.externalVisitCommittees || 0,
-                    externalVisitComments: data.externalVisitComments || '',
-                    knowledgeSharingLocal: data.knowledgeSharingLocal || 0,
-                    knowledgeSharingCommittees: data.knowledgeSharingCommittees || 0,
-                    knowledgeSharingComments: data.knowledgeSharingComments || '',
-                    perseverance2Local: data.perseverance2Local || 0,
-                    perseverance2Committees: data.perseverance2Committees || 0,
-                    perseverance2Comments: data.perseverance2Comments || '',
-                    knowledgeProvidingLocal: data.knowledgeProvidingLocal || 0,
-                    knowledgeProvidingCommittees: data.knowledgeProvidingCommittees || 0,
-                    knowledgeProvidingComments: data.knowledgeProvidingComments || '',
-                    externalVisit2Local: data.externalVisit2Local || 0,
-                    externalVisit2Committees: data.externalVisit2Committees || 0,
-                    externalVisit2Comments: data.externalVisit2Comments || '',
-                };
-                setFormData(updatedFormData);
-            }
-
+            const url = emailUser 
+                ? `http://localhost:8000/api/data/getDataEmail/${emailUser}`
+                : `http://localhost:8000/api/data/fetchData`;
+    
+            const response = await axios.get(url, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+    
+            const data = response.data.localResult[0] || {};
+    
+            const fields = [
+                "cleanliness", "orderliness", "greenery", "atmosphere", 
+                "responsibility", "honesty", "perseverance", "unity", 
+                "gratitude", "diligence", "localInvolvement", "externalVisit", 
+                "knowledgeSharing", "perseverance2", "knowledgeProviding", "externalVisit2"
+            ];
+    
+            const updatedFormData = fields.reduce((acc, field) => {
+                acc[`${field}Local`] = data[`${field}Local`] || 0;
+                acc[`${field}Committees`] = data[`${field}Committees`] || 0;
+                acc[`${field}Comments`] = data[`${field}Comments`] || '';
+                return acc;
+            }, {});
+    
+            setFormData(updatedFormData);
+    
         } catch (error) {
             Swal.fire({
                 icon: "error",
@@ -242,6 +152,7 @@ const LocalResult = () => {
             });
         }
     };
+    
 
     const renderRow = (label, max, localName, committeesName, commentsName) => (
         <tr key={`${localName}_${label}`}>

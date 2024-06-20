@@ -62,94 +62,40 @@ const LocalOperaSecond = () => {
         });
     };
 
-    useEffect(() => {
-        console.log(formData);
-    }, [formData]);
 
     const fetchUserData = async () => {
         try {
-            if (emailUser) {
-                const response = await axios.get(`http://localhost:8000/api/data/getDataEmail/${emailUser}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-                const data = response.data.localOperaSec[0] || {};
-                const updatedFormData = {
-                    localBasicInfo: data.localBasicInfo || 0,
-                    refereeBasicInfo: data.refereeBasicInfo || 0,
-                    commentBasicInfo: data.commentBasicInfo || '',
-                    localOccupationalInfo: data.localOccupationalInfo || 0,
-                    refereeOccupationalInfo: data.refereeOccupationalInfo || 0,
-                    commentOccupationalInfo: data.commentOccupationalInfo || '',
-                    localPhysicalInfo: data.localPhysicalInfo || 0,
-                    refereePhysicalInfo: data.refereePhysicalInfo || 0,
-                    commentPhysicalInfo: data.commentPhysicalInfo || '',
-                    localCommunityHistory: data.localCommunityHistory || 0,
-                    refereeCommunityHistory: data.refereeCommunityHistory || 0,
-                    commentCommunityHistory: data.commentCommunityHistory || '',
-                    localPlantUsage: data.localPlantUsage || 0,
-                    refereePlantUsage: data.refereePlantUsage || 0,
-                    commentPlantUsage: data.commentPlantUsage || '',
-                    localAnimalUsage: data.localAnimalUsage || 0,
-                    refereeAnimalUsage: data.refereeAnimalUsage || 0,
-                    commentAnimalUsage: data.commentAnimalUsage || '',
-                    localOtherBiologicalUsage: data.localOtherBiologicalUsage || 0,
-                    refereeOtherBiologicalUsage: data.refereeOtherBiologicalUsage || 0,
-                    commentOtherBiologicalUsage: data.commentOtherBiologicalUsage || '',
-                    localLocalWisdom: data.localLocalWisdom || 0,
-                    refereeLocalWisdom: data.refereeLocalWisdom || 0,
-                    commentLocalWisdom: data.commentLocalWisdom || '',
-                    localArchaeologicalResources: data.localArchaeologicalResources || 0,
-                    refereeArchaeologicalResources: data.refereeArchaeologicalResources || 0,
-                    commentArchaeologicalResources: data.commentArchaeologicalResources || '',
-                    localResourceSurveyReport: data.localResourceSurveyReport || 0,
-                    refereeResourceSurveyReport: data.refereeResourceSurveyReport || 0,
-                    commentResourceSurveyReport: data.commentResourceSurveyReport || ''
-                };
-                setFormData(updatedFormData);
-            } else {
-                const response = await axios.get(`http://localhost:8000/api/data/fetchData`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-                const data = response.data.localOperaSec[0] || {};
-                const updatedFormData = {
-                    localBasicInfo: data.localBasicInfo || 0,
-                    refereeBasicInfo: data.refereeBasicInfo || 0,
-                    commentBasicInfo: data.commentBasicInfo || '',
-                    localOccupationalInfo: data.localOccupationalInfo || 0,
-                    refereeOccupationalInfo: data.refereeOccupationalInfo || 0,
-                    commentOccupationalInfo: data.commentOccupationalInfo || '',
-                    localPhysicalInfo: data.localPhysicalInfo || 0,
-                    refereePhysicalInfo: data.refereePhysicalInfo || 0,
-                    commentPhysicalInfo: data.commentPhysicalInfo || '',
-                    localCommunityHistory: data.localCommunityHistory || 0,
-                    refereeCommunityHistory: data.refereeCommunityHistory || 0,
-                    commentCommunityHistory: data.commentCommunityHistory || '',
-                    localPlantUsage: data.localPlantUsage || 0,
-                    refereePlantUsage: data.refereePlantUsage || 0,
-                    commentPlantUsage: data.commentPlantUsage || '',
-                    localAnimalUsage: data.localAnimalUsage || 0,
-                    refereeAnimalUsage: data.refereeAnimalUsage || 0,
-                    commentAnimalUsage: data.commentAnimalUsage || '',
-                    localOtherBiologicalUsage: data.localOtherBiologicalUsage || 0,
-                    refereeOtherBiologicalUsage: data.refereeOtherBiologicalUsage || 0,
-                    commentOtherBiologicalUsage: data.commentOtherBiologicalUsage || '',
-                    localLocalWisdom: data.localLocalWisdom || 0,
-                    refereeLocalWisdom: data.refereeLocalWisdom || 0,
-                    commentLocalWisdom: data.commentLocalWisdom || '',
-                    localArchaeologicalResources: data.localArchaeologicalResources || 0,
-                    refereeArchaeologicalResources: data.refereeArchaeologicalResources || 0,
-                    commentArchaeologicalResources: data.commentArchaeologicalResources || '',
-                    localResourceSurveyReport: data.localResourceSurveyReport || 0,
-                    refereeResourceSurveyReport: data.refereeResourceSurveyReport || 0,
-                    commentResourceSurveyReport: data.commentResourceSurveyReport || ''
-                };
-                setFormData(updatedFormData);
-            }
-
+            const url = emailUser 
+                ? `http://localhost:8000/api/data/getDataEmail/${emailUser}`
+                : `http://localhost:8000/api/data/fetchData`;
+    
+            const response = await axios.get(url, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+    
+            const data = response.data.localOperaSec[0] || {};
+            const keys = [
+                "localBasicInfo", "refereeBasicInfo", "commentBasicInfo",
+                "localOccupationalInfo", "refereeOccupationalInfo", "commentOccupationalInfo",
+                "localPhysicalInfo", "refereePhysicalInfo", "commentPhysicalInfo",
+                "localCommunityHistory", "refereeCommunityHistory", "commentCommunityHistory",
+                "localPlantUsage", "refereePlantUsage", "commentPlantUsage",
+                "localAnimalUsage", "refereeAnimalUsage", "commentAnimalUsage",
+                "localOtherBiologicalUsage", "refereeOtherBiologicalUsage", "commentOtherBiologicalUsage",
+                "localLocalWisdom", "refereeLocalWisdom", "commentLocalWisdom",
+                "localArchaeologicalResources", "refereeArchaeologicalResources", "commentArchaeologicalResources",
+                "localResourceSurveyReport", "refereeResourceSurveyReport", "commentResourceSurveyReport"
+            ];
+    
+            const updatedFormData = keys.reduce((acc, key) => {
+                acc[key] = data[key] || (typeof data[key] === 'number' ? 0 : "");
+                return acc;
+            }, {});
+    
+            setFormData(updatedFormData);
+    
         } catch (error) {
             Swal.fire({
                 icon: "error",
@@ -158,6 +104,7 @@ const LocalOperaSecond = () => {
             });
         }
     };
+    
 
     const handleSubmit = async (e) => {
         e.preventDefault();

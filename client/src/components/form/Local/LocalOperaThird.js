@@ -72,7 +72,7 @@ const LocalOperaThird = () => {
                     icon: "success",
                     title: "ส่งข้อมูลสำเร็จ",
                     text: "ไปที่หน้าต่อไป"
-                  });
+                });
                 navigate('/localresult', { state: { emailUser } })
             }
         } catch (error) {
@@ -80,7 +80,7 @@ const LocalOperaThird = () => {
                 icon: "error",
                 title: "เกิดข้อผิดพลาดในการส่งข้อมูล!",
                 text: "กรุณาตรวจสอบข้อมูลของท่านให้ครบ",
-              });
+            });
         }
     };
 
@@ -97,94 +97,47 @@ const LocalOperaThird = () => {
         </tr>
     );
 
-
-
     const fetchUserData = async () => {
         try {
-            if (emailUser) {
-                const response = await axios.get(`http://localhost:8000/api/data/getDataEmail/${emailUser}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-                const data = response.data.localOperaThird[0] || {};
-                const updatedFormData = {
-                    scoreInput31: data.scoreInput31 || 0,
-                    refereeScoreInput31: data.refereeScoreInput31 || 0,
-                    comment31: data.comment31 || '',
-                    scoreInput32: data.scoreInput32 || 0,
-                    refereeScoreInput32: data.refereeScoreInput32 || 0,
-                    comment32: data.comment32 || '',
-                    scoreInput33: data.scoreInput33 || 0,
-                    refereeScoreInput33: data.refereeScoreInput33 || 0,
-                    comment33: data.comment33 || '',
-                    scoreInput41: data.scoreInput41 || 0,
-                    refereeScoreInput41: data.refereeScoreInput41 || 0,
-                    comment41: data.comment41 || '',
-                    scoreInput42: data.scoreInput42 || 0,
-                    refereeScoreInput42: data.refereeScoreInput42 || 0,
-                    comment42: data.comment42 || '',
-                    scoreInput51: data.scoreInput51 || 0,
-                    refereeScoreInput51: data.refereeScoreInput51 || 0,
-                    comment51: data.comment51 || '',
-                    scoreInput52: data.scoreInput52 || 0,
-                    refereeScoreInput52: data.refereeScoreInput52 || 0,
-                    comment52: data.comment52 || '',
-                    scoreInput61: data.scoreInput61 || 0,
-                    refereeScoreInput61: data.refereeScoreInput61 || 0,
-                    comment61: data.comment61 || '',
-                    scoreInput62: data.scoreInput62 || 0,
-                    refereeScoreInput62: data.refereeScoreInput62 || 0,
-                    comment62: data.comment62 || ''
-                };
-                setFormData(updatedFormData);
-            }else{
-                const response = await axios.get(`http://localhost:8000/api/data/fetchData`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-                const data = response.data.localOperaThird[0] || {};
-                const updatedFormData = {
-                    scoreInput31: data.scoreInput31 || 0,
-                    refereeScoreInput31: data.refereeScoreInput31 || 0,
-                    comment31: data.comment31 || '',
-                    scoreInput32: data.scoreInput32 || 0,
-                    refereeScoreInput32: data.refereeScoreInput32 || 0,
-                    comment32: data.comment32 || '',
-                    scoreInput33: data.scoreInput33 || 0,
-                    refereeScoreInput33: data.refereeScoreInput33 || 0,
-                    comment33: data.comment33 || '',
-                    scoreInput41: data.scoreInput41 || 0,
-                    refereeScoreInput41: data.refereeScoreInput41 || 0,
-                    comment41: data.comment41 || '',
-                    scoreInput42: data.scoreInput42 || 0,
-                    refereeScoreInput42: data.refereeScoreInput42 || 0,
-                    comment42: data.comment42 || '',
-                    scoreInput51: data.scoreInput51 || 0,
-                    refereeScoreInput51: data.refereeScoreInput51 || 0,
-                    comment51: data.comment51 || '',
-                    scoreInput52: data.scoreInput52 || 0,
-                    refereeScoreInput52: data.refereeScoreInput52 || 0,
-                    comment52: data.comment52 || '',
-                    scoreInput61: data.scoreInput61 || 0,
-                    refereeScoreInput61: data.refereeScoreInput61 || 0,
-                    comment61: data.comment61 || '',
-                    scoreInput62: data.scoreInput62 || 0,
-                    refereeScoreInput62: data.refereeScoreInput62 || 0,
-                    comment62: data.comment62 || ''
-                };
-                setFormData(updatedFormData);
-            }
+            const url = emailUser
+                ? `http://localhost:8000/api/data/getDataEmail/${emailUser}`
+                : `http://localhost:8000/api/data/fetchData`;
+
+            const response = await axios.get(url, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            const data = response.data.localOperaThird[0] || {};
+            const keys = [
+                "scoreInput31", "refereeScoreInput31", "comment31",
+                "scoreInput32", "refereeScoreInput32", "comment32",
+                "scoreInput33", "refereeScoreInput33", "comment33",
+                "scoreInput41", "refereeScoreInput41", "comment41",
+                "scoreInput42", "refereeScoreInput42", "comment42",
+                "scoreInput51", "refereeScoreInput51", "comment51",
+                "scoreInput52", "refereeScoreInput52", "comment52",
+                "scoreInput61", "refereeScoreInput61", "comment61",
+                "scoreInput62", "refereeScoreInput62", "comment62"
+            ];
+
+            const updatedFormData = keys.reduce((acc, key) => {
+                acc[key] = data[key] || (typeof data[key] === 'number' ? 0 : '');
+                return acc;
+            }, {});
+
+            setFormData(updatedFormData);
 
         } catch (error) {
             Swal.fire({
                 icon: "error",
                 title: "เกิดข้อผิดพลาดในการดึงข้อมูล!",
                 text: "ไม่สามารถดึงข้อมูลจากฐานข้อมูลได้",
-              });
+            });
         }
     };
+
 
     return (
         <div className='lmf-container'>

@@ -101,6 +101,59 @@ function LocalManage() {
         }
     };
 
+    const calculateRefereeTotal = (formData) => {
+        const refereeFields = [
+            'refereeLocalMeetingAgenda',
+            'refereeLocalMemberSignatures',
+            'refereeMeetingMinutes',
+            'refereePhotos',
+            'refereeAppointmentOrder',
+            'refereeSubcommittee',
+            'refereeManagementPlan',
+            'refereeProtectionPlan',
+            'refereeSurveyPlan',
+            'refereeCoordination',
+            'refereeExpenseSummary',
+            'refereeMeetingInvite',
+            'refereeThankYouNote',
+            'refereeOperationResults',
+            'refereeAnalysisResults',
+            'refereeImprovementPlan',
+            'refereeAnnualReport'
+        ];
+
+        const total = refereeFields.reduce((sum, field) => sum + (formData[field] || 0), 0);
+        return total;
+    };
+
+    const calculateOrganizationTotal = (formData) => {
+        const organizationFields = [
+            'localMeetingAgenda',
+            'localMemberSignatures',
+            'meetingMinutes',
+            'photos',
+            'appointmentOrder',
+            'subcommittee',
+            'managementPlan',
+            'protectionPlan',
+            'surveyPlan',
+            'coordination',
+            'expenseSummary',
+            'meetingInvite',
+            'thankYouNote',
+            'operationResults',
+            'analysisResults',
+            'improvementPlan',
+            'annualReport'
+        ];
+
+        const total = organizationFields.reduce((sum, field) => sum + (formData[field] || 0), 0);
+        return total;
+    };
+
+    const refereeTotal = calculateRefereeTotal(formData);
+    const organizationTotal = calculateOrganizationTotal(formData);
+
     const fetchUserData = async () => {
         try {
             if (emailUser) {
@@ -259,7 +312,7 @@ function LocalManage() {
                 icon: "error",
                 title: "เกิดข้อผิดพลาดในการดึงข้อมูล!",
                 text: "ไม่สามารถดึงข้อมูลจากฐานข้อมูลได้",
-              });
+            });
         }
     };
 
@@ -269,7 +322,9 @@ function LocalManage() {
         try {
             const response = await axios.post('http://localhost:8000/api/data/localsubmit', {
                 ...formData,
-                emailUser: emailUser
+                emailUser: emailUser,
+                refereeTotal,
+                organizationTotal
             }, {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -279,7 +334,7 @@ function LocalManage() {
                 icon: "success",
                 title: "ส่งข้อมูลสำเร็จ",
                 text: "ไปที่หน้าต่อไป"
-              });
+            });
             navigate('/localoperafirst', { state: { emailUser } })
             // Redirect or show success message
         } catch (error) {
@@ -287,7 +342,7 @@ function LocalManage() {
                 icon: "error",
                 title: "เกิดข้อผิดพลาดในการส่งข้อมูล!",
                 text: "กรุณาตรวจสอบข้อมูลของท่านให้ครบ",
-              });
+            });
         }
     };
 
@@ -347,8 +402,7 @@ function LocalManage() {
         { colSpan: 4, title: "1.6 วิเคราะห์ผลและปรับปรุงพัฒนางาน (20 คะแนน)" },
         { title: "1) วิเคราะห์ผล และหาข้อสรุป (10 คะแนน)", name: "analysisResults", max: 10 },
         { title: "2) วางแผน ปรับปรุง และพัฒนาการดำเนินงานในปีต่อไป (10 คะแนน)", name: "improvementPlan", max: 10 },
-        { title: (<span><b>1.7 รายงานผลการดำเนินงานฐานทรัพยากรท้องถิ่น ประจำปีงบประมาณให้ อพ.สธ. อย่างน้อยปีละ 1 ครั้ง (40 คะแนน)</b>{" "}<span style={{ fontWeight: "normal", display: "block", paddingLeft: "30px" }}>รายงานผลการดำเนินงานฐานทรัพยากรท้องถิ่นโดยแสดงหลักฐานตั้งแต่ข้อ 1.1 – 1.6</span></span>), name: "annualReport", max: 40 },
-        { colSpan: 4, title: "รวมคะแนนที่ได้ ด้านที่ 1 การบริหารและการจัดการ", center: true, fontSize: "18px" }
+        { title: (<span><b>1.7 รายงานผลการดำเนินงานฐานทรัพยากรท้องถิ่น ประจำปีงบประมาณให้ อพ.สธ. อย่างน้อยปีละ 1 ครั้ง (40 คะแนน)</b>{" "}<span style={{ fontWeight: "normal", display: "block", paddingLeft: "30px" }}>รายงานผลการดำเนินงานฐานทรัพยากรท้องถิ่นโดยแสดงหลักฐานตั้งแต่ข้อ 1.1 – 1.6</span></span>), name: "annualReport", max: 40 }
     ];
 
     return (
@@ -434,18 +488,28 @@ function LocalManage() {
                                         </td>
                                         <td>
                                             <input
-                                                type="text"
+                                                type="text"  // Assuming you want to accept more than one character
                                                 className="comment"
                                                 name={`comment${name.charAt(0).toUpperCase() + name.slice(1)}`}
                                                 onChange={handleCommentInputChange}
                                                 value={formData[`comment${name.charAt(0).toUpperCase() + name.slice(1)}`]}
                                                 disabled={!isAdmin}
                                             />
+
                                         </td>
                                     </tr>
                                 )}
                             </React.Fragment>
                         ))}
+                        <tr>
+                            <td >รวมคะแนนที่ได้ ด้านที่ 1 การบริหารและการจัดการ</td>
+                            <td className="text-center" style={{ fontSize: '16px', alignItems: 'center' }}>
+                                {organizationTotal}
+                            </td>
+                            <td className="text-center" style={{ fontSize: '16px', alignItems: 'center' }}>
+                                {refereeTotal}
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>

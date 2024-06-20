@@ -71,191 +71,49 @@ function LocalOperaFirst() {
 
     const fetchUserData = async () => {
         try {
-            if (emailUser) {
-                const response = await axios.get(`http://localhost:8000/api/data/getDataEmail/${emailUser}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-                const data = response.data.localOperaFirst[0] || {};
-                const updatedFormData = {
-                    year1BoundaryAreaProtection: data.year1BoundaryAreaProtection || 0,
-                    area1BoundaryAreaProtection: data.area1BoundaryAreaProtection || 0,
-                    year2BoundaryAreaProtection: data.year2BoundaryAreaProtection || 0,
-                    area2BoundaryAreaProtection: data.area2BoundaryAreaProtection || 0,
-                    scoreBoundary: data.scoreBoundary || 0,
-                    refereeScoreBoundary: data.refereeScoreBoundary || 0,
-                    commentBoundaryAreaProtection: data.commentBoundaryAreaProtection || "",
-                    scoreSurveyResources: data.scoreSurveyResources || 0,
-                    refereeScoreSurveyResources: data.refereeScoreSurveyResources || 0,
-                    commentSurveyResources: data.commentSurveyResources || "",
-                    scoreClassifyResources: data.scoreClassifyResources || 0,
-                    refereeScoreClassifyResources: data.refereeScoreClassifyResources || 0,
-                    commentClassifyResources: data.commentClassifyResources || "",
-                    scoreTagResources: data.scoreTagResources || 0,
-                    refereeScoreTagResources: data.refereeScoreTagResources || 0,
-                    commentTagResources: data.commentTagResources || "",
-                    scoreMappingBoundary: data.scoreMappingBoundary || 0,
-                    refereeScoreMappingBoundary: data.refereeScoreMappingBoundary || 0,
-                    commentMappingBoundary: data.commentMappingBoundary || "",
-                    scoreStudyResources: data.scoreStudyResources || 0,
-                    refereeScoreStudyResources: data.refereeScoreStudyResources || 0,
-                    commentStudyResources: data.commentStudyResources || "",
-                    scorePhotoResources: data.scorePhotoResources || 0,
-                    refereeScorePhotoResources: data.refereeScorePhotoResources || 0,
-                    commentPhotoResources: data.commentPhotoResources || "",
-                    scoreSampleResources: data.scoreSampleResources || 0,
-                    refereeScoreSampleResources: data.refereeScoreSampleResources || 0,
-                    commentSampleResources: data.commentSampleResources || "",
-                    scoreRegisterResources: data.scoreRegisterResources || 0,
-                    refereeScoreRegisterResources: data.refereeScoreRegisterResources || 0,
-                    commentRegisterResources: data.commentRegisterResources || "",
-                    scorePhotoRegisterResources: data.scorePhotoRegisterResources || 0,
-                    refereeScorePhotoRegisterResources: data.refereeScorePhotoRegisterResources || 0,
-                    commentPhotoRegisterResources: data.commentPhotoRegisterResources || "",
-                    scoreCareResources: data.scoreCareResources || 0,
-                    refereeScoreCareResources: data.refereeScoreCareResources || 0,
-                    commentCareResources: data.commentCareResources || "",
-                    scoreEvaluateResources: data.scoreEvaluateResources || 0,
-                    refereeScoreEvaluateResources: data.refereeScoreEvaluateResources || 0,
-                    commentEvaluateResources: data.commentEvaluateResources || "",
-                    scoreMonitorResources: data.scoreMonitorResources || 0,
-                    refereeScoreMonitorResources: data.refereeScoreMonitorResources || 0,
-                    commentMonitorResources: data.commentMonitorResources || "",
-                    scoreManageResources: data.scoreManageResources || 0,
-                    refereeScoreManageResources: data.refereeScoreManageResources || 0,
-                    commentManageResources: data.commentManageResources || "",
-                    scoreSupportResources: data.scoreSupportResources || 0,
-                    refereeScoreSupportResources: data.refereeScoreSupportResources || 0,
-                    commentSupportResources: data.commentSupportResources || "",
-                    scoreAdministerResources: data.scoreAdministerResources || 0,
-                    refereeScoreAdministerResources: data.refereeScoreAdministerResources || 0,
-                    commentAdministerResources: data.commentAdministerResources || "",
-                    scoreCoordinateResources: data.scoreCoordinateResources || 0,
-                    refereeScoreCoordinateResources: data.refereeScoreCoordinateResources || 0,
-                    commentCoordinateResources: data.commentCoordinateResources || "",
-                    scoreReportResources: data.scoreReportResources || 0,
-                    refereeScoreReportResources: data.refereeScoreReportResources || 0,
-                    commentReportResources: data.commentReportResources || "",
-                    scoreDocumentResources: data.scoreDocumentResources || 0,
-                    refereeScoreDocumentResources: data.refereeScoreDocumentResources || 0,
-                    commentDocumentResources: data.commentDocumentResources || "",
-                    scorePlanResources: data.scorePlanResources || 0,
-                    refereeScorePlanResources: data.refereeScorePlanResources || 0,
-                    commentPlanResources: data.commentPlanResources || "",
-                    scoreFundResources: data.scoreFundResources || 0,
-                    refereeScoreFundResources: data.refereeScoreFundResources || 0,
-                    commentFundResources: data.commentFundResources || "",
-                    scoreExecuteResources: data.scoreExecuteResources || 0,
-                    refereeScoreExecuteResources: data.refereeScoreExecuteResources || 0,
-                    commentExecuteResources: data.commentExecuteResources || "",
-                    scoreReviewResources: data.scoreReviewResources || 0,
-                    refereeScoreReviewResources: data.refereeScoreReviewResources || 0,
-                    commentReviewResources: data.commentReviewResources || "",
-                    scoreAuditResources: data.scoreAuditResources || 0,
-                    refereeScoreAuditResources: data.refereeScoreAuditResources || 0,
-                    commentAuditResources: data.commentAuditResources || "",
-                    scoreInspectResources: data.scoreInspectResources || 0,
-                    refereeScoreInspectResources: data.refereeScoreInspectResources || 0,
-                    commentInspectResources: data.commentInspectResources || "",
-                    scoreVerifyResources: data.scoreVerifyResources || 0,
-                    refereeScoreVerifyResources: data.refereeScoreVerifyResources || 0,
-                    commentVerifyResources: data.commentVerifyResources || ""
-                }
-                setFormData(updatedFormData);
-            } else {
-                const response = await axios.get(`http://localhost:8000/api/data/fetchData`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-                const data = response.data.localOperaFirst[0] || {};
-                const updatedFormData = {
-                    year1BoundaryAreaProtection: data.year1BoundaryAreaProtection || 0,
-                    area1BoundaryAreaProtection: data.area1BoundaryAreaProtection || 0,
-                    year2BoundaryAreaProtection: data.year2BoundaryAreaProtection || 0,
-                    area2BoundaryAreaProtection: data.area2BoundaryAreaProtection || 0,
-                    scoreBoundary: data.scoreBoundary || 0,
-                    refereeScoreBoundary: data.refereeScoreBoundary || 0,
-                    commentBoundaryAreaProtection: data.commentBoundaryAreaProtection || "",
-                    scoreSurveyResources: data.scoreSurveyResources || 0,
-                    refereeScoreSurveyResources: data.refereeScoreSurveyResources || 0,
-                    commentSurveyResources: data.commentSurveyResources || "",
-                    scoreClassifyResources: data.scoreClassifyResources || 0,
-                    refereeScoreClassifyResources: data.refereeScoreClassifyResources || 0,
-                    commentClassifyResources: data.commentClassifyResources || "",
-                    scoreTagResources: data.scoreTagResources || 0,
-                    refereeScoreTagResources: data.refereeScoreTagResources || 0,
-                    commentTagResources: data.commentTagResources || "",
-                    scoreMappingBoundary: data.scoreMappingBoundary || 0,
-                    refereeScoreMappingBoundary: data.refereeScoreMappingBoundary || 0,
-                    commentMappingBoundary: data.commentMappingBoundary || "",
-                    scoreStudyResources: data.scoreStudyResources || 0,
-                    refereeScoreStudyResources: data.refereeScoreStudyResources || 0,
-                    commentStudyResources: data.commentStudyResources || "",
-                    scorePhotoResources: data.scorePhotoResources || 0,
-                    refereeScorePhotoResources: data.refereeScorePhotoResources || 0,
-                    commentPhotoResources: data.commentPhotoResources || "",
-                    scoreSampleResources: data.scoreSampleResources || 0,
-                    refereeScoreSampleResources: data.refereeScoreSampleResources || 0,
-                    commentSampleResources: data.commentSampleResources || "",
-                    scoreRegisterResources: data.scoreRegisterResources || 0,
-                    refereeScoreRegisterResources: data.refereeScoreRegisterResources || 0,
-                    commentRegisterResources: data.commentRegisterResources || "",
-                    scorePhotoRegisterResources: data.scorePhotoRegisterResources || 0,
-                    refereeScorePhotoRegisterResources: data.refereeScorePhotoRegisterResources || 0,
-                    commentPhotoRegisterResources: data.commentPhotoRegisterResources || "",
-                    scoreCareResources: data.scoreCareResources || 0,
-                    refereeScoreCareResources: data.refereeScoreCareResources || 0,
-                    commentCareResources: data.commentCareResources || "",
-                    scoreEvaluateResources: data.scoreEvaluateResources || 0,
-                    refereeScoreEvaluateResources: data.refereeScoreEvaluateResources || 0,
-                    commentEvaluateResources: data.commentEvaluateResources || "",
-                    scoreMonitorResources: data.scoreMonitorResources || 0,
-                    refereeScoreMonitorResources: data.refereeScoreMonitorResources || 0,
-                    commentMonitorResources: data.commentMonitorResources || "",
-                    scoreManageResources: data.scoreManageResources || 0,
-                    refereeScoreManageResources: data.refereeScoreManageResources || 0,
-                    commentManageResources: data.commentManageResources || "",
-                    scoreSupportResources: data.scoreSupportResources || 0,
-                    refereeScoreSupportResources: data.refereeScoreSupportResources || 0,
-                    commentSupportResources: data.commentSupportResources || "",
-                    scoreAdministerResources: data.scoreAdministerResources || 0,
-                    refereeScoreAdministerResources: data.refereeScoreAdministerResources || 0,
-                    commentAdministerResources: data.commentAdministerResources || "",
-                    scoreCoordinateResources: data.scoreCoordinateResources || 0,
-                    refereeScoreCoordinateResources: data.refereeScoreCoordinateResources || 0,
-                    commentCoordinateResources: data.commentCoordinateResources || "",
-                    scoreReportResources: data.scoreReportResources || 0,
-                    refereeScoreReportResources: data.refereeScoreReportResources || 0,
-                    commentReportResources: data.commentReportResources || "",
-                    scoreDocumentResources: data.scoreDocumentResources || 0,
-                    refereeScoreDocumentResources: data.refereeScoreDocumentResources || 0,
-                    commentDocumentResources: data.commentDocumentResources || "",
-                    scorePlanResources: data.scorePlanResources || 0,
-                    refereeScorePlanResources: data.refereeScorePlanResources || 0,
-                    commentPlanResources: data.commentPlanResources || "",
-                    scoreFundResources: data.scoreFundResources || 0,
-                    refereeScoreFundResources: data.refereeScoreFundResources || 0,
-                    commentFundResources: data.commentFundResources || "",
-                    scoreExecuteResources: data.scoreExecuteResources || 0,
-                    refereeScoreExecuteResources: data.refereeScoreExecuteResources || 0,
-                    commentExecuteResources: data.commentExecuteResources || "",
-                    scoreReviewResources: data.scoreReviewResources || 0,
-                    refereeScoreReviewResources: data.refereeScoreReviewResources || 0,
-                    commentReviewResources: data.commentReviewResources || "",
-                    scoreAuditResources: data.scoreAuditResources || 0,
-                    refereeScoreAuditResources: data.refereeScoreAuditResources || 0,
-                    commentAuditResources: data.commentAuditResources || "",
-                    scoreInspectResources: data.scoreInspectResources || 0,
-                    refereeScoreInspectResources: data.refereeScoreInspectResources || 0,
-                    commentInspectResources: data.commentInspectResources || "",
-                    scoreVerifyResources: data.scoreVerifyResources || 0,
-                    refereeScoreVerifyResources: data.refereeScoreVerifyResources || 0,
-                    commentVerifyResources: data.commentVerifyResources || ""
-                }
-                setFormData(updatedFormData);
-            }
+            const url = emailUser 
+                ? `http://localhost:8000/api/data/getDataEmail/${emailUser}`
+                : `http://localhost:8000/api/data/fetchData`;
+    
+            const response = await axios.get(url, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+    
+            const data = response.data.localOperaFirst[0] || {};
+            const keys = [
+                "year1BoundaryAreaProtection", "area1BoundaryAreaProtection", "year2BoundaryAreaProtection", 
+                "area2BoundaryAreaProtection", "scoreBoundary", "refereeScoreBoundary", "commentBoundaryAreaProtection", 
+                "scoreSurveyResources", "refereeScoreSurveyResources", "commentSurveyResources", "scoreClassifyResources", 
+                "refereeScoreClassifyResources", "commentClassifyResources", "scoreTagResources", "refereeScoreTagResources", 
+                "commentTagResources", "scoreMappingBoundary", "refereeScoreMappingBoundary", "commentMappingBoundary", 
+                "scoreStudyResources", "refereeScoreStudyResources", "commentStudyResources", "scorePhotoResources", 
+                "refereeScorePhotoResources", "commentPhotoResources", "scoreSampleResources", "refereeScoreSampleResources", 
+                "commentSampleResources", "scoreRegisterResources", "refereeScoreRegisterResources", "commentRegisterResources", 
+                "scorePhotoRegisterResources", "refereeScorePhotoRegisterResources", "commentPhotoRegisterResources", 
+                "scoreCareResources", "refereeScoreCareResources", "commentCareResources", "scoreEvaluateResources", 
+                "refereeScoreEvaluateResources", "commentEvaluateResources", "scoreMonitorResources", 
+                "refereeScoreMonitorResources", "commentMonitorResources", "scoreManageResources", 
+                "refereeScoreManageResources", "commentManageResources", "scoreSupportResources", 
+                "refereeScoreSupportResources", "commentSupportResources", "scoreAdministerResources", 
+                "refereeScoreAdministerResources", "commentAdministerResources", "scoreCoordinateResources", 
+                "refereeScoreCoordinateResources", "commentCoordinateResources", "scoreReportResources", 
+                "refereeScoreReportResources", "commentReportResources", "scoreDocumentResources", 
+                "refereeScoreDocumentResources", "commentDocumentResources", "scorePlanResources", 
+                "refereeScorePlanResources", "commentPlanResources", "scoreFundResources", "refereeScoreFundResources", 
+                "commentFundResources", "scoreExecuteResources", "refereeScoreExecuteResources", "commentExecuteResources", 
+                "scoreReviewResources", "refereeScoreReviewResources", "commentReviewResources", "scoreAuditResources", 
+                "refereeScoreAuditResources", "commentAuditResources", "scoreInspectResources", "refereeScoreInspectResources", 
+                "commentInspectResources", "scoreVerifyResources", "refereeScoreVerifyResources", "commentVerifyResources"
+            ];
+    
+            const updatedFormData = keys.reduce((acc, key) => {
+                acc[key] = data[key] || (typeof data[key] === 'number' ? 0 : "");
+                return acc;
+            }, {});
+    
+            setFormData(updatedFormData);
         } catch (error) {
             Swal.fire({
                 icon: "error",
@@ -264,6 +122,7 @@ function LocalOperaFirst() {
             });
         }
     }
+    
 
     const handleSubmit = async () => {
         try {
@@ -325,7 +184,7 @@ function LocalOperaFirst() {
                 <input
                     type="text"
                     name={`comment${namePrefix}`}
-                    className="comment"
+                    className="commentInput"
                     value={formData[`comment${namePrefix}`]}
                     onChange={handleInputChange}
                     disabled={!isAdmin} /></td>
