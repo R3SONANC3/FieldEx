@@ -1,8 +1,8 @@
+// server.js
 const express = require('express');
 const cors = require('cors');
 const { initMySQL } = require('./config');
 const { corsOptions } = require('./middleware');
-
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
 const dataRoutes = require('./routes/data');
