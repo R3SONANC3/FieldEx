@@ -490,4 +490,6 @@ tbody tr:hover {
   box-sizing: border-box; 
   resize: none; 
   overflow: hidden; 
+  height: 80px;
+  font-size: 16px;
 }
