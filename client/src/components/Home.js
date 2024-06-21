@@ -61,7 +61,8 @@ const Home = () => {
               <img src={logos[logoIndex]} alt="Header Img" className={logoIndex === 1 ? 'logonu' : 'logo'} />
             </div>
             <div className="banner-text">
-              <h1>{`โครงการอนุรักษ์พันธุกรรมพืช`}<br /> <span className="wrap">{text}</span></h1>
+              <h1>{`โครงการอนุรักษ์พันธุกรรมพืชอันเนื่องมาจากพระราชดำริ`}<br /></h1>
+              <h1 >{`สมเด็จพระเทพรัตนราชสุดาฯ สยามบรมราชกุมารี (อพ.สธ.)`}<br /> <span className="wrap">{text}</span></h1>
             </div>
           </div>
         </section>
