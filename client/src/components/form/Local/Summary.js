@@ -5,9 +5,12 @@ import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
-import '../../../styles.css'
+import '../../../styles.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
 
 const Summary = () => {
+    const [isAdmin, setIsAdmin] = useState(false);
     const location = useLocation();
     const navigate = useNavigate();
     const emailUser = location.state?.emailUser;
@@ -21,7 +24,8 @@ const Summary = () => {
         sumScore: 0,
         sumRef: 0
     });
-
+    const [evaluationResult, setEvaluationResult] = useState('');
+    
     const fetchUserData = useCallback(async () => {
         try {
             const url = emailUser 
@@ -58,6 +62,16 @@ const Summary = () => {
                 sumScore,
                 sumRef
             });
+    
+            // Fetch evaluation result
+            const evaluationResponse = await axios.get(`${API_URL}/api/user/evaluateData`, {
+                params: { email: emailUser },
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+    
+            setEvaluationResult(evaluationResponse.data.evaluationResult[0]);
         } catch (error) {
             Swal.fire({
                 icon: "error",
@@ -66,14 +80,77 @@ const Summary = () => {
             });
         }
     }, [API_URL, emailUser, token]);
-
+    
     useEffect(() => {
+        setIsAdmin(localStorage.getItem('userRole') === 'admin');
         if (!token) {
             navigate('/');
         } else {
             fetchUserData();
         }
     }, [navigate, token, fetchUserData]);
+
+    const handleEvaluateClick = () => {
+        Swal.fire({
+            title: 'ประเมินองค์กร',
+            text: "คุณต้องการประเมินองค์กรนี้ว่าอย่างไร?",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'ผ่าน',
+            cancelButtonText: 'ไม่ผ่าน',
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                const evaluation = 'pass';
+                setEvaluationResult(evaluation);
+                await saveEvaluationResult(evaluation);
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                const evaluation = 'notPass';
+                setEvaluationResult(evaluation);
+                await saveEvaluationResult(evaluation);
+            }
+        });
+    };
+
+    const saveEvaluationResult = async (evaluation) => {
+        try {
+            await axios.post(`${API_URL}/api/user/evaluate`, { email: emailUser, evaluationResult: evaluation }, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            Swal.fire({
+                icon: 'success',
+                title: 'ผลการประเมินถูกบันทึกเรียบร้อย',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        } catch (error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'เกิดข้อผิดพลาดในการบันทึกผลการประเมิน',
+                text: 'โปรดลองอีกครั้ง',
+            });
+        }
+    };
+
+    const renderEvaluationResult = () => {
+        if (evaluationResult === 'pass') {
+            return (
+                <span className="pass">
+                    <FontAwesomeIcon icon={faCheck} style={{ color: 'green' }}/>
+                    ผ่านเกณฑ์มาตรฐาน อพ.สธ. ระดับป้ายสนองพระราชดำริในงานฐานทรัพยากรท้องถิ่น
+                </span>
+            );
+        } else if (evaluationResult === 'notPass') {
+            return (
+                <span className="notPass">
+                    <FontAwesomeIcon icon={faTimes} style={{ color: 'red' }} />
+                    ไม่ผ่านเกณฑ์มาตรฐาน อพ.สธ. ระดับป้ายสนองพระราชดำริในงานฐานทรัพยากรท้องถิ่น
+                </span>
+            );
+        }
+        return null;
+    };
 
     return (
         <div className='sum-container'>
@@ -130,7 +207,7 @@ const Summary = () => {
                 </table>
             </div>
             <div className='sum-footer' style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
-                <button>ประเมินองค์กร</button>
+                <button onClick={handleEvaluateClick} disabled={!isAdmin}>ประเมินองค์กร</button>
             </div>
             <div className='sum-footer'>
                 <table className='showSum-table' id='showSum-table'>
@@ -141,7 +218,7 @@ const Summary = () => {
                     </thead>
                     <tbody>
                         <tr>
-                            <td style={{ textAlign: 'center' }}><span className="pass">ผ่านเกณฑ์มาตรฐาน อพ.สธ. ระดับป้ายสนองพระราชดำริในงานฐานทรัพยากรท้องถิ่น</span></td>
+                            <td style={{ textAlign: 'center' }}>{renderEvaluationResult()}</td>
                         </tr>
                     </tbody>
                 </table>

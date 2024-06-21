@@ -485,15 +485,9 @@ tbody tr:hover {
   width: 42%;
 }
 
-.pass::before {
-  content: " ✓";
-  color: green;
-  font-weight: bold;
-  font-family: Arial, sans-serif; 
-}
-.not-pass::before {
-  content: " ✗";
-  color: red;
-  font-weight: bold;
-  font-family: Arial, sans-serif;
+.commentInput {
+  width: 100%; 
+  box-sizing: border-box; 
+  resize: none; 
+  overflow: hidden; 
 }

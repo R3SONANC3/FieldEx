@@ -30,6 +30,7 @@ const UseAuth = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('userRole');
         localStorage.removeItem('isLoggedIn');
+        localStorage.removeItem('hasVisitedHome')
         window.location.reload();
     };
 

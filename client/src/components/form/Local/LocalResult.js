@@ -68,14 +68,14 @@ const LocalResult = () => {
     const [formData, setFormData] = useState(initialFormData);
 
 
-    useEffect(() => {
-        setIsAdmin(localStorage.getItem('userRole') === 'admin');
-        if (!token) {
-            navigate('/');
-        } else {
-            fetchUserData();
-        }
-    }, [navigate, token]);
+    // useEffect(() => {
+    //     setIsAdmin(localStorage.getItem('userRole') === 'admin');
+    //     if (!token) {
+    //         navigate('/');
+    //     } else {
+    //         fetchUserData();
+    //     }
+    // }, [navigate, token]);
 
     useEffect(() => {
         const calculateSums = () => {
@@ -207,8 +207,9 @@ const LocalResult = () => {
                 />
             </td>
             <td>
-                <input
+                <textarea
                     type="text"
+                    className='commentInput'
                     name={commentsName}
                     value={formData[commentsName]}
                     onChange={handleInputChange}

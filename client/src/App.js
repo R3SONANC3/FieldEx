@@ -25,18 +25,25 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate a 2-second loading time
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 3000);
+    const hasVisitedHome = localStorage.getItem("hasVisitedHome");
+    if (!hasVisitedHome) {
+      // Simulate a 3-second loading time on the first visit to the home page
+      const timer = setTimeout(() => {
+        setIsLoading(false);
+        localStorage.setItem("hasVisitedHome", "true");
+      }, 3000);
 
-    return () => clearTimeout(timer);
+      return () => clearTimeout(timer);
+    } else {
+      setIsLoading(false);
+      localStorage.removeItem('hasVisitedHome')
+    }
   }, []);
 
   return (
     <BrowserRouter>
       {isLoading ? (
-        <div style={{ textAlign: "center"}}>
+        <div style={{ textAlign: "center" }}>
           <Loding />
         </div>
       ) : (
@@ -58,7 +65,7 @@ function App() {
           <Route path="/localresult" element={<LocalResult />} />
           <Route path="/forgotpass" element={<ForgotPassword />} />
           <Route path="/adminlocal" element={<LocalUser />} />
-          <Route path="/admininstitution" element={<InstitutionUsers />}/>
+          <Route path="/admininstitution" element={<InstitutionUsers />} />
         </Routes>
       )}
     </BrowserRouter>

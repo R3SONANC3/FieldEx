@@ -172,4 +172,88 @@ router.get('/fetchUser', verifyUser, async (req, res) => {
   }
 });
 
+router.post('/evaluate', verifyUser, async (req, res) => {
+  const { evaluationResult } = req.body;
+  let connection;
+
+  try {
+    connection = await getConnector().getConnection();
+    const role = req.user.role;
+
+    if (role.length === 0) {
+      return res.status(404).json({
+        message: "User not found.",
+      });
+    }
+
+    if (role === 'admin') {
+      const { email: targetEmail, evaluationResult } = req.body;
+
+      if (!targetEmail || !evaluationResult) {
+        return res.status(400).json({
+          message: "Email and evaluation result are required.",
+        });
+      }
+
+      const sql = 'UPDATE FieldEx.users SET evaluationResults = ? WHERE email = ?';
+      await connection.query(sql, [evaluationResult, targetEmail]);
+      res.status(200).json({ message: 'Evaluation result updated successfully' });
+
+    } else {
+      res.status(403).json({
+        message: "Access denied. Insufficient permissions.",
+      });
+    }
+
+  } catch (error) {
+    console.error('Error updating evaluation result:', error);
+    res.status(500).json({
+      message: "Failed to update evaluation result",
+      error: error.message,
+    });
+  } finally {
+    if (connection) {
+      try {
+        connection.release();
+      } catch (releaseError) {
+        console.error('Error releasing connection:', releaseError);
+      }
+    }
+  }
+});
+
+router.get('/evaluateData', verifyUser, async (req, res) => {
+  const { email } = req.query;  // Use req.query to get the email parameter in a GET request
+  let connection;
+
+  try {
+    connection = await getConnector().getConnection();
+    const [result] = await connection.query(`SELECT evaluationResults FROM FieldEx.users WHERE email = ?`, [email]);
+
+    if (result.length > 0) {
+      res.status(200).json({
+        message: 'Evaluation result fetched successfully',
+        evaluationResult: result[0].evaluationResults  // Assuming evaluationResults is a field in your database
+      });
+    } else {
+      res.status(404).json({ message: 'Evaluation result not found' });
+    }
+  } catch (error) {
+    console.error('Error fetching evaluation result:', error);
+    res.status(500).json({
+      message: 'Failed to fetch evaluation result',
+      error: error.message,
+    });
+  } finally {
+    if (connection) {
+      try {
+        connection.release();
+      } catch (releaseError) {
+        console.error('Error releasing connection:', releaseError);
+      }
+    }
+  }
+});
+
+
 module.exports = router;
