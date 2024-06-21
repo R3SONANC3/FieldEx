@@ -64,14 +64,14 @@ const Summary = () => {
             });
     
             // Fetch evaluation result
-            const evaluationResponse = await axios.get(`${API_URL}/api/user/evaluateData`, {
+            const evaluationResponse = await axios.get(`http://localhost:8000/api/user/evaluateData`, {
                 params: { email: emailUser },
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
     
-            setEvaluationResult(evaluationResponse.data.evaluationResult[0]);
+            setEvaluationResult(evaluationResponse.data.evaluationResult);
         } catch (error) {
             Swal.fire({
                 icon: "error",
@@ -88,7 +88,8 @@ const Summary = () => {
         } else {
             fetchUserData();
         }
-    }, [navigate, token, fetchUserData]);
+        renderEvaluationResult();
+    }, [navigate, token, fetchUserData, evaluationResult]);
 
     const handleEvaluateClick = () => {
         Swal.fire({

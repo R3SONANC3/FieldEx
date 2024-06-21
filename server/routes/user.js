@@ -224,11 +224,12 @@ router.post('/evaluate', verifyUser, async (req, res) => {
 
 router.get('/evaluateData', verifyUser, async (req, res) => {
   const { email } = req.query;  // Use req.query to get the email parameter in a GET request
+  const userEmail = req.user.email;
   let connection;
 
   try {
     connection = await getConnector().getConnection();
-    const [result] = await connection.query(`SELECT evaluationResults FROM FieldEx.users WHERE email = ?`, [email]);
+    const [result] = await connection.query(`SELECT evaluationResults FROM FieldEx.users WHERE email = ?`, email || userEmail);
 
     if (result.length > 0) {
       res.status(200).json({

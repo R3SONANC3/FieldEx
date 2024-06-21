@@ -496,7 +496,6 @@ function LocalManage() {
                                                 value={formData[`comment${name.charAt(0).toUpperCase() + name.slice(1)}`]}
                                                 disabled={!isAdmin}
                                             />
-
                                         </td>
                                     </tr>
                                 )}
