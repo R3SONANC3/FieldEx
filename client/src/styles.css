@@ -408,7 +408,7 @@ button:active {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background: linear-gradient(120deg, #e67e22, #3b3939);
+  background: linear-gradient(135deg, #bb5b08, #3b3939);
 }
 
 .hm-header {
