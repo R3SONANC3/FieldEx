@@ -25,21 +25,21 @@ const Summary = () => {
         sumRef: 0
     });
     const [evaluationResult, setEvaluationResult] = useState('');
-    
+
     const fetchUserData = useCallback(async () => {
         try {
-            const url = emailUser 
+            const url = emailUser
                 ? `${API_URL}/api/data/getDataEmail/${emailUser}`
                 : `${API_URL}/api/data/fetchData`;
-    
+
             const response = await axios.get(url, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
-    
+
             const { localResult, localManageData, localOperaFirst, localOperaSec, localOperaThird } = response.data;
-    
+
             const scoResult = localResult[0].totalScore;
             const refResult = localResult[0].totalRefereeScore;
             const scoManage = localManageData[0].organizationTotal;
@@ -50,10 +50,10 @@ const Summary = () => {
             const refOpera2 = localOperaSec[0].refereeTotal;
             const scoOpera3 = localOperaThird[0].totalScore;
             const refOpera3 = localOperaThird[0].totalRefereeScore;
-    
+
             const sumScore = scoOpera1 + scoOpera2 + scoOpera3 + scoManage + scoResult;
             const sumRef = refOpera1 + refOpera2 + refOpera3 + refResult + refManage;
-    
+
             setFormData({
                 scoResult,
                 refResult,
@@ -62,15 +62,15 @@ const Summary = () => {
                 sumScore,
                 sumRef
             });
-    
+
             // Fetch evaluation result
-            const evaluationResponse = await axios.get(`http://localhost:8000/api/user/evaluateData`, {
+            const evaluationResponse = await axios.get(`${API_URL}/api/user/evaluateData`, {
                 params: { email: emailUser },
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
-    
+
             setEvaluationResult(evaluationResponse.data.evaluationResult);
         } catch (error) {
             Swal.fire({
@@ -80,7 +80,7 @@ const Summary = () => {
             });
         }
     }, [API_URL, emailUser, token]);
-    
+
     useEffect(() => {
         setIsAdmin(localStorage.getItem('userRole') === 'admin');
         if (!token) {
@@ -138,7 +138,7 @@ const Summary = () => {
         if (evaluationResult === 'pass') {
             return (
                 <span className="pass">
-                    <FontAwesomeIcon icon={faCheck} style={{ color: 'green' }}/>
+                    <FontAwesomeIcon icon={faCheck} style={{ color: 'green' }} />
                     ผ่านเกณฑ์มาตรฐาน อพ.สธ. ระดับป้ายสนองพระราชดำริในงานฐานทรัพยากรท้องถิ่น
                 </span>
             );
@@ -190,7 +190,7 @@ const Summary = () => {
                             <div className="flex-line">
                                 <div style={{ marginBottom: '8px' }}><b>ด้านที่ 1 การบริหารและการจัดการ</b></div>
                                 <span style={{ marginLeft: '61px' }}>คะแนนเต็ม 200 คะแนน</span>
-                                <span style={{ marginLeft: '100px' }}>คะแนนที่ได้ <input type="number" className="score-input" value={formData.refManage} min="0" disabled /> คะแนน</span>              
+                                <span style={{ marginLeft: '100px' }}>คะแนนที่ได้ <input type="number" className="score-input" value={formData.refManage} min="0" disabled /> คะแนน</span>
                             </div>
                             <div className="flex-line">
                                 <div style={{ marginBottom: '8px' }}><b>ด้านที่ 2 การดำเนินงาน</b></div>
@@ -208,7 +208,12 @@ const Summary = () => {
                 </table>
             </div>
             <div className='sum-footer' style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
-                <button onClick={handleEvaluateClick} disabled={!isAdmin}>ประเมินองค์กร</button>
+                {isAdmin && (
+                    <button onClick={handleEvaluateClick} disabled={!isAdmin}>
+                        ประเมินองค์กร
+                    </button>
+                )}
+
             </div>
             <div className='sum-footer'>
                 <table className='showSum-table' id='showSum-table'>
