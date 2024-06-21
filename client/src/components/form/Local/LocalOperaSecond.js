@@ -189,7 +189,7 @@ const LocalOperaSecond = () => {
             </div>
             <div className='lmf-body'>
                 <div className='lmf-text'>
-                    <h1 className='title'>ด้านที่ 2 การดำเนินงาน : <small>งานที่ 2 งานสำรวจเก็บรวบรวมทรัพยากรท้องถิ่น</small></h1>
+                    <h1 className='lmf-h1'>ด้านที่ 2 การดำเนินงาน : <small>งานที่ 2 งานสำรวจเก็บรวบรวมทรัพยากรท้องถิ่น</small></h1>
                 </div>
             </div>
             <form onSubmit={handleSubmit}>
@@ -235,8 +235,7 @@ const LocalOperaSecond = () => {
                                         />
                                     </td>
                                     <td>
-                                        <input
-                                            type="text"
+                                        <textarea
                                             className="commentInput"
                                             name={`comment${item.field}`}
                                             value={formData[`comment${item.field}`] || ''}

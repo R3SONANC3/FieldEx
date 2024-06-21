@@ -96,7 +96,7 @@ const LocalOperaThird = () => {
             <td className="tabb">{label}</td>
             <td><input type="number" name={`scoreInput${idPrefix}`} value={formData[`scoreInput${idPrefix}`]} onChange={handleChange} min="0" max={maxScore} disabled={isAdmin} /></td>
             <td><input type="number" name={`refereeScoreInput${idPrefix}`} value={formData[`refereeScoreInput${idPrefix}`]} onChange={handleChange} min="0" max={maxScore} disabled={!isAdmin} /></td>
-            <td><input type="text" name={`comment${idPrefix}`} value={formData[`comment${idPrefix}`]} onChange={handleChange} disabled={!isAdmin} /></td>
+            <td><textarea type="text"  className ="commentInput"name={`comment${idPrefix}`} value={formData[`comment${idPrefix}`]} onChange={handleChange} disabled={!isAdmin} /></td>
         </tr>
     );
 

@@ -210,7 +210,7 @@ function LocalOperaFirst() {
                     onChange={handleInputChange}
                     disabled={!isAdmin} /></td>
             <td>
-                <input
+                <textarea
                     type="text"
                     name={`comment${namePrefix}`}
                     className="commentInput"
@@ -332,10 +332,10 @@ function LocalOperaFirst() {
                                 />
                             </td>
                             <td>
-                                <input
+                                <textarea
                                     type="text"
                                     name="commentBoundaryAreaProtection"
-                                    className="comment"
+                                    className="commentInput"
                                     value={formData.commentBoundaryAreaProtection}
                                     onChange={handleInputChange}
                                     disabled={!isAdmin}
@@ -350,7 +350,7 @@ function LocalOperaFirst() {
                             <td className="tabb">1.2 การทำผังแสดงขอบเขตพื้นที่ปกปักทรัพยากรท้องถิ่น (10 คะแนน)</td>
                             <td><input type="number" name="scoreMappingBoundary" className="score-input" min="0" max="10" value={formData.scoreMappingBoundary} onChange={handleInputChange} disabled={isAdmin} /></td>
                             <td><input type="number" name="refereeScoreMappingBoundary" className="referee-score-input" min="0" max="10" value={formData.refereeScoreMappingBoundary} onChange={handleInputChange} disabled={!isAdmin} /></td>
-                            <td><input type="text" name="commentMappingBoundary" className="comment" value={formData.commentMappingBoundary} onChange={handleInputChange} disabled={!isAdmin} /></td>
+                            <td><textarea type="text" name="commentMappingBoundary" className="commentInput" value={formData.commentMappingBoundary} onChange={handleInputChange} disabled={!isAdmin} /></td>
                         </tr>
                         <tr>
                             <td className="tabb">1.3 การศึกษาทรัพยากรในพื้นที่ปกปักทรัพยากรท้องถิ่น (20 คะแนน)</td>
@@ -361,7 +361,7 @@ function LocalOperaFirst() {
                             <td className="tabb">1.4 การทำตัวอย่างทรัพยากรในพื้นที่ปกปักทรัพยากรท้องถิ่น (20 คะแนน)</td>
                             <td><input type="number" name="scoreSampleResources" className="score-input" min="0" max="10" value={formData.scoreSampleResources} onChange={handleInputChange} disabled={isAdmin} /></td>
                             <td><input type="number" name="refereeScoreSampleResources" className="referee-score-input" min="0" max="10" value={formData.refereeScoreSampleResources} onChange={handleInputChange} disabled={!isAdmin} /></td>
-                            <td><input type="text" name="commentSampleResources" className="comment" value={formData.commentSampleResources} onChange={handleInputChange} disabled={!isAdmin} /></td>
+                            <td><textarea type="text" name="commentSampleResources" className="commentInput" value={formData.commentSampleResources} onChange={handleInputChange} disabled={!isAdmin} /></td>
                         </tr>
                         <tr>
                             <td className="tabb" colSpan="4">1.5 การทำทะเบียนทรัพยากรในพื้นที่ปกปักทรัพยากรท้องถิ่น (10 คะแนน) </td>
@@ -374,7 +374,7 @@ function LocalOperaFirst() {
                             </td>
                             <td><input type="number" name="scoreCareResources" className="score-input" min="0" max="20" value={formData.scoreCareResources} onChange={handleInputChange} disabled={isAdmin} /></td>
                             <td><input type="number" name="refereeScoreCareResources" className="referee-score-input" min="0" max="20" value={formData.refereeScoreCareResources} onChange={handleInputChange} disabled={!isAdmin} /></td>
-                            <td><input type="text" name="commentCareResources" className="comment" value={formData.commentCareResources} onChange={handleInputChange} disabled={!isAdmin} /></td>
+                            <td><textarea type="text" name="commentCareResources" className="commentInput" value={formData.commentCareResources} onChange={handleInputChange} disabled={!isAdmin} /></td>
                         </tr>
                         <tr>
                             <td style={{ textAlign: 'center' }}><b>รวมคะแนนที่ได้  งานที่ 1 งานปกปักทรัพยากรท้องถิ่น</b></td>

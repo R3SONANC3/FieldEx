@@ -68,14 +68,14 @@ const LocalResult = () => {
     const [formData, setFormData] = useState(initialFormData);
 
 
-    // useEffect(() => {
-    //     setIsAdmin(localStorage.getItem('userRole') === 'admin');
-    //     if (!token) {
-    //         navigate('/');
-    //     } else {
-    //         fetchUserData();
-    //     }
-    // }, [navigate, token]);
+    useEffect(() => {
+        setIsAdmin(localStorage.getItem('userRole') === 'admin');
+        if (!token) {
+            navigate('/');
+        } else {
+            fetchUserData();
+        }
+    }, [navigate, token]);
 
     useEffect(() => {
         const calculateSums = () => {

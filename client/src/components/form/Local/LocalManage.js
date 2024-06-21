@@ -488,9 +488,9 @@ function LocalManage() {
 
                                         </td>
                                         <td>
-                                            <input
+                                            <textarea
                                                 type="text"  // Assuming you want to accept more than one character
-                                                className="comment"
+                                                className="commentInput"
                                                 name={`comment${name.charAt(0).toUpperCase() + name.slice(1)}`}
                                                 onChange={handleCommentInputChange}
                                                 value={formData[`comment${name.charAt(0).toUpperCase() + name.slice(1)}`]}
